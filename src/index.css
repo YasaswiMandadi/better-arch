@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Montserrat:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Roboto+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+:root{
+  --paper:#F5F4F0; --card:#FFFFFF; --ink:#191814; --muted:#6E675E; --faint:#9B958B;
+  --hair:#E6E2D8; --hair2:#EFECE4; --red:#B03020; --deep:#7C1D12;
+  --ok:#346538; --okbg:#EDF3EC; --warn:#956400; --warnbg:#FBF3DB;
+  --sh: 0 1px 2px rgba(40,32,20,.05), 0 16px 38px -26px rgba(40,32,20,.22);
+  --shs: 0 1px 2px rgba(40,32,20,.04), 0 9px 24px -18px rgba(40,32,20,.16);
+  --field-ink:#E4E7EA; --field-bg:#070707; --field-dim:#7A7F84; --accent-eye:#E0825C;
+}
+
+html[data-theme="dark"]{
+  --paper:#323232; --card:#3B3B3A; --ink:#ECEAE4; --muted:#B3AEA4; --faint:#8C877D;
+  --hair:#4E4E4C; --hair2:#454543; --red:#E07A5F; --deep:#EC8E76;
+  --ok:#7FB585; --okbg:#37423A; --warn:#D9A441; --warnbg:#46402F;
+  --sh: 0 1px 2px rgba(0,0,0,.34), 0 18px 40px -26px rgba(0,0,0,.72);
+  --shs: 0 1px 2px rgba(0,0,0,.30), 0 10px 28px -20px rgba(0,0,0,.6);
+}
+
+/* per-section accents, ported verbatim */
+.ac1{--ac:#C75B39;--acd:#9c3f22} .ac2{--ac:#3B4C8A;--acd:#2c3a6e}
+.ac3{--ac:#6F7A33;--acd:#545d22} .ac4{--ac:#9C5A3C;--acd:#7a4228}
+.ac5{--ac:#7A3B6E;--acd:#5e2a55} .ac6{--ac:#B03020;--acd:#7C1D12}
+.ac7{--ac:#C9971F;--acd:#8a6510} .ac8{--ac:#4A5560;--acd:#333b44}
+.ac9{--ac:#2E7D7B;--acd:#1f5c5a} .ac10{--ac:#6D5A8C;--acd:#4d3d68}
+html[data-theme="dark"] .ac1{--ac:#E0825C;--acd:#EEA078}
+html[data-theme="dark"] .ac2{--ac:#8696CE;--acd:#A6B2DC}
+html[data-theme="dark"] .ac3{--ac:#B3BC66;--acd:#C8D086}
+html[data-theme="dark"] .ac4{--ac:#C88E68;--acd:#DBAA88}
+html[data-theme="dark"] .ac5{--ac:#BE7CAD;--acd:#D199C2}
+html[data-theme="dark"] .ac6{--ac:#E07A5F;--acd:#EC8E76}
+html[data-theme="dark"] .ac7{--ac:#E2BC5C;--acd:#ECCD80}
+html[data-theme="dark"] .ac8{--ac:#8C97A4;--acd:#A8B1BC}
+html[data-theme="dark"] .ac9{--ac:#5FB8B5;--acd:#86CFCC}
+html[data-theme="dark"] .ac10{--ac:#A892C2;--acd:#C0AED8}
+
+@theme {
+  --font-sans: "Roboto", system-ui, sans-serif;
+  --font-head: "Montserrat", "Roboto", sans-serif;
+  --font-num: "Bebas Neue", "Montserrat", sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, monospace;
+  /* Overridden inside .consoleApp (console/console.css) to Newsreader; harmless default elsewhere. */
+  --font-display: "Montserrat", "Roboto", sans-serif;
+
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-hair: var(--hair);
+  --color-hair2: var(--hair2);
+  --color-red: var(--red);
+  --color-deep: var(--deep);
+  --color-ac: var(--ac);
+  --color-acd: var(--acd);
+
+  /* Console-only accent colours. The underlying --rust / --moss / --amber /
+     --danger custom properties are defined solely inside .consoleApp (see
+     console/console.css), so these utilities (bg-rust, text-moss, etc.)
+     only resolve to something meaningful there. */
+  --color-rust: var(--rust);
+  --color-rustDeep: var(--rustDeep);
+  --color-moss: var(--moss);
+  --color-mossBg: var(--mossBg);
+  --color-amber: var(--amber);
+  --color-amberBg: var(--amberBg);
+  --color-danger: var(--danger);
+  --color-dangerBg: var(--dangerBg);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--font-sans); font-size:16.5px; line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s cubic-bezier(.22,.61,.36,1), color .3s cubic-bezier(.22,.61,.36,1);
+}
+::selection{background:color-mix(in srgb, var(--red) 18%, transparent)}
+a{color:var(--deep)}
+
+.cpt{font-style:italic;color:var(--acd, var(--deep));font-weight:500}
+.read p:first-of-type::first-letter{font:800 3rem/.8 var(--font-head);float:left;padding:6px 12px 0 0;color:var(--acd)}
+
+@keyframes blink-eye { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(0.06); } }
+@keyframes float-slow { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
+@keyframes caret-blink { 50% { opacity: 0; } }
+@keyframes grain-shift { 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(-2%,2%);} }
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--hair);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
