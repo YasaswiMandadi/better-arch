@@ -24,12 +24,12 @@ export const DB = {
     'By the final episode the series delivers a decisive call to action: the industry\u2019s inability to sustain its workforce is laid bare, and alternative paths in governance, corporate roles and interdisciplinary careers are presented as viable, meaningful evolutions offering financial stability, creative freedom, and broader societal impact.'
    ],
    themes:[
-    ['Economic and emotional costs of the education','High tuition fees, material costs, and emotional labour undermine the long-term viability of architectural careers.'],
-    ['The necessity of strategic diversification','Exploring fields like governance, corporate management, and UI/UX design is essential for professional survival.'],
-    ['Exploitation of fresh graduates','Young architects are underpaid, overworked, and undervalued, perpetuating dissatisfaction and stunting growth.'],
-    ['The media-fuelled obsession with stardom','The relentless pursuit of awards and validation distracts architects from impactful work and realistic career paths.'],
-    ['Breaking industry stereotypes','Moving into non-design fields is reframed as innovative, impactful, and entirely compatible with architectural training.'],
-    ['The pragmatic realities of diversification','Diversification ensures financial stability, personal fulfilment, and opportunities to contribute meaningfully to society.']
+    {slug:'economic-and-emotional-costs-of-the-education',title:'Economic and emotional costs of the education',desc:'High tuition fees, material costs, and emotional labour undermine the long-term viability of architectural careers.'},
+    {slug:'the-necessity-of-strategic-diversification',title:'The necessity of strategic diversification',desc:'Exploring fields like governance, corporate management, and UI/UX design is essential for professional survival.'},
+    {slug:'exploitation-of-fresh-graduates',title:'Exploitation of fresh graduates',desc:'Young architects are underpaid, overworked, and undervalued, perpetuating dissatisfaction and stunting growth.'},
+    {slug:'the-media-fuelled-obsession-with-stardom',title:'The media-fuelled obsession with stardom',desc:'The relentless pursuit of awards and validation distracts architects from impactful work and realistic career paths.'},
+    {slug:'breaking-industry-stereotypes',title:'Breaking industry stereotypes',desc:'Moving into non-design fields is reframed as innovative, impactful, and entirely compatible with architectural training.'},
+    {slug:'the-pragmatic-realities-of-diversification',title:'The pragmatic realities of diversification',desc:'Diversification ensures financial stability, personal fulfilment, and opportunities to contribute meaningfully to society.'}
    ],
    future:'The next phase will document the experiences of diversified architects: the psychological, societal, and economic dimensions of transitioning out of traditional practice, recorded pre-, during, and post-migration, to normalise diversification and give professionals actionable insight.',
    links:[
@@ -54,17 +54,28 @@ export const DB = {
     'The series identifies critical gaps in the current landscape: the lack of accountability in architectural journalism, the reduction of complex ideas into marketable stories, and the financial instability of intellectual labour within media. At the same time, it holds on to media\u2019s potential to bridge academia and public discourse, foster inclusivity, and expand the cultural relevance of architecture. The season asks one question throughout: does architecture (the production of it) lead media (the publishing of it), or vice versa in today\u2019s world?'
    ],
    themes:[
-    ['Representation and visual dominance','Media\u2019s obsession with aesthetics often eclipses materiality, sustainability, and socio-political relevance; curated feeds shape perception while detaching architecture from context.'],
-    ['Criticality and architectural journalism','Platforms favour visual appeal and celebratory narratives; the need for media to hold architecture to higher standards recurs across the season.'],
-    ['Commodification of architectural narratives','Marketable content reduces architecture to brand-friendly stories, privileging celebrity architects and sidelining the complexities of practice.'],
-    ['Media as a market-driven force','Editorial priorities dictated by advertisers undermine independent critique and limit media\u2019s ability to address deeper socio-political questions.'],
-    ['Architectural films as critique and storytelling','Film blends emotional resonance with intellectual depth, documenting unspoken histories and democratising access to architectural knowledge.'],
-    ['Intersections of history, theory, and media','History and theory, often sidelined, are essential for contextualising design within socio-political and cultural frameworks.'],
-    ['Branding and identity in architecture','Branding reframed from self-promotion to a strategic exercise that communicates values and bridges architects with broader audiences.'],
-    ['Financial precarity of intellectual labour','Critics, journalists, and filmmakers face instability that compromises independent, rigorous work; alternative funding models are essential.'],
-    ['Democratisation with depth','Accessibility risks oversimplification; the challenge is content that balances inclusivity with intellectual rigour.'],
-    ['Collaborative ecosystems','Interdisciplinary collaboration among architects, journalists, theorists, and filmmakers fosters richer, more inclusive narratives.'],
-    ['Bridging academia and public discourse','Media must connect academic research with public understanding, making architectural knowledge relevant across audiences.']
+    {slug:'representation-and-visual-dominance',title:'Representation and visual dominance',desc:'Media\u2019s obsession with aesthetics often eclipses materiality, sustainability, and socio-political relevance; curated feeds shape perception while detaching architecture from context.'},
+    {slug:'criticality-and-architectural-journalism',title:'Criticality and architectural journalism',desc:'Platforms favour visual appeal and celebratory narratives; the need for media to hold architecture to higher standards recurs across the season.',
+     keywords:[
+      {word:'critical',freq:6,gloss:'The register this sub-theme argues is largely missing from Indian architectural coverage.'},
+      {word:'laudatory',freq:4,gloss:'The flattering default the sub-theme contrasts against genuine criticism.'},
+      {word:'institution',freq:3,gloss:'The awards bodies and platforms that shape which narratives get amplified.'},
+      {word:'accountability',freq:5,gloss:'What critical journalism is meant to hold the profession to.'}
+     ]},
+    {slug:'commodification-of-architectural-narratives',title:'Commodification of architectural narratives',desc:'Marketable content reduces architecture to brand-friendly stories, privileging celebrity architects and sidelining the complexities of practice.'},
+    {slug:'media-as-a-market-driven-force',title:'Media as a market-driven force',desc:'Editorial priorities dictated by advertisers undermine independent critique and limit media\u2019s ability to address deeper socio-political questions.'},
+    {slug:'architectural-films-as-critique-and-storytelling',title:'Architectural films as critique and storytelling',desc:'Film blends emotional resonance with intellectual depth, documenting unspoken histories and democratising access to architectural knowledge.'},
+    {slug:'intersections-of-history-theory-and-media',title:'Intersections of history, theory, and media',desc:'History and theory, often sidelined, are essential for contextualising design within socio-political and cultural frameworks.'},
+    {slug:'branding-and-identity-in-architecture',title:'Branding and identity in architecture',desc:'Branding reframed from self-promotion to a strategic exercise that communicates values and bridges architects with broader audiences.'},
+    {slug:'financial-precarity-of-intellectual-labour',title:'Financial precarity of intellectual labour',desc:'Critics, journalists, and filmmakers face instability that compromises independent, rigorous work; alternative funding models are essential.',
+     keywords:[
+      {word:'political economy',freq:5,gloss:'Who pays for criticism, and what that dependency does to what gets written.'},
+      {word:'critically unaffordable',freq:3,gloss:'The plain problem this sub-theme names: rigorous, independent writing doesn\u2019t pay enough to sustain a career.'},
+      {word:'laudatory media',freq:2,gloss:'The safer, better-funded alternative that fills the gap critical writing leaves behind.'}
+     ]},
+    {slug:'democratisation-with-depth',title:'Democratisation with depth',desc:'Accessibility risks oversimplification; the challenge is content that balances inclusivity with intellectual rigour.'},
+    {slug:'collaborative-ecosystems',title:'Collaborative ecosystems',desc:'Interdisciplinary collaboration among architects, journalists, theorists, and filmmakers fosters richer, more inclusive narratives.'},
+    {slug:'bridging-academia-and-public-discourse',title:'Bridging academia and public discourse',desc:'Media must connect academic research with public understanding, making architectural knowledge relevant across audiences.'}
    ],
    future:'Immediate priorities: strengthening media literacy among architects and media practitioners; highlighting untold narratives and underrepresented practices; and fostering collaboration across disciplines so that critique, inclusion, and public engagement replace superficial narratives and market dependence.',
    links:[]},
@@ -75,8 +86,8 @@ export const DB = {
     'The season is in production. Episodes will appear on this page as they are published, each with its own analysis record built through the BetterArch Console.'
    ],
    themes:[
-    ['One provocation per episode','A single sacred cow of the profession, grilled in under an hour.'],
-    ['Informal register, serious questions','The tone drops, the stakes do not; the political economy of practice stays on the table.']
+    {slug:'one-provocation-per-episode',title:'One provocation per episode',desc:'A single sacred cow of the profession, grilled in under an hour.'},
+    {slug:'informal-register-serious-questions',title:'Informal register, serious questions',desc:'The tone drops, the stakes do not; the political economy of practice stays on the table.'}
    ],
    future:'First recordings are being scheduled. Requests for provocations are welcome through the contact page.',
    links:[]},
@@ -87,8 +98,8 @@ export const DB = {
     'The season is in preparation. Episodes will appear on this page as they are published, each with its own analysis record built through the BetterArch Console.'
    ],
    themes:[
-    ['The political economy of practice','Fees, contracts, procurement, and the money that moves buildings.'],
-    ['Labour inside the studio','Who does the work, on what terms, and what that does to the work itself.']
+    {slug:'the-political-economy-of-practice',title:'The political economy of practice',desc:'Fees, contracts, procurement, and the money that moves buildings.'},
+    {slug:'labour-inside-the-studio',title:'Labour inside the studio',desc:'Who does the work, on what terms, and what that does to the work itself.'}
    ],
    future:'Guest outreach underway. Practitioners willing to speak on record about the economics of their practice can write in through the contact page.',
    links:[]}
@@ -125,5 +136,29 @@ export const DB = {
   {id:'dp-03',season:'diversify-please',no:'03',title:'Kid Conundrum',guest:'',sub:'The exploitation of fresh graduates, and the romanticised struggle that normalises it.',url:"https://podcasters.spotify.com/pod/show/betterarchtalks/episodes/"+'Diversify-Please_Kid-Conundrum-e10gk97',analysis:false},
   {id:'dp-04',season:'diversify-please',no:'04',title:'Pritzker Trap',guest:'',sub:'The obsession with fame and validation, and what it steers architects away from.',url:"https://podcasters.spotify.com/pod/show/betterarchtalks/episodes/"+'Diversify-Please_Pritzker-Trap-e114fqu',analysis:false},
   {id:'dp-05',season:'diversify-please',no:'05',title:'Save Thy Ass',guest:'',sub:'The decisive call: diversification as the only path forward for an industry that cannot sustain its workforce.',url:"https://podcasters.spotify.com/pod/show/betterarchtalks/episodes/"+'Diversify-Please_Save-Thy-Ass-e1nufqc',analysis:false}
- ]
+ ],
+ /* One sample essay, to show the template with real content while the
+    console-based essay authoring flow is still being built. Author is
+    left blank on purpose: this is placeholder body text, not a piece
+    actually written by any of the site's real collaborators, so it is
+    not attributed to one of them. Swap in real essays here as they are
+    written; nothing else needs to change to pick them up. */
+ essays:[
+  {id:'sample-01',season:'archxmedia',title:'What Accountability Would Actually Look Like',slug:'what-accountability-would-actually-look-like',
+   author:'',sub:'A short sample essay, standing in for the real writing this section will carry.',
+   body:[
+    'This is placeholder text for the Essays section, written to show the page working end to end rather than to make any argument of its own. A real essay would sit here once the console can author one directly.',
+    'It borrows several of the season\u2019s own keywords, critical, accountability, political economy and critically unaffordable, on purpose: visit any of their pages from here and you will find this essay listed alongside the episode and the sub-themes that also use them, which is the point of the keyword system this sample is demonstrating.'
+   ],
+   keywords:[
+    {word:'critical',freq:2,gloss:'The register this essay is a placeholder for.'},
+    {word:'accountability',freq:1,gloss:'The idea the sample body text gestures toward.'},
+    {word:'political economy',freq:2,gloss:'Who funds critical writing, and what that dependency shapes.'},
+    {word:'critically unaffordable',freq:1,gloss:'The economic problem underneath the accountability question.'}
+   ]}
+ ] as {
+  id: string; season: string; title: string; slug: string;
+  author: string; sub: string; body: string[];
+  keywords?: { word: string; freq: number; gloss?: string }[];
+ }[]
 } as const;

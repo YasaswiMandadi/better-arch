@@ -7,7 +7,8 @@ import BubbleChart from '../components/charts/BubbleChart';
 import SentimentSpider from '../components/charts/SentimentSpider';
 import CriticalityCompass from '../components/charts/CriticalityCompass';
 import { DB } from '../data/db';
-import { EP01 } from '../data/ep01';
+import { getAnalysis } from '../data/analysis';
+import { getCollaborator, collaboratorSlugForGuest } from '../data/collaborators';
 import { ExternalLink, X } from 'lucide-react';
 
 const STAT_COLORS = ['#C75B39', '#3B4C8A', '#6F7A33', '#7A3B6E'];
@@ -22,8 +23,9 @@ export default function Episode() {
 
   if (!e) return <Navigate to="/" replace />;
   const s = seasons.find((x) => x.slug === e.season);
-  const isDeep = e.analysis && id === 'axm-01';
-  const A: any = EP01;
+  const A: any = id ? getAnalysis(id) : undefined;
+  const isDeep = Boolean(e.analysis && A);
+  const collaborator = e.guest ? getCollaborator(collaboratorSlugForGuest(e.guest)) : undefined;
 
   const sideItems = isDeep
     ? [
@@ -36,8 +38,12 @@ export default function Episode() {
         { num: '07', label: 'Criticality Register', href: '#s07' },
         { num: '08', label: 'References', href: '#s08' },
         { num: '09', label: 'Related & materials', href: '#s09' },
+        { num: '10', label: 'Collaborators', href: '#s10' },
       ]
-    : [{ num: '01', label: 'This episode', href: '#s01' }];
+    : [
+        { num: '01', label: 'This episode', href: '#s01' },
+        { num: '02', label: 'Collaborators', href: '#s02' },
+      ];
 
   const embedUrl = e.url.replace('/episodes/', '/embed/episodes/');
 
@@ -60,7 +66,13 @@ export default function Episode() {
       )}
       <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">{e.title}</h1>
       <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">
-        {e.guest ? `A conversation with ${e.guest}` : 'An episode'}{e.sub ? ` · ${e.sub}` : ''}
+        {e.guest ? (
+          <>A conversation with{' '}
+            {collaborator ? (
+              <Link to={`/collaborator/${collaborator.slug}`} className="text-deep underline decoration-dotted underline-offset-4">{e.guest}</Link>
+            ) : e.guest}
+          </>
+        ) : 'An episode'}{e.sub ? ` · ${e.sub}` : ''}
       </p>
 
       {isDeep && (
@@ -254,6 +266,17 @@ export default function Episode() {
               })}
             </ul>
           </Section>
+
+          <Section ac="ac10" num="10" title="Collaborators">
+            {collaborator ? (
+              <Link to={`/collaborator/${collaborator.slug}`} className="flex flex-col gap-1 bg-card border border-hair rounded-[10px] px-5 py-4 shadow-[var(--shs)] hover:border-[color-mix(in_srgb,var(--red)_40%,var(--hair))] hover:-translate-y-0.5 transition-all max-w-sm">
+                <span className="font-semibold">{collaborator.name}</span>
+                <span className="text-xs text-muted">{collaborator.episodeIds.length} episode{collaborator.episodeIds.length === 1 ? '' : 's'} on the site</span>
+              </Link>
+            ) : (
+              <p className="text-muted max-w-[62ch]">No collaborator is linked to this episode.</p>
+            )}
+          </Section>
         </>
       )}
 
@@ -266,6 +289,19 @@ export default function Episode() {
           <a href={e.url} target="_blank" rel="noopener" className="mt-4 inline-flex items-center gap-2 font-head font-bold text-[.82rem] bg-ink text-paper rounded-lg px-5 py-3 hover:bg-deep hover:text-white transition-colors">
             Listen on Spotify <ExternalLink size={13} />
           </a>
+        </Section>
+      )}
+
+      {!isDeep && (
+        <Section ac="ac10" num="02" title="Collaborators">
+          {collaborator ? (
+            <Link to={`/collaborator/${collaborator.slug}`} className="flex flex-col gap-1 bg-card border border-hair rounded-[10px] px-5 py-4 shadow-[var(--shs)] hover:border-[color-mix(in_srgb,var(--red)_40%,var(--hair))] hover:-translate-y-0.5 transition-all max-w-sm">
+              <span className="font-semibold">{collaborator.name}</span>
+              <span className="text-xs text-muted">{collaborator.episodeIds.length} episode{collaborator.episodeIds.length === 1 ? '' : 's'} on the site</span>
+            </Link>
+          ) : (
+            <p className="text-muted max-w-[62ch]">No collaborator is linked to this episode.</p>
+          )}
         </Section>
       )}
 
