@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTheme } from '../lib/theme';
 import { Moon, Sun, ChevronDown } from 'lucide-react';
-import WordField from '../components/WordField';
-import WatchingEye from '../components/WatchingEye';
+import KeywordEye from '../components/KeywordEye';
 import TypeSwap from '../components/TypeSwap';
 import HeaderSearch from '../components/HeaderSearch';
 
@@ -11,7 +10,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#070707]" style={{ colorScheme: 'dark' }}>
-      <WordField />
+      <KeywordEye />
 
       {/* nav */}
       <nav className="relative z-20 flex items-center gap-6 px-6 sm:px-8 py-5 font-mono text-[12px] tracking-[.12em] text-[#E4E7EA]">
@@ -63,9 +62,6 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex-1 w-full max-w-md lg:max-w-lg flex justify-center" style={{ animation: 'float-slow 7s ease-in-out infinite' }}>
-          <WatchingEye className="w-full drop-shadow-[0_30px_60px_rgba(224,130,92,0.15)]" />
-        </div>
       </div>
 
       {/* footer */}
