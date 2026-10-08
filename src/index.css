@@ -112,22 +112,54 @@ html[data-protect="on"] svg {
 html[data-protect="on"] ::selection { background: transparent; }
 html[data-protect="on"] input::selection,
 html[data-protect="on"] textarea::selection { background: Highlight; }
-/* Solid cover while a capture may be in progress: raised by a capture shortcut or by
-   the window losing focus, lifted by the next click / key press. */
-html[data-protect="on"][data-shield="on"]::after {
-  content: "Content hidden \2014  click or press a key to continue";
+/* Solid cover + contact notice while a capture may be in progress: raised by a capture
+   shortcut or by the window losing focus, lifted by "Continue reading". */
+#capture-notice { display: none; }
+html[data-protect="on"][data-shield="on"] #capture-notice {
+  display: grid;
   position: fixed;
   inset: 0;
   z-index: 2147483647;
-  display: grid;
   place-items: center;
   background: var(--paper);
-  color: var(--muted);
-  font: 600 15px/1.4 system-ui, sans-serif;
-  letter-spacing: .02em;
-  text-align: center;
-  padding: 2rem;
+  color: var(--ink);
+  padding: 1.5rem;
+  overflow: auto;
+  -webkit-user-select: none;
+  user-select: none;
 }
+#capture-notice .capture-card {
+  max-width: 480px;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-top: 3px solid var(--red);
+  border-radius: 10px;
+  box-shadow: var(--sh);
+  padding: 1.6rem 1.5rem;
+}
+#capture-notice h2 { font: 800 1.25rem/1.25 var(--font-head, system-ui); margin: 0 0 .7rem; }
+#capture-notice p { font: 400 .95rem/1.6 system-ui, sans-serif; color: var(--muted); margin: 0 0 .9rem; }
+#capture-notice .capture-mail {
+  color: var(--ink);
+  font-weight: 600;
+  -webkit-user-select: text;
+  user-select: text;
+}
+#capture-notice .capture-mail::selection { background: Highlight; }
+#capture-notice .capture-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+#capture-notice .capture-btn {
+  font: 700 .82rem system-ui, sans-serif;
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  padding: .65rem 1.1rem;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+}
+#capture-notice .capture-btn:hover { border-color: var(--muted); }
+#capture-notice .capture-btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 @media print {
   html[data-protect="on"] #root { display: none !important; }
   html[data-protect="on"] body::before {

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 /**
@@ -13,8 +13,8 @@ import { useLocation } from 'react-router-dom';
  * - The built-in "Cite this page" and "Copy citation" buttons keep working
  *   (they write to the clipboard programmatically).
  */
-/** Minimum time the cover stays up before a click / key press may lift it. */
-const RELEASE_AFTER_MS = 400;
+/** Where visitors are sent when they want to use content from the site. */
+export const CONTENT_REQUEST_EMAIL = 'ar.shubhayan.m@gmail.com';
 const flag = import.meta.env.VITE_PROTECT as string | undefined;
 export const PROTECTION_ENABLED = flag === '1' ? true : flag === '0' ? false : import.meta.env.PROD;
 
@@ -27,17 +27,18 @@ function isEditable(t: EventTarget | null): boolean {
   return Boolean(el.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]'));
 }
 
-// While "shielded" the whole viewport is covered (see index.css). The shield is
+// While "shielded" the whole viewport is covered by the notice below (shown
+// purely by CSS, so it appears the instant the attribute is set). The shield is
 // raised the moment a capture shortcut starts (or the window loses focus) and
-// stays up until the visitor interacts with the page again, so it cannot
-// vanish between pressing the shortcut and the capture actually happening.
-let armedAt = 0;
+// stays up until the visitor chooses "Continue reading", so it cannot vanish
+// between pressing the shortcut and the capture actually happening.
 function shield(on: boolean) {
-  if (on) { armedAt = Date.now(); root().dataset.shield = 'on'; }
-  else delete root().dataset.shield;
+  if (on) {
+    root().dataset.shield = 'on';
+    document.getElementById('capture-continue')?.focus({ preventScroll: true });
+  } else delete root().dataset.shield;
 }
 const shielded = () => root().dataset.shield === 'on';
-const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta', 'AltGraph', 'CapsLock']);
 
 export default function ContentProtection() {
   const { pathname } = useLocation();
@@ -69,8 +70,8 @@ export default function ContentProtection() {
         (ev.key === 'Meta' && (ev.shiftKey || ev.altKey))
       ) {
         shield(true);
-      } else if (shielded() && !MODIFIER_KEYS.has(ev.key) && Date.now() - armedAt > RELEASE_AFTER_MS && document.hasFocus()) {
-        shield(false); // a real key press after the shield went up lifts it
+      } else if (shielded() && ev.key === 'Escape') {
+        shield(false);
       }
 
       // Print, save, view-source: blocked everywhere on public pages.
@@ -98,27 +99,54 @@ export default function ContentProtection() {
     function onVisibility() {
       if (active() && document.visibilityState === 'hidden') shield(true);
     }
-    function onPointer() {
-      if (shielded() && Date.now() - armedAt > RELEASE_AFTER_MS && document.hasFocus()) shield(false);
-    }
 
     const opts = { capture: true } as const;
     const blockers = ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'] as const;
     blockers.forEach((t) => document.addEventListener(t, block, opts));
     document.addEventListener('keydown', onKeyDown, opts);
     document.addEventListener('keyup', onKeyUp, opts);
-    document.addEventListener('pointerdown', onPointer, opts);
     window.addEventListener('blur', onBlur);
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
       blockers.forEach((t) => document.removeEventListener(t, block, opts));
       document.removeEventListener('keydown', onKeyDown, opts);
       document.removeEventListener('keyup', onKeyUp, opts);
-      document.removeEventListener('pointerdown', onPointer, opts);
       window.removeEventListener('blur', onBlur);
       document.removeEventListener('visibilitychange', onVisibility);
     };
   }, []);
 
-  return null;
+  if (!PROTECTION_ENABLED) return null;
+  return <CaptureNotice />;
+}
+
+/** Full-screen notice shown while the shield is up (hidden by CSS otherwise). */
+function CaptureNotice() {
+  const { pathname } = useLocation();
+  const [copied, setCopied] = useState(false);
+  const subject = `Content request: ${document.title || 'BetterArch.org'}`;
+  const body = `Hello,\n\nI would like to request some content from this page:\n${window.location.origin}${pathname}\n\nWhat I need:\n\nHow I plan to use it:\n\nThank you.`;
+  const mailto = `mailto:${CONTENT_REQUEST_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  async function copy() {
+    try { await navigator.clipboard.writeText(CONTENT_REQUEST_EMAIL); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* clipboard unavailable */ }
+  }
+
+  return (
+    <div id="capture-notice" role="dialog" aria-modal="true" aria-labelledby="capture-title">
+      <div className="capture-card">
+        <h2 id="capture-title">Need something from this site?</h2>
+        <p>
+          This content is protected, so the page is hidden while it might be captured. If you would like to
+          use any of it, for research, teaching or citation, please write to us and we will be glad to help.
+        </p>
+        <p className="capture-mail">{CONTENT_REQUEST_EMAIL}</p>
+        <div className="capture-actions">
+          <a className="capture-btn capture-btn-primary" href={mailto}>Email us</a>
+          <button type="button" className="capture-btn" onClick={copy}>{copied ? 'Address copied' : 'Copy address'}</button>
+          <button type="button" id="capture-continue" className="capture-btn" onClick={() => shield(false)}>Continue reading</button>
+        </div>
+      </div>
+    </div>
+  );
 }
