@@ -14,6 +14,7 @@ import { useCollaborator } from '../data/useCollaborators';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 import { ExternalLink, X } from 'lucide-react';
 import { useTheme } from '../lib/theme';
+import { spotifyEmbedUrl } from '../lib/spotify';
 import { SPECTACLE_DOMAIN_BY_CODE } from '../data/spectacle';
 
 const STAT_COLORS = ['#C75B39', '#3B4C8A', '#6F7A33', '#7A3B6E'];
@@ -63,11 +64,7 @@ export default function Episode() {
         { num: '02', label: 'Collaborators', href: '#s02' },
       ];
 
-  const embedUrl = e.url.includes('/embed/')
-    ? e.url
-    : e.url.includes('/episodes/')
-      ? e.url.replace('/episodes/', '/embed/episodes/')
-      : e.url.replace(/open\.spotify\.com\/episode\//, 'open.spotify.com/embed/episode/');
+  const embedUrl = spotifyEmbedUrl(e.url);
   const resolveRelated = (r: any): string | null => {
     if (r.id && episodes.some((x) => x.id === r.id)) return r.id;
     const t = String(r.t || '').trim().toLowerCase();
@@ -115,7 +112,19 @@ export default function Episode() {
       )}
 
       <div className="mt-6">
-        <iframe src={embedUrl} loading="lazy" title="Spotify player" className="w-full h-[152px] rounded-[10px] shadow-[var(--shs)] border-0" />
+        {embedUrl ? (
+          <iframe
+            src={embedUrl}
+            loading="lazy"
+            title="Spotify player"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            className="w-full h-[152px] rounded-[10px] shadow-[var(--shs)] border-0"
+          />
+        ) : /^https?:\/\//i.test(e.url) ? (
+          <a href={e.url} target="_blank" rel="noopener" className="inline-flex items-center gap-2 font-head font-bold text-[.82rem] bg-ink text-paper rounded-lg px-5 py-3 hover:bg-deep hover:text-white transition-colors">
+            Listen to this episode <ExternalLink size={13} />
+          </a>
+        ) : null}
       </div>
 
       {isDeep && (

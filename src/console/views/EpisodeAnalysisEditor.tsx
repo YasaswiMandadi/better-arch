@@ -10,6 +10,7 @@ import { importAnalysisHtml, importAnalysisJson, type ImportResult } from '../li
 import { bestKeywordMatchForTag, collectKeywordSuggestions, rankKeywordSuggestions } from '../../data/keywords';
 import { resolveAnalysis } from '../../data/useEpisodeAnalysis';
 import { slugify } from '../../lib/slug';
+import { spotifyEmbedUrl } from '../../lib/spotify';
 
 /**
  * Validates the shape loosely — enough to catch a wrong/partial file
@@ -230,7 +231,16 @@ export default function EpisodeAnalysisEditor() {
             </Field>
             <Field label="Subtitle / one-liner"><TextInput value={episode.sub} onChange={(ev) => patch((ep) => { ep.sub = (ev.target as any).value; })} /></Field>
           </Grid3>
-          <Field label="Spotify episode URL">
+          <Field
+            label="Spotify episode URL"
+            hint={
+              !episode.url.trim()
+                ? 'In Spotify use Share → Copy link to episode (it looks like https://open.spotify.com/episode/…).'
+                : spotifyEmbedUrl(episode.url)
+                  ? `Player will load: ${spotifyEmbedUrl(episode.url)}`
+                  : 'This link can’t be shown as a player. Use Spotify’s Share → Copy link to episode (https://open.spotify.com/episode/…). Visitors will see a “Listen” button until then.'
+            }
+          >
             <TextInput type="url" value={episode.url} onChange={(ev) => patch((ep) => { ep.url = (ev.target as any).value; })} />
           </Field>
           <Field label="Deep-analysis flag">
