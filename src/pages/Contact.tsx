@@ -4,16 +4,23 @@ import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
 import { Mail } from 'lucide-react';
 
-type FormType = 'general' | 'episode';
+type FormType = 'general' | 'episode' | 'propose' | 'contribute';
 
 export default function Contact() {
-  const [type, setType] = useState<FormType>('general');
+  const [type, setType] = useState<FormType>(() => {
+    const h = window.location.hash.replace('#', '');
+    if (h === 'propose-a-project') return 'propose';
+    if (h === 'contribute') return 'contribute';
+    return 'general';
+  });
   const [form, setForm] = useState({ name: '', email: '', org: '', subject: '', guest: '', topic: '', msg: '' });
   const [sent, setSent] = useState(false);
 
   const items = [
     { num: '01', label: 'The form', href: '#s01' },
-    { num: '02', label: 'Points to note', href: '#s02' },
+    { num: '02', label: 'Propose a Project', href: '#propose-a-project' },
+    { num: '03', label: 'Contribute', href: '#contribute' },
+    { num: '04', label: 'Points to note', href: '#s02' },
   ];
 
   function set<K extends keyof typeof form>(k: K, v: string) {
@@ -34,7 +41,8 @@ export default function Contact() {
   }
 
   function mailtoHref() {
-    const subjectPrefix = type === 'episode' ? 'Episode request' : 'Enquiry';
+    const subjectPrefix =
+      type === 'episode' ? 'Episode request' : type === 'propose' ? 'Project proposal' : type === 'contribute' ? 'Contribution' : 'Enquiry';
     const body = `${form.msg}\n\n${form.name}${form.org ? ' · ' + form.org : ''}${form.guest ? '\nProposed guest: ' + form.guest : ''}${form.topic ? '\nTopic: ' + form.topic : ''}`;
     return `mailto:hello@betterarch.org?subject=${encodeURIComponent(`[${subjectPrefix}] ${form.subject || ''}`)}&body=${encodeURIComponent(body)}`;
   }
@@ -43,17 +51,19 @@ export default function Contact() {
   const labelCls = "block text-[.72rem] font-semibold uppercase tracking-wide text-muted mb-1.5";
 
   return (
-    <InnerLayout sideItems={items} sideKicker="Contact" sideFoot={[{ label: '← Home', to: '/' }, { label: 'About', to: '/about' }]}>
+    <InnerLayout sideItems={items}>
       <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">Contact · The Better Architecture Project</p>
       <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">Write to us.</h1>
       <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">
-        General enquiries, collaborations, or a request to sit down for an episode: both routes run through the same form. Submissions land in the Console inbox; we reply from there.
+        General enquiries, collaborations, a request to sit down for an episode, a project to propose, or a way to contribute: every route runs through the same form. Submissions land in the Console inbox; we reply from there.
       </p>
 
       <Section ac="ac1" num="01" title="The form">
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <button onClick={() => setType('general')} className={`text-sm font-semibold px-4 py-2.5 rounded-full transition-colors ${type === 'general' ? 'bg-ink text-paper' : 'bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] text-muted'}`}>General enquiry</button>
           <button onClick={() => setType('episode')} className={`text-sm font-semibold px-4 py-2.5 rounded-full transition-colors ${type === 'episode' ? 'bg-ink text-paper' : 'bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] text-muted'}`}>Request an episode</button>
+          <button id="propose-a-project" onClick={() => setType('propose')} className={`text-sm font-semibold px-4 py-2.5 rounded-full transition-colors ${type === 'propose' ? 'bg-ink text-paper' : 'bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] text-muted'}`}>Propose a project</button>
+          <button id="contribute" onClick={() => setType('contribute')} className={`text-sm font-semibold px-4 py-2.5 rounded-full transition-colors ${type === 'contribute' ? 'bg-ink text-paper' : 'bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] text-muted'}`}>How can I contribute?</button>
         </div>
 
         <div className="space-y-4 max-w-[560px]">
@@ -86,6 +96,20 @@ export default function Contact() {
                 <span className="block text-xs text-faint mt-1.5">One line. The sharper the better.</span>
               </div>
             </>
+          )}
+          {type === 'propose' && (
+            <div>
+              <label className={labelCls}>Proposed theme / project</label>
+              <input className={inputCls} value={form.topic} onChange={(e) => set('topic', e.target.value)} />
+              <span className="block text-xs text-faint mt-1.5">What theme or project haven't we covered yet, and why does it belong here?</span>
+            </div>
+          )}
+          {type === 'contribute' && (
+            <div>
+              <label className={labelCls}>How you'd like to contribute</label>
+              <input className={inputCls} value={form.topic} onChange={(e) => set('topic', e.target.value)} />
+              <span className="block text-xs text-faint mt-1.5">Writing, research, translation, production — tell us what you bring.</span>
+            </div>
           )}
           <div>
             <label className={labelCls}>Message</label>

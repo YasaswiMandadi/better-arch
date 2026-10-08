@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import InnerLayout from '../components/InnerLayout';
 import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
-import { DB } from '../data/db';
+import { useSiteData } from '../data/store';
 
 export default function About() {
-  const seasons: any[] = DB.seasons as any;
+  const { data } = useSiteData();
+  const seasons = data.themes;
   const items = [
     { num: '01', label: 'What we do', href: '#s01' },
     { num: '02', label: 'The projects', href: '#s02' },
@@ -16,14 +17,10 @@ export default function About() {
   ];
 
   return (
-    <InnerLayout
-      sideItems={items}
-      sideKicker="About the project"
-      sideFoot={[{ label: '← Home', to: '/' }, { label: 'Contact', to: '/contact' }]}
-    >
+    <InnerLayout sideItems={items}>
       <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">About · The Better Architecture Project</p>
       <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">What this project is, and why.</h1>
-      <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">{DB.site.line}</p>
+      <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">{data.site.line}</p>
 
       <Section ac="ac1" num="01" title="What we do">
         <div className="read space-y-4">
@@ -39,9 +36,9 @@ export default function About() {
               <div className="font-num text-[1.35rem] text-acd pt-0.5">{String(i + 1).padStart(2, '0')}</div>
               <div>
                 <h3 className="font-head font-bold text-[1.14rem] leading-[1.35] tracking-tight mb-2">
-                  <Link to={`/project/${s.slug}`} className="text-inherit hover:underline">{s.title}</Link>
+                  <Link to={`/theme/${s.slug}`} className="text-inherit hover:underline">{s.title}</Link>
                 </h3>
-                <p className="text-sm text-muted font-medium mb-1.5">{s.period} · {s.status}</p>
+                <p className="text-sm text-muted font-medium mb-1.5">{s.period} · {s.statusLabel}</p>
                 <p className="text-[.99rem] leading-[1.62]">{s.one}</p>
               </div>
             </div>

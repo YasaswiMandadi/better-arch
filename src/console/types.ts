@@ -103,3 +103,7 @@ export type ViewName =
   | 'pages'
   | 'inbox'
   | 'settings'
+  | 'themes'
+  | 'themeEditor'
+  | 'episodeAnalysis'
+  | 'episodeAnalysisEditor'

@@ -5,7 +5,7 @@ export const EP01 = {
  eyebrow:'Architecture X Media Studies · Ep. 01 · Season opener',
  bio:'The guest is an architect, urban designer, educator and filmmaker based in Bombay, long associated with the Kamla Raheja Vidyanidhi Institute of Architecture (KRVIA), whose documentary practice grew out of Project Cinema City and whose teaching, writing and films keep returning to space, the city and the people who live it.',
  tags:['media as mirror','criticality','film & the image','class & the closed circle','language & access','the validation economy'],
- stats:[['18','Sentiments scored'],['27','Keywords mapped'],['27','References named'],['6','Key themes']],
+ stats:[['18','Sentiments scored'],['28','Keywords mapped'],['27','References named'],['6','Key themes']],
  reading:[
   'The season opens on a metaphor that will hold the whole hour. Any discipline, the guest argues, needs a space that is not about production but about the reasons and the modes of its work, a place that can offer a mirror in which it sees itself and, seeing, adjusts who it wants to become. That mirror is what a healthy media gives a profession, and the guest believes India has largely lacked it, even as he allows that the magazines of the nineteen-twenties and thirties may once have been real platforms for the larger concerns of architecture.',
   'The present mirror, in his reading, mostly flatters. Architectural magazines tend to be overly romantic and sentimental, <em class="cpt">\u2018a little too laudatory and not really critical\u2019</em>, and a mirror that always says you are fine breeds a self-congratulatory complacency that leaves no reason to change. The conferences and the sponsored awards are no better, focused on a narrow band of practices in a profession so incestuous that no one is willing to challenge anyone critically. The diagnosis is gentle in tone and severe in content: the spaces meant to host dialogue have become too comfortable to do it.',
@@ -43,6 +43,7 @@ export const EP01 = {
   {word:'platform',typ:'Language & the platform',freq:8,gloss:'The neutral space the guest proposes to choreograph confrontation.'},
   {word:'references',typ:'Language & the platform',freq:3,gloss:'What one must acknowledge to grow, since no one is original in a void.'},
   {word:'activism',typ:'Language & the platform',freq:2,gloss:'The collective social-media voice, as against the Central Vista project.'},
+  {word:'access',typ:'Language & the platform',freq:3,gloss:'What the English-language gate withholds from architects who work in the country’s other tongues.'},
   {word:'laudatory media',typ:'Political economy & access',freq:4,gloss:'The flattering register the guest names directly as the industry default.'},
   {word:'political economy',typ:'Political economy & access',freq:3,gloss:'Documentary funding drying up, state money tilting toward propaganda: who pays for media, and what that buys.'}
  ],
@@ -205,7 +206,7 @@ export const EP01 = {
  ],
  materials:[
   {t:'The episode on Spotify',d:'The full conversation, streaming.',u:SP+'Arch-X-Media_Media-as-a-Mirror-e2gcj1q',c:'Listen'},
-  {t:'Season page · Architecture X Media Studies',d:'All conversations in the season, with the framework note.',u:'/project/archxmedia',c:'On this site'},
+  {t:'Theme page · Architecture X Media Studies',d:'All conversations in the theme, with the framework note.',u:'/theme/archxmedia',c:'On this site'},
   {t:'AXM Unified Framework v5',d:'13 clusters, 34 thematic lines, 102 parameters, 18 sentiments; the instrument behind every analysis page.',u:'/about',c:'Method'},
   {t:'Knowledge Network v5',d:'The 53-source reading spine the references above draw from.',u:'/about',c:'Method'}
  ],

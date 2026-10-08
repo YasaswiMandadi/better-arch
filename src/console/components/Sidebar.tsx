@@ -4,6 +4,8 @@ import type { ViewName } from '../types'
 
 const NAV: [ViewName, string, string][] = [
   ['dashboard', 'DB', 'Dashboard'],
+  ['themes', 'TH', 'Theme Repository'],
+  ['episodeAnalysis', 'EA', 'Episode Analysis'],
   ['seasons', 'SE', 'Seasons'],
   ['episodes', 'EP', 'Episodes'],
   ['pages', 'PG', 'Pages'],

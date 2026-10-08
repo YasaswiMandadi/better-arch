@@ -4,13 +4,13 @@ import { keywordHref } from '../../data/keywords';
 
 interface KW { word: string; typ: string; freq: number; gloss: string }
 
-export default function BubbleChart({ kws, hue }: { kws: KW[]; hue: Record<string, string> }) {
+export default function BubbleChart({ kws, hue, preview }: { kws: KW[]; hue: Record<string, string>; preview?: string }) {
   const [hover, setHover] = useState<KW | null>(null);
   const navigate = useNavigate();
 
   const placed = useMemo(() => {
     const Wv = 760, Hv = 460;
-    const maxF = Math.max(...kws.map((k) => k.freq));
+    const maxF = Math.max(1, ...kws.map((k) => k.freq || 0));
     const sorted = [...kws].sort((a, b) => b.freq - a.freq);
     const out: { x: number; y: number; r: number; k: KW }[] = [];
     sorted.forEach((k) => {
@@ -41,7 +41,7 @@ export default function BubbleChart({ kws, hue }: { kws: KW[]; hue: Record<strin
               key={p.k.word}
               onMouseEnter={() => setHover(p.k)}
               onMouseLeave={() => setHover(null)}
-              onClick={() => navigate(keywordHref(p.k.word))}
+              onClick={() => navigate(keywordHref(p.k.word, preview))}
               className="cursor-pointer"
             >
               <circle cx={p.x} cy={p.y} r={p.r} fill={c} fillOpacity={hover?.word === p.k.word ? 0.32 : 0.16} stroke={c} strokeWidth={1.6} style={{ transition: 'fill-opacity .15s' }} />

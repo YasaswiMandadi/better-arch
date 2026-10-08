@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  TEMPLATE — Episode analysis (AXM Unified Framework v5)
+
+  How to use this file:
+  1. Replace every [BRACKETED] placeholder in the visible page below —
+     this is what a human sees if they open the file directly in a browser.
+  2. Fill in the matching values inside the <script type="application/json"
+     id="axm-analysis-data"> block near the bottom — this is the ONLY part
+     the Console's "Episode Analysis" upload actually reads. Keep its
+     field names and shapes exactly as given; add as many items to each
+     array as the conversation needs (two is just a starting shape).
+  3. Upload this whole file in Console → Episode Analysis → an episode →
+     "Choose file…". The visible page content is never read — only the
+     embedded JSON block is.
+-->
+<title>[EPISODE TITLE] — [GUEST NAME] | Arch × Media [SEASON]E[EPISODE NO]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --display: 'EB Garamond', Georgia, serif;
+  --body:    'DM Sans', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+  --bg: #FAFAF7; --bg-tint: #F2EEE6; --bg-card: #FFFFFF;
+  --text: #111111; --text-body: #2E2A24; --text-secondary: #5A5549; --text-muted: #9A9189;
+  --accent: #B03020; --accent-dark: #8A2418; --accent-bg: #F5E5E0;
+  --rule: #DEDED5; --rule-light: #ECEAE2;
+  --max: 880px; --gutter: clamp(1.2rem, 4vw, 2.8rem);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--body); color: var(--text-body); background: var(--bg); line-height: 1.6; }
+.banner { background: var(--accent-bg); color: var(--accent-dark); font-family: var(--mono); font-size: 12px; letter-spacing: .04em; padding: 10px var(--gutter); border-bottom: 1px solid var(--rule); }
+section { max-width: var(--max); margin: 0 auto; padding: 3rem var(--gutter) 0; border-top: 1px solid var(--rule); }
+section:first-of-type { border-top: 0; }
+.section-label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 8px; }
+.section-title { font-family: var(--display); font-size: clamp(24px, 3vw, 32px); font-weight: 500; color: var(--text); margin-bottom: 14px; }
+.hero { padding-top: 3rem; }
+.hero-tag { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 18px; }
+.hero h1 { font-family: var(--display); font-size: clamp(32px, 4.5vw, 52px); font-weight: 500; line-height: 1.1; color: var(--text); margin-bottom: 12px; }
+.hero-sub { font-family: var(--display); font-size: 19px; font-style: italic; color: var(--text-secondary); margin-bottom: 20px; }
+.prose p { font-size: 16px; line-height: 1.7; color: var(--text-body); margin-bottom: 1.1rem; max-width: 680px; }
+.keyword-bars { display: grid; gap: .6rem; margin-top: 1rem; }
+.kb { padding: .5rem 0; border-bottom: 1px solid var(--rule-light); display: flex; justify-content: space-between; }
+.kb-term { font-family: var(--display); font-weight: 600; }
+.kb-freq { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+.theme { padding: 1.1rem 0; border-bottom: 1px solid var(--rule-light); }
+.theme-name { font-family: var(--display); font-size: 19px; font-weight: 600; color: var(--text); margin-bottom: .5rem; }
+.quote { padding: .9rem 0 .9rem 1rem; border-left: 2px solid var(--rule); margin-bottom: .9rem; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ref-table th, .ref-table td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule-light); }
+footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 1.5rem var(--gutter) 0; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="banner">TEMPLATE — fill in the placeholders below, then fill in the matching JSON block near the end of this file. Only that JSON block is read on upload.</div>
+
+<section class="hero">
+  <div class="hero-tag">[SEASON] · [EPISODE NO] — [THEME NAME]</div>
+  <h1>[Episode title]</h1>
+  <p class="hero-sub">[Guest name] · [Guest role / one-line description]</p>
+  <p class="prose"><p>[One-paragraph guest bio — who they are, what standing they speak from.]</p></p>
+</section>
+
+<section id="synopsis">
+  <div class="section-label">Synopsis</div>
+  <h2 class="section-title">A reading of the conversation</h2>
+  <div class="prose">
+    <p>[Reading paragraph 1 — what the conversation opens on and where it goes.]</p>
+    <p>[Reading paragraph 2 — add as many as the episode needs.]</p>
+  </div>
+</section>
+
+<section id="terrain">
+  <div class="section-label">Lexical terrain</div>
+  <h2 class="section-title">Where the language sits</h2>
+  <div class="keyword-bars">
+    <div class="kb"><span class="kb-term">[keyword one]</span><span class="kb-freq">[freq]×</span></div>
+    <div class="kb"><span class="kb-term">[keyword two]</span><span class="kb-freq">[freq]×</span></div>
+  </div>
+</section>
+
+<section id="themes">
+  <div class="section-label">Themes</div>
+  <h2 class="section-title">What the conversation argues</h2>
+  <div class="theme">
+    <div class="theme-name">[Theme one title]</div>
+    <p class="prose"><p>[Theme one, paragraph 1.]</p></p>
+  </div>
+</section>
+
+<section id="highlights">
+  <div class="section-label">Selected highlights</div>
+  <h2 class="section-title">Excerpts from the conversation</h2>
+  <div class="quote">
+    <p>[context before] <strong>[the quoted phrase itself]</strong> [context after]</p>
+  </div>
+</section>
+
+<section id="references">
+  <div class="section-label">References</div>
+  <h2 class="section-title">Mentioned in the conversation</h2>
+  <table class="ref-table">
+    <thead><tr><th>Name</th><th>Category</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>[Reference name]</td><td>[Category]</td><td>[One-line note]</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  Architecture × Media Studies · [Season] · [Episode no.] · The Better Architecture Project · betterarch.org
+</footer>
+
+<!--
+  ↓↓↓ THE ONLY PART THE CONSOLE UPLOAD READS ↓↓↓
+  Keep the id exactly as "axm-analysis-data" and the type exactly as
+  "application/json". Replace the placeholder values; add more items to
+  any array as needed. This scaffold already validates and uploads
+  successfully as-is, so you can test the flow before filling it in.
+-->
+<script type="application/json" id="axm-analysis-data">
+{
+  "eyebrow": "Architecture X Media Studies · [Season] · Episode [no.]",
+  "bio": "[One-paragraph guest bio.]",
+  "tags": ["[topic tag one]", "[topic tag two]"],
+  "stats": [["[number]", "[stat label]"], ["[number]", "[stat label]"]],
+  "reading": [
+    "[Reading paragraph 1.]",
+    "[Reading paragraph 2 — add as many as needed.]"
+  ],
+  "lexnarr": "[One paragraph introducing the lexical-terrain chart.]",
+  "keywords": [
+    { "word": "[keyword one]", "typ": "[cluster name]", "freq": 0, "gloss": "[short gloss]" },
+    { "word": "[keyword two]", "typ": "[cluster name]", "freq": 0, "gloss": "[short gloss]" }
+  ],
+  "hue": { "[cluster name]": "#B03020" },
+  "themes": [
+    { "t": "[Theme one title]", "p": ["[Theme one, paragraph 1.]", "[Theme one, paragraph 2.]"] }
+  ],
+  "qcats": ["[Theme one title]"],
+  "quotes": [
+    { "cat": "[Theme one title]", "kp": true, "read": "[One line on why this quote matters.]", "ctx1": "[context before]", "main": "[the quoted phrase itself]", "ctx2": "[context after]" }
+  ],
+  "lived": "[A paragraph of phenomenological/lived-experience reading of the conversation.]",
+  "sentprose": "[A paragraph describing the overall sentiment register.]",
+  "sentiments": [
+    { "code": "S01", "label": "Optimism", "full": "Pessimism ↔ Optimism", "score": 50, "reading": "[One line explaining this score.]" }
+  ],
+  "compass": {
+    "x": 50,
+    "y": 50,
+    "quadrant": "[quadrant label]",
+    "prose": "[A paragraph placing the episode on the critical-autonomy compass.]",
+    "indicators": [
+      ["X1", "[indicator label]", 0, "[one-line note]"]
+    ]
+  },
+  "refcats": ["[Category]"],
+  "refs": [
+    { "n": "[Reference name]", "u": "https://example.com", "c": "[Category]", "d": "[One-line note]" }
+  ],
+  "related": [
+    { "t": "[Related episode title]", "g": "[Related guest]", "d": "[One-line note]", "id": "[episode id, e.g. axm-12]" }
+  ],
+  "materials": [
+    { "t": "The episode on Spotify", "d": "The full conversation, streaming.", "u": "https://open.spotify.com/show/7glojNr7jxfFlu5FF9RjjF", "c": "Listen" }
+  ],
+  "txnote": "[A line describing where the transcript excerpt below picks up.]",
+  "tx": [
+    ["H", "[Host line.]"],
+    ["G", "[Guest line.]"]
+  ]
+}
+</script>
+</body>
+</html>

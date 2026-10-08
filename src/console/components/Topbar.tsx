@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useConsole } from '../store/useConsole'
+import SyncBadge from './SyncBadge'
 
 export default function Topbar() {
   const { db, setDB, dirty, saveNow, go, toast, theme, toggleTheme } = useConsole()
@@ -42,6 +43,7 @@ export default function Topbar() {
         <span className={`w-1.5 h-1.5 rounded-full ${dirty ? 'bg-amber' : 'bg-moss'}`} />
         {dirty ? 'Unsaved' : 'Saved'}
       </span>
+      <SyncBadge />
       <span className="flex-1" />
       <span className="hidden md:inline font-mono text-[10.5px] text-paper/40">
         save <kbd className="font-mono text-[10px] border border-paper/20 border-b-2 rounded px-1 text-paper/60">Ctrl</kbd>+<kbd className="font-mono text-[10px] border border-paper/20 border-b-2 rounded px-1 text-paper/60">S</kbd>

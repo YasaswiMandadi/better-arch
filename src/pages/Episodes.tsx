@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import InnerLayout from '../components/InnerLayout';
 import SiteFooter from '../components/SiteFooter';
-import { DB } from '../data/db';
+import { useSiteData } from '../data/store';
+import { isEpisodePublished } from '../data/types';
 
 export default function Episodes() {
-  const seasons: any[] = DB.seasons as any;
-  const episodes: any[] = DB.episodes as any;
+  const { data } = useSiteData();
+  const seasons = data.themes;
+  const episodes = data.episodes.filter(isEpisodePublished);
   const [filter, setFilter] = useState<string>('all');
 
   const seasonBySlug = useMemo(() => {
@@ -19,15 +21,11 @@ export default function Episodes() {
 
   const items = [
     { num: '00', label: 'All episodes', href: '#top' },
-    ...seasons.map((s, i) => ({ num: String(i + 1).padStart(2, '0'), label: s.title, href: `/project/${s.slug}` })),
+    ...seasons.map((s, i) => ({ num: String(i + 1).padStart(2, '0'), label: s.title, href: `/theme/${s.slug}` })),
   ];
 
   return (
-    <InnerLayout
-      sideItems={items}
-      sideKicker="All conversations"
-      sideFoot={[{ label: '← Home', to: '/' }, { label: 'About', to: '/about' }, { label: 'Contact', to: '/contact' }]}
-    >
+    <InnerLayout sideItems={items}>
       <p id="top" className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">Episodes</p>
       <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">Every conversation, in one place.</h1>
       <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">

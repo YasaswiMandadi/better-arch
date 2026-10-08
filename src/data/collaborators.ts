@@ -1,55 +1,68 @@
-import { DB } from './db';
+import type { SiteDB, Collaborator as CollaboratorRecord } from './types';
 import { slugify } from '../lib/slug';
 
-/**
- * Collaborators are not a hand-authored list, they're derived directly from
- * the `guest` field already present on every episode. This is deliberate:
- * a guest's name is written once, on the episode, and this module is the
- * only place that turns those names into a de-duplicated, linkable roster.
- * There is nothing here to keep in sync by hand, add a guest to an episode
- * in the console and their collaborator page appears automatically.
- *
- * Bios are intentionally left blank rather than invented. A real bio can be
- * added later (in the console, once collaborator profiles are editable
- * there) without changing this derivation.
- */
 export interface Collaborator {
   slug: string;
   name: string;
+  designation?: string;
   bio: string;
   episodeIds: string[];
+  essayIds: string[];
 }
 
-function buildCollaborators(): Collaborator[] {
+export function collaboratorSlugForName(name: string): string {
+  return slugify(name);
+}
+
+/**
+ * Builds the full collaborator roster: explicit collaborators added in the
+ * console, merged with ones implied by an episode guest or essay author that
+ * doesn't yet have an explicit record. Either way the result is keyed by
+ * slug, so console-authored bio/designation always wins over the derived
+ * stub.
+ */
+export function buildCollaboratorRoster(data: SiteDB): Collaborator[] {
   const bySlug = new Map<string, Collaborator>();
-  for (const ep of DB.episodes) {
-    const guest = (ep as { guest: string }).guest;
-    if (!guest) continue;
-    const slug = slugify(guest);
-    const existing = bySlug.get(slug);
-    if (existing) {
-      existing.episodeIds.push(ep.id);
-    } else {
-      bySlug.set(slug, { slug, name: guest, bio: '', episodeIds: [ep.id] });
-    }
+
+  for (const c of data.collaborators) {
+    bySlug.set(c.slug, { ...c, episodeIds: [], essayIds: [] });
   }
+
+  for (const ep of data.episodes) {
+    if (!ep.guest) continue;
+    const slug = slugify(ep.guest);
+    const existing = bySlug.get(slug);
+    if (existing) existing.episodeIds.push(ep.id);
+    else bySlug.set(slug, { slug, name: ep.guest, bio: '', episodeIds: [ep.id], essayIds: [] });
+  }
+
+  for (const es of data.essays) {
+    if (!es.author) continue;
+    const slug = slugify(es.author);
+    const existing = bySlug.get(slug);
+    if (existing) existing.essayIds.push(es.id);
+    else bySlug.set(slug, { slug, name: es.author, bio: '', episodeIds: [], essayIds: [es.id] });
+  }
+
   return Array.from(bySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export const COLLABORATORS: Collaborator[] = buildCollaborators();
-
-export function getCollaborator(slug: string): Collaborator | undefined {
-  return COLLABORATORS.find((c) => c.slug === slug);
+export function getCollaborator(data: SiteDB, slug: string): Collaborator | undefined {
+  return buildCollaboratorRoster(data).find((c) => c.slug === slug);
 }
 
-export function collaboratorSlugForGuest(guest: string): string {
-  return slugify(guest);
-}
-
-/** Collaborators who appear in at least one episode belonging to the given category (season). */
-export function collaboratorsForSeason(seasonSlug: string): Collaborator[] {
-  const idsInSeason = new Set<string>(
-    DB.episodes.filter((e) => (e as { season: string }).season === seasonSlug).map((e) => e.id)
+export function collaboratorsForTheme(data: SiteDB, themeSlug: string): Collaborator[] {
+  const roster = buildCollaboratorRoster(data);
+  const episodeIdsInTheme = new Set(data.episodes.filter((e) => e.season === themeSlug).map((e) => e.id));
+  const essayIdsInTheme = new Set(data.essays.filter((es) => es.season === themeSlug).map((es) => es.id));
+  const theme = data.themes.find((t) => t.slug === themeSlug);
+  const investigatorSlugs = new Set(theme?.investigatorSlugs ?? []);
+  return roster.filter(
+    (c) =>
+      investigatorSlugs.has(c.slug) ||
+      c.episodeIds.some((id) => episodeIdsInTheme.has(id)) ||
+      c.essayIds.some((id) => essayIdsInTheme.has(id))
   );
-  return COLLABORATORS.filter((c) => c.episodeIds.some((id) => idsInSeason.has(id)));
 }
+
+export type { CollaboratorRecord };

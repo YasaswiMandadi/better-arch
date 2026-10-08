@@ -2,31 +2,26 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import InnerLayout from '../components/InnerLayout';
 import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
-import { DB } from '../data/db';
+import { useSiteData } from '../data/store';
 import { keywordHref } from '../data/keywords';
+import { useCollaboratorsForTheme } from '../data/useCollaborators';
+import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 
-/**
- * One page per sub-theme (the "Key themes" list on a category page), matching
- * the page-architecture note that every Category / Sub-theme / Episode / Essay
- * page is template based: this is that template, filled in with whichever
- * sub-theme's slug is in the URL.
- *
- * Episodes and Essays are not yet tagged to an individual sub-theme (only to
- * their parent category), so those two sections show an honest "not mapped
- * yet" state rather than guessing. Once the console can attach a sub-theme to
- * an episode or essay, this page starts listing them with no further changes
- * needed here. Keywords are different: a sub-theme carries its own keyword
- * list directly (see db.ts), so that section renders real, linkable data
- * wherever a sub-theme has been given any.
- */
 export default function SubTheme() {
-  const { slug, themeSlug } = useParams();
-  const seasons: any[] = DB.seasons as any;
-  const s = seasons.find((x) => x.slug === slug);
-  if (!s) return <Navigate to="/" replace />;
-  const theme = s.themes.find((t: any) => t.slug === themeSlug);
-  if (!theme) return <Navigate to={`/project/${slug}`} replace />;
-  const keywords: { word: string; freq: number; gloss?: string }[] = theme.keywords ?? [];
+  const { slug, subSlug } = useParams();
+  const { data } = useSiteData();
+  const { open } = useCollaboratorPopup();
+  const collaborators = useCollaboratorsForTheme(slug);
+
+  const t = data.themes.find((x) => x.slug === slug);
+  if (!t) return <Navigate to="/themes" replace />;
+  const st = t.subThemes.find((x) => x.slug === subSlug);
+  if (!st) return <Navigate to={`/theme/${slug}`} replace />;
+
+  // Episodes/essays are not yet individually mapped to sub-themes (only to
+  // their parent theme), so these sections stay honestly empty for now.
+  const mappedEpisodes: typeof data.episodes = [];
+  const mappedEssays: typeof data.essays = [];
 
   const items = [
     { num: '01', label: 'About this sub-theme', href: '#s01' },
@@ -34,65 +29,94 @@ export default function SubTheme() {
     { num: '03', label: 'Essays', href: '#s03' },
     { num: '04', label: 'Keywords', href: '#s04' },
     { num: '05', label: 'Collaborators', href: '#s05' },
+    ...(st.tertiaryThemes?.length ? [{ num: '06', label: 'Tertiary themes', href: '#s06' }] : []),
   ];
 
-  const notMapped = (kind: string) => (
-    <p className="text-muted max-w-[62ch]">
-      {kind} aren't tagged to individual sub-themes yet, only to {s.title} as a whole. Once that mapping is added
-      in the console, matching {kind.toLowerCase()} will appear here automatically.
-    </p>
-  );
-
   return (
-    <InnerLayout
-      sideItems={items}
-      sideKicker={`${s.no} · ${s.title}`}
-      sideFoot={[
-        { label: '← Home', to: '/' },
-        { label: s.title, to: `/project/${s.slug}` },
-        { label: 'Contact', to: '/contact' },
-      ]}
-    >
+    <InnerLayout sideItems={items}>
       <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">
-        <Link to={`/project/${s.slug}`} className="hover:underline">{s.no} · {s.title}</Link> · Sub-theme
+        {t.no} · {t.title} · Sub-theme
       </p>
-      <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">{theme.title}</h1>
-      <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">{theme.desc}</p>
+      <h1 className="font-head font-extrabold text-[clamp(2.2rem,6.5vw,3.8rem)] leading-[1.02] tracking-tight mb-4">
+        {st.title}
+      </h1>
+      <p className="font-head font-semibold text-[1.1rem] leading-[1.5] text-muted max-w-[56ch]">{st.shortDesc}</p>
 
-      <Section ac="ac2" num="01" title="About this sub-theme">
-        <p className="max-w-[62ch]">{theme.desc}</p>
+      <Section ac="ac1" num="01" title="About this sub-theme">
+        <p className="text-[.99rem] leading-[1.62]">{st.longDesc || st.shortDesc}</p>
       </Section>
 
       <Section ac="ac6" num="02" title="Episodes">
-        {notMapped('Episodes')}
+        {mappedEpisodes.length ? (
+          <div className="space-y-2" />
+        ) : (
+          <p className="text-muted max-w-[62ch]">
+            Episodes have not yet been mapped to this sub-theme in the console. They will appear here once that
+            mapping is done.
+          </p>
+        )}
       </Section>
 
-      <Section ac="ac4" num="03" title="Essays">
-        {notMapped('Essays')}
+      <Section ac="ac5" num="03" title="Essays">
+        {mappedEssays.length ? (
+          <div className="space-y-2" />
+        ) : (
+          <p className="text-muted max-w-[62ch]">
+            Essays have not yet been mapped to this sub-theme in the console. They will appear here once that
+            mapping is done.
+          </p>
+        )}
       </Section>
 
-      <Section ac="ac7" num="04" title="Keywords">
-        {keywords.length ? (
+      <Section ac="ac2" num="04" title="Keywords">
+        {st.keywords?.length ? (
           <div className="flex flex-wrap gap-2">
-            {keywords.map((k) => (
+            {st.keywords.map((k) => (
               <Link
                 key={k.word}
                 to={keywordHref(k.word)}
-                title={k.gloss}
-                className="text-[.8rem] text-deep bg-[color-mix(in_srgb,var(--red)_9%,transparent)] px-3 py-1.5 rounded-full hover:bg-[color-mix(in_srgb,var(--red)_16%,transparent)] transition-colors"
+                className="text-[.8rem] lowercase text-deep bg-[color-mix(in_srgb,var(--red)_9%,transparent)] px-3 py-1.5 rounded-full hover:bg-[color-mix(in_srgb,var(--red)_16%,transparent)] transition-colors"
               >
-                {k.word} <span className="text-faint">· {k.freq}</span>
+                {k.word} · {k.freq}
               </Link>
             ))}
           </div>
         ) : (
-          notMapped('Keywords')
+          <p className="text-muted max-w-[62ch]">No keywords have been mapped to this sub-theme yet.</p>
         )}
       </Section>
 
-      <Section ac="ac5" num="05" title="Collaborators">
-        {notMapped('Collaborators')}
+      <Section ac="ac8" num="05" title="Collaborators">
+        {collaborators.length ? (
+          <div className="grid sm:grid-cols-2 gap-3.5">
+            {collaborators.map((c) => (
+              <button
+                key={c.slug}
+                onClick={() => open(c.slug)}
+                className="text-left flex flex-col gap-1 bg-card border border-hair rounded-[10px] px-5 py-4 shadow-[var(--shs)] hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--red)_40%,var(--hair))] transition-all"
+              >
+                <span className="font-semibold">{c.name}</span>
+                <span className="text-xs text-muted">View collaborator card</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted max-w-[62ch]">No collaborators are linked to this theme yet.</p>
+        )}
       </Section>
+
+      {st.tertiaryThemes?.length ? (
+        <Section ac="ac3" num="06" title="Tertiary themes">
+          <div className="space-y-3">
+            {st.tertiaryThemes.map((tier) => (
+              <div key={tier.slug} className="bg-card border border-hair rounded-[10px] px-5 py-4 shadow-[var(--shs)]">
+                <h4 className="font-head font-bold text-[.98rem] mb-1">{tier.title}</h4>
+                <p className="text-sm text-muted">{tier.desc}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+      ) : null}
 
       <SiteFooter />
     </InnerLayout>

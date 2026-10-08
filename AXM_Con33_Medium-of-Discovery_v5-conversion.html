@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  Episode analysis — "Medium of Discovery" with Kamna Malik
+  Architecture X Media Studies · Season 2 · Conversation 33
+
+  Hand-converted from the original AXM v4-framework analysis page into the
+  v5 shape the live site renders. Every field below is drawn from the real
+  conversation (synopsis, themes, highlights, references, transcript) in
+  the original file; the sentiment scores and the compass sub-indicators
+  are an editorial re-scoring against the v5 framework's own dimensions,
+  since v4 and v5 do not score the same axes. v4-only sections that the
+  live Episode page does not render (the force-graph theme map, the
+  phenomenology grid, the evidence map, the full 191-turn transcript) are
+  not carried over — only a short excerpt of the transcript opening is
+  kept, matching how the site's other episode records use `tx`.
+
+  This file is ready to upload as-is: Console → Episode Analysis → an
+  episode → "Choose file…". Only the embedded
+  <script type="application/json" id="axm-analysis-data"> block near the
+  bottom is read; everything above it is a cosmetic, readable rendering of
+  the same content for anyone who opens the file directly in a browser.
+-->
+<title>Medium of Discovery — Kamna Malik | Arch × Media S2E33</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --display: 'EB Garamond', Georgia, serif;
+  --body:    'DM Sans', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+  --bg: #FAFAF7; --bg-tint: #F2EEE6; --bg-card: #FFFFFF;
+  --text: #111111; --text-body: #2E2A24; --text-secondary: #5A5549; --text-muted: #9A9189;
+  --accent: #B03020; --accent-dark: #8A2418; --accent-bg: #F5E5E0;
+  --rule: #DEDED5; --rule-light: #ECEAE2;
+  --max: 880px; --gutter: clamp(1.2rem, 4vw, 2.8rem);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--body); color: var(--text-body); background: var(--bg); line-height: 1.6; }
+.banner { background: var(--accent-bg); color: var(--accent-dark); font-family: var(--mono); font-size: 12px; letter-spacing: .04em; padding: 10px var(--gutter); border-bottom: 1px solid var(--rule); }
+section { max-width: var(--max); margin: 0 auto; padding: 3rem var(--gutter) 0; border-top: 1px solid var(--rule); }
+section:first-of-type { border-top: 0; }
+.section-label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 8px; }
+.section-title { font-family: var(--display); font-size: clamp(24px, 3vw, 32px); font-weight: 500; color: var(--text); margin-bottom: 14px; }
+.hero { padding-top: 3rem; }
+.hero-tag { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 18px; }
+.hero h1 { font-family: var(--display); font-size: clamp(32px, 4.5vw, 52px); font-weight: 500; line-height: 1.1; color: var(--text); margin-bottom: 12px; }
+.hero-sub { font-family: var(--display); font-size: 19px; font-style: italic; color: var(--text-secondary); margin-bottom: 20px; }
+.prose-p { font-size: 16px; line-height: 1.7; color: var(--text-body); margin-bottom: 1.1rem; max-width: 680px; }
+.keyword-bars { display: grid; gap: .6rem; margin-top: 1rem; }
+.kb { padding: .5rem 0; border-bottom: 1px solid var(--rule-light); display: flex; justify-content: space-between; max-width: 680px; }
+.kb-term { font-family: var(--display); font-weight: 600; }
+.kb-freq { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+.theme { padding: 1.1rem 0; border-bottom: 1px solid var(--rule-light); }
+.theme-name { font-family: var(--display); font-size: 19px; font-weight: 600; color: var(--text); margin-bottom: .5rem; }
+.quote { padding: .9rem 0 .9rem 1rem; border-left: 2px solid var(--rule); margin-bottom: .9rem; }
+.quote .ctx { color: var(--text-muted); font-style: italic; }
+.quote .anno { font-size: 13px; color: var(--text-secondary); margin-top: .4rem; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ref-table th, .ref-table td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule-light); vertical-align: top; }
+footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 1.5rem var(--gutter) 0; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="banner">Hand-converted from the original v4 analysis into the v5 shape — ready to upload as-is. Only the embedded JSON block near the end of this file is read on upload.</div>
+
+<section class="hero">
+  <div class="hero-tag">Season 02 · Conversation 33 — Architecture X Media Studies</div>
+  <h1>Medium of Discovery</h1>
+  <p class="hero-sub">Kamna Malik · Brand &amp; Communications Strategist · Design Media Veteran · London/India</p>
+  <p class="prose-p">Seventeen years across Indian design and architecture media — editorial, fairs, brand-side communications. Held senior roles in the era when ELLE Decor, A+D and the early India Design ID set the editorial weather. Moved on from the corporate structure roughly three years before the conversation; based in London at the time of recording. Speaks here as somebody who watched the discovery economy of design media end in real time, and who is willing to say so out loud.</p>
+</section>
+
+<section id="synopsis">
+  <div class="section-label">Synopsis</div>
+  <h2 class="section-title">A reading of the conversation</h2>
+  <div class="prose">
+    <p class="prose-p">Kamna Malik joins Shubhayan M. from London with seventeen years inside Indian design and architecture media behind her. The conversation opens with a long question and stays with one short one. The fairs, the magazines, the awards circuit, the panel slots — were these ever really about discovery, and if they were, are they still? She remembers when &lt;em&gt;India Design ID&lt;/em&gt; and ACETECH were two of two, when writers flew between cities to interview principal architects, when an editorial filter actually said no.</p>
+    <p class="prose-p">The diagnosis starts with the fair floor itself. Attendance used to mean discovery — pen drives, catalogues, brand cards as ammunition, no other way to find a new material or a new name. &lt;em&gt;"It’s definitely not for discovery,"&lt;/em&gt; she says now; the same booths and panels have been emptied of that function and refilled with another, being seen, being projected, maintaining relationships with the media houses that cover the fair. The international counter-examples — Salone del Mobile, London Design Festival, Design Miami — are offered not as uncommercialised ideals but as &lt;em&gt;cultural moments&lt;/em&gt; that still move an industry, against Indian shows that, in her account, sustain only the booths.</p>
+    <p class="prose-p">The conversation gets sharper from there. Discovery has been replaced by optics; &lt;em&gt;me-toos&lt;/em&gt; have multiplied as one successful format gets copied by ten studios across geographies; the &lt;em&gt;dal-tarka&lt;/em&gt; metaphor lands cleanly — same dish, every day, until the audience is done. She names the bubble and refuses to soften the call: magazines &lt;em&gt;"have become glorified catalogues,"&lt;/em&gt; because today you can buy a feature the way you once could only earn one. She also refuses to play expert about everything. Pressed on how a tier-2-city studio breaks in today, she says she genuinely does not know, and explains exactly why the old answer — write to the editor, get judged on merit — has stopped working: talent is no longer the only currency. The honesty of &lt;em&gt;I don’t know&lt;/em&gt; is the most useful thing said in that stretch.</p>
+    <p class="prose-p">The take comes in the close, and it is programmatic. Architects and studios should stop seeking validation from magazines; they should hire content people in-house and control their own narrative, because an outside agency, however talented, does not sit in the office and does not know its daily nuances. Magazines, in turn, have one option left — reinvent, structurally rather than cosmetically, or become glorified catalogues, which the West is already rehearsing in its own shutdowns and pulled titles. Self-publishing for studios; structural rethink for media. The episode is the rare AXM conversation where the prescription is clear and the speaker is willing to wear the cost of saying it, flagging before she says the hardest lines that this will get her into trouble, and saying them anyway.</p>
+  </div>
+</section>
+
+<section id="terrain">
+  <div class="section-label">Lexical terrain</div>
+  <h2 class="section-title">Where the language sits</h2>
+  <p class="prose-p">Twenty terms drawn from the conversation, grouped by thematic cluster and sized by how often each recurs. The words &lt;em&gt;architecture&lt;/em&gt; and &lt;em&gt;media&lt;/em&gt; are excluded as ambient noise in a conversation between architects about the architecture profession — both saturate the hour and would swamp the rest. What remains leans hardest on discovery, optics and the institutions under autopsy, with the economics of the old magazine model and the herd mechanism of the &lt;em&gt;me-too&lt;/em&gt; close behind.</p>
+  <div class="keyword-bars">
+    <div class="kb"><span class="kb-term">Discovery</span><span class="kb-freq">18&times;</span></div>
+    <div class="kb"><span class="kb-term">Optics</span><span class="kb-freq">12&times;</span></div>
+    <div class="kb"><span class="kb-term">Validation</span><span class="kb-freq">10&times;</span></div>
+    <div class="kb"><span class="kb-term">Herd</span><span class="kb-freq">9&times;</span></div>
+    <div class="kb"><span class="kb-term">Me-toos</span><span class="kb-freq">7&times;</span></div>
+    <div class="kb"><span class="kb-term">Magazines</span><span class="kb-freq">24&times;</span></div>
+    <div class="kb"><span class="kb-term">Fairs</span><span class="kb-freq">17&times;</span></div>
+    <div class="kb"><span class="kb-term">Catalogues</span><span class="kb-freq">6&times;</span></div>
+    <div class="kb"><span class="kb-term">Editorial filter</span><span class="kb-freq">5&times;</span></div>
+    <div class="kb"><span class="kb-term">Mediocrity</span><span class="kb-freq">4&times;</span></div>
+    <div class="kb"><span class="kb-term">Talent</span><span class="kb-freq">11&times;</span></div>
+    <div class="kb"><span class="kb-term">Currency</span><span class="kb-freq">4&times;</span></div>
+    <div class="kb"><span class="kb-term">Vanilla advertising</span><span class="kb-freq">3&times;</span></div>
+    <div class="kb"><span class="kb-term">Subscriptions</span><span class="kb-freq">4&times;</span></div>
+    <div class="kb"><span class="kb-term">Aspirational</span><span class="kb-freq">3&times;</span></div>
+    <div class="kb"><span class="kb-term">Dal-tarka</span><span class="kb-freq">3&times;</span></div>
+    <div class="kb"><span class="kb-term">Beige / Pantones</span><span class="kb-freq">4&times;</span></div>
+    <div class="kb"><span class="kb-term">Cultural moments</span><span class="kb-freq">3&times;</span></div>
+    <div class="kb"><span class="kb-term">Reinvention</span><span class="kb-freq">4&times;</span></div>
+    <div class="kb"><span class="kb-term">Free advice</span><span class="kb-freq">2&times;</span></div>
+  </div>
+</section>
+
+<section id="themes">
+  <div class="section-label">Themes</div>
+  <h2 class="section-title">What the conversation argues</h2>
+  <div class="theme">
+    <div class="theme-name">Discovery as the lost function</div>
+    <p class="prose-p">Kamna Malik's central claim is structural and small. The fairs and magazines that shaped Indian design media for two decades existed because they did one thing nobody else could do: they let architects, builders, students walk in and find products, materials, brands, names. The pen drives, the catalogues, the trips to ACETECH and India Design ID in 2010, 2011, 2012 — these were the apparatus of an information market. Discovery was not an aspiration of the format; it was the format.</p>
+    <p class="prose-p">The pivot comes when SHM presses for one word: from discovery, what has it become? "Today's become about optics," KM says, and the conversation reorganises around the contrast (t-37). The same physical event — booths, panels, footfall — now does a different job: being seen, being projected, maintaining relationships with media houses and brands. "It's definitely not for discovery. It's not about, oh, you know what? I should go there because I'm gonna find something new — that is not the agenda anymore" (t-30). The brand sales-force does discovery work for eleven and a half months of the year by phone and email; the four days of the fair are for something else.</p>
+    <p class="prose-p">The diagnosis bleeds into every other theme. Without the discovery function, the me-too problem (Theme 3) follows automatically — same booths, same brands, same template across geographies. Without the discovery function, the editorial filter (Theme 4) has nothing to filter for. And without the discovery function, the access question for tier-2 studios (Theme 2) cannot be answered by the old recipe of doing good work and waiting to be found. Discovery is the function whose loss explains the others.</p>
+  </div>
+  <div class="theme">
+    <div class="theme-name">Talent is no longer the only currency</div>
+    <p class="prose-p">Pressed on how a five-year-old studio in a tier-2 city — Indore, Chandigarh, Hyderabad in her old examples — gets onto a panel or a magazine spread today, KM does the harder thing and refuses the recipe. "I genuinely don't know," she says, twice (t-131, t-133). The honesty is not a dodge; it is the answer. The recipe she could have given — call up the editor, send the project, get judged on the editorial aesthetic — described a system that is no longer in operation.</p>
+    <p class="prose-p">The structural diagnosis arrives in one line: "Talent is not the only currency anymore" (t-137). The sentence is sharper than it sounds because it inverts the moral economy under which most architectural-merit conversations are conducted. If access were a function of talent, sustained good work would eventually break in. KM's claim is that access is now a function of multiple currencies — relationships, PR spend, geography, willingness to play the optics game — and talent is one currency among them, not the dominant one.</p>
+    <p class="prose-p">The implication for young practices is structural rather than tactical. KM offers no five-step playbook because the system is not playbook-shaped; she offers instead the same instruction she will repeat at the close — stop seeking validation — and warns that the vanity of the cover, when it doesn't come, will demoralise people who deserve better. "Don't let that become the be-all or end-all because then you may not, because when you don't get into those spaces, it can be very demotivating" (t-142).</p>
+  </div>
+  <div class="theme">
+    <div class="theme-name">The herd, the me-too, the dal-tarka</div>
+    <p class="prose-p">The cultural mechanism that produces homogenisation gets a name and a metaphor. The name is herd mentality — "one entity has gotten it right, there are 10 others who've gotten up and said, we will do exactly the same thing" (t-80). The metaphor is dal-tarka: "if you're served dal-tarka every single day, how many days are you going to have the same dal-tarka? There will come a time when you'll be like, you know what? I'm done with this" (t-86). The Hindi switch carries hospitality, household routine and exhaustion in one image, and does the analytical work that several paragraphs of structural critique would have done less efficiently.</p>
+    <p class="prose-p">The mechanism operates at multiple scales. At the level of fairs, one successful template begets ten replications across geographies (t-85). At the level of design itself, "if one architect or one designer is doing beige and that person becomes popular or that person gets featured, everybody wants to start adopting to it" (t-148). KM is careful to refuse the single-cause story here — she names customers and consumers as co-authors, with their Pinterest libraries and Instagram references, and locates the answer in "courage to stay true to who you are" rather than in any structural fix.</p>
+    <p class="prose-p">The contrast set is international and explicit: Salone del Mobile, London Design Festival, Design Miami. "These are not just fairs, these are cultural moments that create a certain impact. They create a certain narrative in the industry. They bring about a change" (t-84). The argument is not that these events are uncommercialised — KM concedes they are — but that they sustain interventions, talents and emotions alongside the booths. The Indian shows, by her account, sustain only the booths.</p>
+  </div>
+  <div class="theme">
+    <div class="theme-name">Magazines as catalogues, not curators</div>
+    <p class="prose-p">The institution under autopsy is the design magazine, and the autopsy is conducted on its own historical terms. KM defends the old model first — the ten pages of advertising that used to frustrate the young SHM existed because "if those clients didn't pay money, the copies would not get printed and there was no other way to generate money on a magazine" (t-57). Subscriptions never funded the work; Filmfare and Femina were partial exceptions in their own segment.</p>
+    <p class="prose-p">What has been lost is not the ad model — that was always there — but the editorial filter and the seasoned editor it required. "Today they're not about content. They have become glorified catalogues because today you can buy an article, you can buy a feature, you can buy anything to get anything published because everything is about the economic study" (t-122). The phrase glorified catalogues is the hardest sentence in the episode and the one that would, by KM's own warning, get her into trouble. Editorial filter as the lost mechanism (t-123) explains the catalogue diagnosis without making it personal: when nothing says no, everything is yes.</p>
+    <p class="prose-p">The bleed into the closing prescription is direct. Magazines, KM says in the close, will either reinvent themselves or "only become more and more glorified catalogues" (t-178). The Western precedent — "the best of the magazines are shutting down, the best of the media companies are pulling the plug on some of their best titles" (t-180) — is named as a forecast. "It's a matter of time that's gonna start happening in India" (t-181). The diagnosis and the prognosis collapse into one sentence.</p>
+  </div>
+  <div class="theme">
+    <div class="theme-name">Stop seeking validation; become your own brand</div>
+    <p class="prose-p">The closing prescription is two-part and unusually clear for a conversation that has spent forty minutes refusing to give recipes. "Architects and design studios need to stop seeking validation from magazines. They themselves need to start becoming brands in themselves today" (t-174). The instruction is not 'do better PR'; it is 'control your own narrative', operationalised as a hire. "Studios need to start hiring content people within their teams. Like today, a design studio has architects, designers, operational people, project managers. Studios need to start hiring content people" (t-175).</p>
+    <p class="prose-p">The internal-vs-external argument is given on operational rather than ideological grounds. "Getting an external agency to do your social media or to create content for you will not work in the long run because no matter how talented that agency is, they are not sitting in your office. They don't know the daily workings and the nuances" (t-175). The international parallel — large practices abroad with in-house communications functions — is the implicit model. The phrase free advice is doing work too: it marks this as not the consultant's pitch she could have made, but the thing she would say at a dinner.</p>
+    <p class="prose-p">The second half of the prescription is for the magazines themselves. "If they do not reinvent themselves, they are going to only become glorified catalogues" (t-178). KM's version of reinvention is structural rather than aesthetic: positioning teams differently, looking at talent differently, looking at operations differently. The two prescriptions are not separate — they describe the same shift from one side and the other. If studios become their own publishers, the magazines lose their monopoly on validation; if magazines do not reinvent, they lose the function altogether. The episode closes on this two-sided ultimatum, delivered without rhetorical heat.</p>
+  </div>
+</section>
+
+<section id="highlights">
+  <div class="section-label">Selected highlights</div>
+  <h2 class="section-title">Excerpts from the conversation</h2>
+  <div class="quote">
+    <p><span class="ctx">The industry has gone through a massive growth, which is great. </span> <strong>Design is something which should be a part of the culture, because design and architecture is an extension of the culture and the community that we live in.</strong> <span class="ctx"> It's been a little late in this conversation becoming mainstream, but today it is a lot more mainstream.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">It's also become a lot more for the optics. </span> <strong>We are losing the essence of the profession, we are losing the essence of design, because now it's become a commodity. It's become very high on consumerism. It's become very high on the optics.</strong> <span class="ctx"> That's really where one is losing things.</span></p>
+    <p class="anno">The first sharp move. Three repetitions of very high on — consumerism, optics — turn the diagnostic into a charge sheet.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">The reason why these fairs happened at that point of time and why people attended at that point of time was because it was discovery. </span> <strong>You didn't have any other means to go and find new products, new materials, new building textures, anything new that was happening in the industry.</strong> <span class="ctx"> These shows and these fairs were the melting pots.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">All of these have changed today because they're no longer discovery platforms. </span> <strong>If somebody is coming to a design show, nine out of 10 times it's not because they're coming to discover new objects or new products or new materials.</strong> <span class="ctx"> The number of architects and designers who tell me that they're not discovering anything is unbelievable.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">From discovery, what has it become today then? </span> <strong>Today's become about optics. Today it's become about, I want to be seen, because when I'm at these fairs, I'm a popular person. I am projected a certain way.</strong> <span class="ctx"> If a fair is being done by a media house, you want to go there because you want to have great relationships with a media house.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">As writers, whether it's in Bombay, whether it's in Bangalore, whether it's in Delhi, </span> <strong>We had to fly down. We had to interview the person. We had to transcribe that interview and then write a feature. It was traditional editorial writing. Editorial standards were very, very high at that point of time.</strong> <span class="ctx"> You just couldn't write crappy copy and get away with it.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">The reason I talk about a shift is back in the day when there was only print media, </span> <strong>The revenue was only generated through vanilla advertising, print ads. That's all you had. You did not have other avenues where companies were making money through events or digital spends.</strong> <span class="ctx"> If those clients didn't pay money, the copies would not get printed.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">You see one format working and you will see everybody aligning to that format. </span> <strong>That's what's happening in the design industry at this point of time, because one entity has gotten it right, there are 10 others who've gotten up and said, we will do exactly the same thing.</strong> <span class="ctx"> The last three years has led to a lot of me-toos, let me put it like that.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">Look at what happens in Milan at Salone del Mobile or look at London when London Design Festival happens, or look at Design Miami that happens in the US. </span> <strong>These are not just fairs, these are cultural moments that create a certain impact. They create a certain narrative in the industry. They bring about a change.</strong> <span class="ctx"> None of the design shows that are happening here are creating impact.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">How long is the same? Like, let's look at it like this — </span> <strong>If you're served dal-tarka every single day, how many days are you going to have the same dal-tarka? There will come a time when you'll be like, you know what? I'm done with this.</strong> <span class="ctx"> It's the same bubble that is being created, and I can only hope that this bubble breaks someday.</span></p>
+    <p class="anno">The episode's central image. Hospitality, household routine and exhaustion in one switch. The hardest single line to argue against.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">I think this is going to be a brilliant episode. Thank you for, </span> <strong>This is gonna be an episode that will get me into a lot of trouble.</strong> <span class="ctx"> If I have to be very true, I do have a pension for getting into trouble with the things I see.</span></p>
+    <p class="anno">The episode's reflexive aside. Said before saying the thing; the thing then gets said anyway. The acknowledgement is the ethics.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">The entire media world is very cosmetic, irrespective of architecture and everything. </span> <strong>It has categorically descended to being a space of almost no dissent, wherein most people are yes men or 'yes sir' kind of attitude.</strong> <span class="ctx"> So I think we need to break that.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">When was the last time we purchased a mainstream magazine? Because today they're not about content. </span> <strong>They have become glorified catalogues because today you can buy an article, you can buy a feature, you can buy anything to get anything published because everything is about the economic study.</strong> <span class="ctx"> There used to be a filter at one point of time.</span></p>
+    <p class="anno">The hardest single sentence. Names the sale of editorial real estate without using the words paid placement; lets the diagnosis sit on the verb buy repeated four times.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">How does a tier-2 city studio get to that kind of visibility? </span> <strong>I genuinely don't know. It's a question.</strong> <span class="ctx"> When I was a young professional who was trying to navigate this, we had an exercise at my then organization where every single day we had to research people across all tier cities to find new talent.</span></p>
+    <p class="anno">The integrity move. KM refuses to fake an answer; the explanation that follows is more valuable than the recipe that didn't come.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">It's not as easy as that. There's a lot of layers there. </span> <strong>Talent is not the only currency anymore, and I know this can sound very demotivating for a lot of people. But unfortunately we are not in those times where if you are talented, you will be put on a talk or if you are talented, your work will get published.</strong> <span class="ctx"> Stop seeking validation from magazines or from platforms.</span></p>
+    <p class="anno">The structural diagnosis under the access question. Inverts the moral economy — talent is reframed as one currency among several, not the dominant one.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">It takes a lot of courage to stay true to who you are. </span> <strong>When you see these new studios which are 3-year-old, 4-year-old, 5-year-old that have just sprouted up, they are all doing it for the gram. For them it's like, oh, I like so-and-so designer, her work is doing very well, I will start working like her.</strong> <span class="ctx"> That's why you start seeing those similarities and you see a lot of inspired things happening.</span></p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">How do we cope best with the future of media? </span> <strong>Architects and design studios need to stop seeking validation from magazines. They themselves need to start becoming brands in themselves today.</strong> <span class="ctx"> Studios need to hire content people within their teams.</span></p>
+    <p class="anno">The first half of the closing prescription. Frames magazine recognition as a power transaction and offers the structural exit — in-house communications as an internal function, not an outsourced PR line.</p>
+  </div>
+  <div class="quote">
+    <p><span class="ctx">You look at the West, the best of the magazines are shutting down, the best of the media companies are pulling the plug on some of their best titles. </span> <strong>It's a matter of time that's gonna start happening in India.</strong> <span class="ctx"></span></p>
+    <p class="anno">The episode's last sharp edge. The Western precedent named without rhetorical flourish; the Indian forecast left to the listener.</p>
+  </div>
+</section>
+
+<section id="lived">
+  <div class="section-label">Lived experience</div>
+  <h2 class="section-title">What it feels like to be the practitioner</h2>
+  <p class="prose-p">To sit inside this conversation is to watch a trade autopsy its own instruments while naming the moment each one stopped working. What the listener feels first is the relief of hearing the fair, the sponsored award and the glorified catalogue described for what they have become, rather than what they are still advertised as. Kamna Malik does not perform radicalism; she states a loss plainly, the way someone states a loss they watched happen slowly rather than one that surprised them. The texture of the hour is her refusal to pretend the old recipe still works — she says twice, unhedged, that she does not know how a tier-2-city studio breaks in today, and that admission carries more weight than a confident wrong answer would have. The &lt;em&gt;dal-tarka&lt;/em&gt; line does in one breath what several paragraphs of structural critique would have done more slowly, and it is delivered with the same plainness as everything else she says, which is part of why it lands. She flags the professional cost of her own candour before incurring it — &lt;em&gt;"this is gonna be an episode that will get me into a lot of trouble"&lt;/em&gt; — and then continues anyway, through the harder claims about magazines, about the herd, about what studios and platforms have stopped doing for the people who make the work. The close is not despair; it is instruction, offered as something closer to free advice than to a consulting pitch, and it asks both sides of the trade — the studios and the magazines — to do a different, harder thing than either has been doing.</p>
+</section>
+
+<section id="sentiment">
+  <div class="section-label">Sentiment register</div>
+  <h2 class="section-title">How the conversation feels</h2>
+  <p class="prose-p">The episode reads as measured, specific and plainly stated, closer to diagnosis than to performance. The dominant note is a composed defiance: the glorified catalogue, the herd mechanism and the exhausted fair format are named without raised voice, and the admission that speaking will cost her something precedes rather than follows the hardest lines. Candour runs high — twice she says plainly that she does not know an answer rather than inventing one — and the register stays generous toward the people the diagnosis might otherwise read as scolding, naming customers and consumers as co-authors of the herd rather than villains of it. The locatedness is strong, grounded in named fairs, named cities and a specific seventeen-year vantage, and the conversation closes on instruction rather than complaint.</p>
+</section>
+
+<section id="compass">
+  <div class="section-label">Criticality compass</div>
+  <h2 class="section-title">Independent and critical</h2>
+  <p class="prose-p">The episode sits in the independent and critical quadrant, low on resource allocation and well above the midpoint on critical autonomy. The resource reading is modest: an independent, unsponsored podcast, with a guest who speaks from outside any current institutional or editorial seat. The autonomy reading is high because the conversation names what the field usually protects — the sold feature, the herd mechanism, the fair emptied of its own stated purpose — and does so while admitting the professional cost of saying it out loud. The position is that of a post-corporate insider spending the standing she built inside the industry to describe, plainly, what has stopped working in it.</p>
+</section>
+
+<section id="references">
+  <div class="section-label">References</div>
+  <h2 class="section-title">Mentioned in the conversation</h2>
+  <table class="ref-table">
+    <thead><tr><th>Name</th><th>Category</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>India Design ID</td><td>Institutions &amp; bodies</td><td>Annual design fair launched in Delhi, in operation since the early 2010s; one of the two reference shows KM cites for the discovery era.</td></tr>
+      <tr><td>ACETECH</td><td>Institutions &amp; bodies</td><td>India's largest exhibition for the architecture and construction industry; long-running fair that, with India Design ID, defined the early-2010s discovery circuit.</td></tr>
+      <tr><td>Salone del Mobile</td><td>Institutions &amp; bodies</td><td>Milan furniture and design fair held annually since 1961; international counter-example KM offers as a cultural moment rather than a fair.</td></tr>
+      <tr><td>London Design Festival</td><td>Institutions &amp; bodies</td><td>Annual citywide design event held across London since 2003; second international counter-example.</td></tr>
+      <tr><td>Design Miami</td><td>Institutions &amp; bodies</td><td>Annual collectible-design fair held in Miami Beach (and now Basel, Paris, Los Angeles) since 2005; third international counter-example.</td></tr>
+      <tr><td>World Architecture Festival</td><td>Institutions &amp; bodies</td><td>International architecture awards programme founded in 2008; KM names it as an example of an awards platform whose competitive sanctity still holds, by contrast.</td></tr>
+      <tr><td>ELLE Decor</td><td>Media platforms</td><td>Decor and lifestyle magazine, Indian edition published by Ogaan Media (and earlier Living Media); part of the mainstream design-magazine landscape SHM grew up with.</td></tr>
+      <tr><td>Architecture+Design (A+D)</td><td>Media platforms</td><td>Indian architecture and interiors magazine, in print since 1984; the other reference title in SHM's railway-station-bookshop memory.</td></tr>
+      <tr><td>Filmfare</td><td>Media platforms</td><td>Indian film magazine published since 1952; named by KM as an example of the rare title for which subscriptions historically mattered.</td></tr>
+      <tr><td>Femina</td><td>Media platforms</td><td>Indian women's magazine published since 1959; second example of a subscription-led title from the older mainstream.</td></tr>
+      <tr><td>Orkut</td><td>Concepts &amp; events</td><td>Google's social-networking service (2004–2014); KM uses Orkut moving into Facebook to date her entry into the industry, before social media existed as a workplace category.</td></tr>
+      <tr><td>Indore</td><td>Places</td><td>Tier-2 city in Madhya Pradesh; example KM uses for the researching new talent exercise of her early career.</td></tr>
+      <tr><td>Chandigarh</td><td>Places</td><td>Planned city, capital of Punjab and Haryana; second example for the talent-research exercise.</td></tr>
+      <tr><td>Indian Institute of Architects (IIA)</td><td>Institutions &amp; bodies</td><td>National professional body for architects in India, founded 1917; named in passing in SHM's question about industry-body absences for media-design practitioners.</td></tr>
+      <tr><td>Council of Architecture (COA)</td><td>Institutions &amp; bodies</td><td>Statutory regulator for the architecture profession in India, established 1972; named alongside IIA in the same enumeration of existing professional bodies.</td></tr>
+      <tr><td>Institute of Town Planners, India (ITPI)</td><td>Institutions &amp; bodies</td><td>National professional body for town planning, founded 1951; third example in the bodies-exist-for-everything-but-this list.</td></tr>
+      <tr><td>Pantone</td><td>Concepts &amp; events</td><td>Colour-matching system used in design and print since 1963; SHM names Pantones as shorthand for the standardisation of fashionable design colour palettes.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  Architecture × Media Studies · Season 02 · Conversation 33 · The Better Architecture Project · betterarch.org
+</footer>
+
+<!--
+  ↓↓↓ THE ONLY PART THE CONSOLE UPLOAD READS ↓↓↓
+  Full EpisodeAnalysis record, hand-converted from the original v4 file.
+-->
+<script type="application/json" id="axm-analysis-data">
+{
+ "eyebrow": "Architecture X Media Studies · Ep. 33",
+ "bio": "Seventeen years across Indian design and architecture media — editorial, fairs, brand-side communications. Held senior roles in the era when ELLE Decor, A+D and the early India Design ID set the editorial weather. Moved on from the corporate structure roughly three years before the conversation; based in London at the time of recording. Speaks here as somebody who watched the discovery economy of design media end in real time, and who is willing to say so out loud.",
+ "tags": [
+  "diagnostic",
+  "structural",
+  "first-person",
+  "code-switching",
+  "willing to be unwelcome"
+ ],
+ "stats": [
+  [
+   "18",
+   "Sentiments scored"
+  ],
+  [
+   "20",
+   "Keywords mapped"
+  ],
+  [
+   "17",
+   "References named"
+  ],
+  [
+   "5",
+   "Key themes"
+  ]
+ ],
+ "reading": [
+  "Kamna Malik joins Shubhayan M. from London with seventeen years inside Indian design and architecture media behind her. The conversation opens with a long question and stays with one short one. The fairs, the magazines, the awards circuit, the panel slots — were these ever really about discovery, and if they were, are they still? She remembers when <em>India Design ID</em> and ACETECH were two of two, when writers flew between cities to interview principal architects, when an editorial filter actually said no.",
+  "The diagnosis starts with the fair floor itself. Attendance used to mean discovery — pen drives, catalogues, brand cards as ammunition, no other way to find a new material or a new name. <em>\"It’s definitely not for discovery,\"</em> she says now; the same booths and panels have been emptied of that function and refilled with another, being seen, being projected, maintaining relationships with the media houses that cover the fair. The international counter-examples — Salone del Mobile, London Design Festival, Design Miami — are offered not as uncommercialised ideals but as <em>cultural moments</em> that still move an industry, against Indian shows that, in her account, sustain only the booths.",
+  "The conversation gets sharper from there. Discovery has been replaced by optics; <em>me-toos</em> have multiplied as one successful format gets copied by ten studios across geographies; the <em>dal-tarka</em> metaphor lands cleanly — same dish, every day, until the audience is done. She names the bubble and refuses to soften the call: magazines <em>\"have become glorified catalogues,\"</em> because today you can buy a feature the way you once could only earn one. She also refuses to play expert about everything. Pressed on how a tier-2-city studio breaks in today, she says she genuinely does not know, and explains exactly why the old answer — write to the editor, get judged on merit — has stopped working: talent is no longer the only currency. The honesty of <em>I don’t know</em> is the most useful thing said in that stretch.",
+  "The take comes in the close, and it is programmatic. Architects and studios should stop seeking validation from magazines; they should hire content people in-house and control their own narrative, because an outside agency, however talented, does not sit in the office and does not know its daily nuances. Magazines, in turn, have one option left — reinvent, structurally rather than cosmetically, or become glorified catalogues, which the West is already rehearsing in its own shutdowns and pulled titles. Self-publishing for studios; structural rethink for media. The episode is the rare AXM conversation where the prescription is clear and the speaker is willing to wear the cost of saying it, flagging before she says the hardest lines that this will get her into trouble, and saying them anyway."
+ ],
+ "lexnarr": "Twenty terms drawn from the conversation, grouped by thematic cluster and sized by how often each recurs. The words <em>architecture</em> and <em>media</em> are excluded as ambient noise in a conversation between architects about the architecture profession — both saturate the hour and would swamp the rest. What remains leans hardest on discovery, optics and the institutions under autopsy, with the economics of the old magazine model and the herd mechanism of the <em>me-too</em> close behind.",
+ "keywords": [
+  {
+   "word": "Discovery",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 18,
+   "gloss": "The episode's organising loss. Names what fairs and magazines used to be for and have stopped being."
+  },
+  {
+   "word": "Optics",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 12,
+   "gloss": "The replacement function — being seen, not finding. KM's blunt one-word answer to 'what has it become?'"
+  },
+  {
+   "word": "Validation",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 10,
+   "gloss": "The dependency she names twice and asks studios to break. The prescription hangs on this word."
+  },
+  {
+   "word": "Herd",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 9,
+   "gloss": "The mechanism by which one successful format becomes ten copies. Describes industry behaviour, not psychology."
+  },
+  {
+   "word": "Me-toos",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 7,
+   "gloss": "Her preferred shorthand for what the herd produces. Coined casually, used like a category."
+  },
+  {
+   "word": "Magazines",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 24,
+   "gloss": "The institution under autopsy. Held to the standard of their own past, found wanting, and given an exit instruction."
+  },
+  {
+   "word": "Fairs",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 17,
+   "gloss": "The other institution. India Design ID, ACETECH, the Salone counter-example. The locus of the discovery question."
+  },
+  {
+   "word": "Catalogues",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 6,
+   "gloss": "What magazines have become and will more fully become. The single hardest word in the episode."
+  },
+  {
+   "word": "Editorial filter",
+   "typ": "Political Economy & Labour",
+   "freq": 5,
+   "gloss": "What used to say no on grounds of taste and merit. Named as the lost mechanism behind the catalogue collapse."
+  },
+  {
+   "word": "Mediocrity",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 4,
+   "gloss": "What gets celebrated in the absence of the filter. Used in the second peak: 'in such exciting times if we are going to celebrate mediocrity.'"
+  },
+  {
+   "word": "Talent",
+   "typ": "Political Economy & Labour",
+   "freq": 11,
+   "gloss": "Reframed mid-conversation as 'no longer the only currency'. The structural diagnosis under the glamour question."
+  },
+  {
+   "word": "Currency",
+   "typ": "Political Economy & Labour",
+   "freq": 4,
+   "gloss": "The economic metaphor that does the heaviest analytical lift. Stops the conversation about access from being moralistic."
+  },
+  {
+   "word": "Vanilla advertising",
+   "typ": "Knowledge, Pedagogy & Intellectual Depth",
+   "freq": 3,
+   "gloss": "Print ad revenue, the only model that ever worked, now extinct. Names the economic substrate without scolding."
+  },
+  {
+   "word": "Subscriptions",
+   "typ": "Knowledge, Pedagogy & Intellectual Depth",
+   "freq": 4,
+   "gloss": "The myth she dismantles. 'Subscriptions historically have never been a revenue generator' — except Filmfare and Femina, which she names by way of qualification."
+  },
+  {
+   "word": "Aspirational",
+   "typ": "Equity, Inclusion & Voice",
+   "freq": 3,
+   "gloss": "How young people experience the desire to be in media. KM names it without dismissing it; uses it to set up the reality check."
+  },
+  {
+   "word": "Dal-tarka",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 3,
+   "gloss": "The code-switch that does the most work. Sameness, hospitality, and exhaustion — all in one image."
+  },
+  {
+   "word": "Beige / Pantones",
+   "typ": "Critical Autonomy & Editorial Integrity",
+   "freq": 4,
+   "gloss": "The visual evidence of the me-too problem. Named via the SHM provocation; KM redirects toward customers and consumers as co-authors."
+  },
+  {
+   "word": "Cultural moments",
+   "typ": "Digital Ecosystem & Platform Dynamics",
+   "freq": 3,
+   "gloss": "What Salone del Mobile, London Design Festival and Design Miami still are abroad — and what Indian fairs are not. Set as the missing benchmark."
+  },
+  {
+   "word": "Reinvention",
+   "typ": "Public Engagement & Civic Reach",
+   "freq": 4,
+   "gloss": "The verb hanging over the close. Required of magazines on pain of irrelevance; required of studios as media-literacy."
+  },
+  {
+   "word": "Free advice",
+   "typ": "Knowledge, Pedagogy & Intellectual Depth",
+   "freq": 2,
+   "gloss": "How KM frames her closing prescription. The phrase signals both giving and refusal of consultancy framing."
+  }
+ ],
+ "hue": {
+  "Critical Autonomy & Editorial Integrity": "#8A2418",
+  "Political Economy & Labour": "#4A6A8A",
+  "Knowledge, Pedagogy & Intellectual Depth": "#B08D57",
+  "Equity, Inclusion & Voice": "#5A7A5A",
+  "Digital Ecosystem & Platform Dynamics": "#6B4F6B",
+  "Public Engagement & Civic Reach": "#C4985C"
+ },
+ "themes": [
+  {
+   "t": "Discovery as the lost function",
+   "p": [
+    "Kamna Malik's central claim is structural and small. The fairs and magazines that shaped Indian design media for two decades existed because they did one thing nobody else could do: they let architects, builders, students walk in and find products, materials, brands, names. The pen drives, the catalogues, the trips to ACETECH and India Design ID in 2010, 2011, 2012 — these were the apparatus of an information market. Discovery was not an aspiration of the format; it was the format.",
+    "The pivot comes when SHM presses for one word: from discovery, what has it become? \"Today's become about optics,\" KM says, and the conversation reorganises around the contrast (t-37). The same physical event — booths, panels, footfall — now does a different job: being seen, being projected, maintaining relationships with media houses and brands. \"It's definitely not for discovery. It's not about, oh, you know what? I should go there because I'm gonna find something new — that is not the agenda anymore\" (t-30). The brand sales-force does discovery work for eleven and a half months of the year by phone and email; the four days of the fair are for something else.",
+    "The diagnosis bleeds into every other theme. Without the discovery function, the me-too problem (Theme 3) follows automatically — same booths, same brands, same template across geographies. Without the discovery function, the editorial filter (Theme 4) has nothing to filter for. And without the discovery function, the access question for tier-2 studios (Theme 2) cannot be answered by the old recipe of doing good work and waiting to be found. Discovery is the function whose loss explains the others."
+   ]
+  },
+  {
+   "t": "Talent is no longer the only currency",
+   "p": [
+    "Pressed on how a five-year-old studio in a tier-2 city — Indore, Chandigarh, Hyderabad in her old examples — gets onto a panel or a magazine spread today, KM does the harder thing and refuses the recipe. \"I genuinely don't know,\" she says, twice (t-131, t-133). The honesty is not a dodge; it is the answer. The recipe she could have given — call up the editor, send the project, get judged on the editorial aesthetic — described a system that is no longer in operation.",
+    "The structural diagnosis arrives in one line: \"Talent is not the only currency anymore\" (t-137). The sentence is sharper than it sounds because it inverts the moral economy under which most architectural-merit conversations are conducted. If access were a function of talent, sustained good work would eventually break in. KM's claim is that access is now a function of multiple currencies — relationships, PR spend, geography, willingness to play the optics game — and talent is one currency among them, not the dominant one.",
+    "The implication for young practices is structural rather than tactical. KM offers no five-step playbook because the system is not playbook-shaped; she offers instead the same instruction she will repeat at the close — stop seeking validation — and warns that the vanity of the cover, when it doesn't come, will demoralise people who deserve better. \"Don't let that become the be-all or end-all because then you may not, because when you don't get into those spaces, it can be very demotivating\" (t-142)."
+   ]
+  },
+  {
+   "t": "The herd, the me-too, the dal-tarka",
+   "p": [
+    "The cultural mechanism that produces homogenisation gets a name and a metaphor. The name is herd mentality — \"one entity has gotten it right, there are 10 others who've gotten up and said, we will do exactly the same thing\" (t-80). The metaphor is dal-tarka: \"if you're served dal-tarka every single day, how many days are you going to have the same dal-tarka? There will come a time when you'll be like, you know what? I'm done with this\" (t-86). The Hindi switch carries hospitality, household routine and exhaustion in one image, and does the analytical work that several paragraphs of structural critique would have done less efficiently.",
+    "The mechanism operates at multiple scales. At the level of fairs, one successful template begets ten replications across geographies (t-85). At the level of design itself, \"if one architect or one designer is doing beige and that person becomes popular or that person gets featured, everybody wants to start adopting to it\" (t-148). KM is careful to refuse the single-cause story here — she names customers and consumers as co-authors, with their Pinterest libraries and Instagram references, and locates the answer in \"courage to stay true to who you are\" rather than in any structural fix.",
+    "The contrast set is international and explicit: Salone del Mobile, London Design Festival, Design Miami. \"These are not just fairs, these are cultural moments that create a certain impact. They create a certain narrative in the industry. They bring about a change\" (t-84). The argument is not that these events are uncommercialised — KM concedes they are — but that they sustain interventions, talents and emotions alongside the booths. The Indian shows, by her account, sustain only the booths."
+   ]
+  },
+  {
+   "t": "Magazines as catalogues, not curators",
+   "p": [
+    "The institution under autopsy is the design magazine, and the autopsy is conducted on its own historical terms. KM defends the old model first — the ten pages of advertising that used to frustrate the young SHM existed because \"if those clients didn't pay money, the copies would not get printed and there was no other way to generate money on a magazine\" (t-57). Subscriptions never funded the work; Filmfare and Femina were partial exceptions in their own segment.",
+    "What has been lost is not the ad model — that was always there — but the editorial filter and the seasoned editor it required. \"Today they're not about content. They have become glorified catalogues because today you can buy an article, you can buy a feature, you can buy anything to get anything published because everything is about the economic study\" (t-122). The phrase glorified catalogues is the hardest sentence in the episode and the one that would, by KM's own warning, get her into trouble. Editorial filter as the lost mechanism (t-123) explains the catalogue diagnosis without making it personal: when nothing says no, everything is yes.",
+    "The bleed into the closing prescription is direct. Magazines, KM says in the close, will either reinvent themselves or \"only become more and more glorified catalogues\" (t-178). The Western precedent — \"the best of the magazines are shutting down, the best of the media companies are pulling the plug on some of their best titles\" (t-180) — is named as a forecast. \"It's a matter of time that's gonna start happening in India\" (t-181). The diagnosis and the prognosis collapse into one sentence."
+   ]
+  },
+  {
+   "t": "Stop seeking validation; become your own brand",
+   "p": [
+    "The closing prescription is two-part and unusually clear for a conversation that has spent forty minutes refusing to give recipes. \"Architects and design studios need to stop seeking validation from magazines. They themselves need to start becoming brands in themselves today\" (t-174). The instruction is not 'do better PR'; it is 'control your own narrative', operationalised as a hire. \"Studios need to start hiring content people within their teams. Like today, a design studio has architects, designers, operational people, project managers. Studios need to start hiring content people\" (t-175).",
+    "The internal-vs-external argument is given on operational rather than ideological grounds. \"Getting an external agency to do your social media or to create content for you will not work in the long run because no matter how talented that agency is, they are not sitting in your office. They don't know the daily workings and the nuances\" (t-175). The international parallel — large practices abroad with in-house communications functions — is the implicit model. The phrase free advice is doing work too: it marks this as not the consultant's pitch she could have made, but the thing she would say at a dinner.",
+    "The second half of the prescription is for the magazines themselves. \"If they do not reinvent themselves, they are going to only become glorified catalogues\" (t-178). KM's version of reinvention is structural rather than aesthetic: positioning teams differently, looking at talent differently, looking at operations differently. The two prescriptions are not separate — they describe the same shift from one side and the other. If studios become their own publishers, the magazines lose their monopoly on validation; if magazines do not reinvent, they lose the function altogether. The episode closes on this two-sided ultimatum, delivered without rhetorical heat."
+   ]
+  }
+ ],
+ "qcats": [
+  "Discovery as the lost function",
+  "Talent is no longer the only currency",
+  "The herd, the me-too, the dal-tarka",
+  "Magazines as catalogues, not curators",
+  "Stop seeking validation; become your own brand"
+ ],
+ "quotes": [
+  {
+   "cat": "Discovery as the lost function",
+   "kp": false,
+   "read": "The setup line. Establishes the standard against which everything that follows is measured: design as cultural extension, not consumer category.",
+   "ctx1": "The industry has gone through a massive growth, which is great. ",
+   "main": "Design is something which should be a part of the culture, because design and architecture is an extension of the culture and the community that we live in.",
+   "ctx2": " It's been a little late in this conversation becoming mainstream, but today it is a lot more mainstream."
+  },
+  {
+   "cat": "Discovery as the lost function",
+   "kp": true,
+   "read": "The first sharp move. Three repetitions of very high on — consumerism, optics — turn the diagnostic into a charge sheet.",
+   "ctx1": "It's also become a lot more for the optics. ",
+   "main": "We are losing the essence of the profession, we are losing the essence of design, because now it's become a commodity. It's become very high on consumerism. It's become very high on the optics.",
+   "ctx2": " That's really where one is losing things."
+  },
+  {
+   "cat": "Discovery as the lost function",
+   "kp": false,
+   "read": "The historical claim that lets the optics diagnosis function. Names the function fairs used to perform; what comes next names what they perform now.",
+   "ctx1": "The reason why these fairs happened at that point of time and why people attended at that point of time was because it was discovery. ",
+   "main": "You didn't have any other means to go and find new products, new materials, new building textures, anything new that was happening in the industry.",
+   "ctx2": " These shows and these fairs were the melting pots."
+  },
+  {
+   "cat": "Discovery as the lost function",
+   "kp": false,
+   "read": "The empirical version of the claim — KM offering not theory but the report from the floor. The nine out of ten is the kind of working ratio used by people who actually attend.",
+   "ctx1": "All of these have changed today because they're no longer discovery platforms. ",
+   "main": "If somebody is coming to a design show, nine out of 10 times it's not because they're coming to discover new objects or new products or new materials.",
+   "ctx2": " The number of architects and designers who tell me that they're not discovering anything is unbelievable."
+  },
+  {
+   "cat": "Discovery as the lost function",
+   "kp": false,
+   "read": "The single-word answer SHM was pushing for, then the unpacking. Optics is operationalised as visibility, projection and relationship-maintenance with media houses.",
+   "ctx1": "From discovery, what has it become today then? ",
+   "main": "Today's become about optics. Today it's become about, I want to be seen, because when I'm at these fairs, I'm a popular person. I am projected a certain way.",
+   "ctx2": " If a fair is being done by a media house, you want to go there because you want to have great relationships with a media house."
+  },
+  {
+   "cat": "Magazines as catalogues, not curators",
+   "kp": false,
+   "read": "The labour audit of an old magazine feature. Travel, interview, transcribe, write — four kinds of work, each of which has been replaced or removed.",
+   "ctx1": "As writers, whether it's in Bombay, whether it's in Bangalore, whether it's in Delhi, ",
+   "main": "We had to fly down. We had to interview the person. We had to transcribe that interview and then write a feature. It was traditional editorial writing. Editorial standards were very, very high at that point of time.",
+   "ctx2": " You just couldn't write crappy copy and get away with it."
+  },
+  {
+   "cat": "Magazines as catalogues, not curators",
+   "kp": false,
+   "read": "The defence of the old ten-pages-of-ads model. KM gives the economic substrate first, then the consequence — without scolding the younger SHM for his earlier irritation.",
+   "ctx1": "The reason I talk about a shift is back in the day when there was only print media, ",
+   "main": "The revenue was only generated through vanilla advertising, print ads. That's all you had. You did not have other avenues where companies were making money through events or digital spends.",
+   "ctx2": " If those clients didn't pay money, the copies would not get printed."
+  },
+  {
+   "cat": "The herd, the me-too, the dal-tarka",
+   "kp": false,
+   "read": "The mechanism behind the homogenisation diagnosis. The one-to-ten ratio is offered casually but is the structural claim.",
+   "ctx1": "You see one format working and you will see everybody aligning to that format. ",
+   "main": "That's what's happening in the design industry at this point of time, because one entity has gotten it right, there are 10 others who've gotten up and said, we will do exactly the same thing.",
+   "ctx2": " The last three years has led to a lot of me-toos, let me put it like that."
+  },
+  {
+   "cat": "Discovery as the lost function",
+   "kp": false,
+   "read": "The international counterpoint. KM does not romanticise the foreign shows — she will concede they are commercialised — but uses cultural moments as the missing benchmark.",
+   "ctx1": "Look at what happens in Milan at Salone del Mobile or look at London when London Design Festival happens, or look at Design Miami that happens in the US. ",
+   "main": "These are not just fairs, these are cultural moments that create a certain impact. They create a certain narrative in the industry. They bring about a change.",
+   "ctx2": " None of the design shows that are happening here are creating impact."
+  },
+  {
+   "cat": "The herd, the me-too, the dal-tarka",
+   "kp": true,
+   "read": "The episode's central image. Hospitality, household routine and exhaustion in one switch. The hardest single line to argue against.",
+   "ctx1": "How long is the same? Like, let's look at it like this — ",
+   "main": "If you're served dal-tarka every single day, how many days are you going to have the same dal-tarka? There will come a time when you'll be like, you know what? I'm done with this.",
+   "ctx2": " It's the same bubble that is being created, and I can only hope that this bubble breaks someday."
+  },
+  {
+   "cat": "Stop seeking validation; become your own brand",
+   "kp": true,
+   "read": "The episode's reflexive aside. Said before saying the thing; the thing then gets said anyway. The acknowledgement is the ethics.",
+   "ctx1": "I think this is going to be a brilliant episode. Thank you for, ",
+   "main": "This is gonna be an episode that will get me into a lot of trouble.",
+   "ctx2": " If I have to be very true, I do have a pension for getting into trouble with the things I see."
+  },
+  {
+   "cat": "Magazines as catalogues, not curators",
+   "kp": false,
+   "read": "SHM offering the broader frame. KM agrees and the conversation moves on; the line stands as the structural climate inside which the rest of the diagnosis is delivered.",
+   "ctx1": "The entire media world is very cosmetic, irrespective of architecture and everything. ",
+   "main": "It has categorically descended to being a space of almost no dissent, wherein most people are yes men or 'yes sir' kind of attitude.",
+   "ctx2": " So I think we need to break that."
+  },
+  {
+   "cat": "Magazines as catalogues, not curators",
+   "kp": true,
+   "read": "The hardest single sentence. Names the sale of editorial real estate without using the words paid placement; lets the diagnosis sit on the verb buy repeated four times.",
+   "ctx1": "When was the last time we purchased a mainstream magazine? Because today they're not about content. ",
+   "main": "They have become glorified catalogues because today you can buy an article, you can buy a feature, you can buy anything to get anything published because everything is about the economic study.",
+   "ctx2": " There used to be a filter at one point of time."
+  },
+  {
+   "cat": "Talent is no longer the only currency",
+   "kp": true,
+   "read": "The integrity move. KM refuses to fake an answer; the explanation that follows is more valuable than the recipe that didn't come.",
+   "ctx1": "How does a tier-2 city studio get to that kind of visibility? ",
+   "main": "I genuinely don't know. It's a question.",
+   "ctx2": " When I was a young professional who was trying to navigate this, we had an exercise at my then organization where every single day we had to research people across all tier cities to find new talent."
+  },
+  {
+   "cat": "Talent is no longer the only currency",
+   "kp": true,
+   "read": "The structural diagnosis under the access question. Inverts the moral economy — talent is reframed as one currency among several, not the dominant one.",
+   "ctx1": "It's not as easy as that. There's a lot of layers there. ",
+   "main": "Talent is not the only currency anymore, and I know this can sound very demotivating for a lot of people. But unfortunately we are not in those times where if you are talented, you will be put on a talk or if you are talented, your work will get published.",
+   "ctx2": " Stop seeking validation from magazines or from platforms."
+  },
+  {
+   "cat": "The herd, the me-too, the dal-tarka",
+   "kp": false,
+   "read": "The visual-sameness argument located in studio behaviour. For the gram is the give-away phrase — Instagram as the immediate audience for the work.",
+   "ctx1": "It takes a lot of courage to stay true to who you are. ",
+   "main": "When you see these new studios which are 3-year-old, 4-year-old, 5-year-old that have just sprouted up, they are all doing it for the gram. For them it's like, oh, I like so-and-so designer, her work is doing very well, I will start working like her.",
+   "ctx2": " That's why you start seeing those similarities and you see a lot of inspired things happening."
+  },
+  {
+   "cat": "Stop seeking validation; become your own brand",
+   "kp": true,
+   "read": "The first half of the closing prescription. Frames magazine recognition as a power transaction and offers the structural exit — in-house communications as an internal function, not an outsourced PR line.",
+   "ctx1": "How do we cope best with the future of media? ",
+   "main": "Architects and design studios need to stop seeking validation from magazines. They themselves need to start becoming brands in themselves today.",
+   "ctx2": " Studios need to hire content people within their teams."
+  },
+  {
+   "cat": "Magazines as catalogues, not curators",
+   "kp": true,
+   "read": "The episode's last sharp edge. The Western precedent named without rhetorical flourish; the Indian forecast left to the listener.",
+   "ctx1": "You look at the West, the best of the magazines are shutting down, the best of the media companies are pulling the plug on some of their best titles. ",
+   "main": "It's a matter of time that's gonna start happening in India.",
+   "ctx2": ""
+  }
+ ],
+ "lived": "To sit inside this conversation is to watch a trade autopsy its own instruments while naming the moment each one stopped working. What the listener feels first is the relief of hearing the fair, the sponsored award and the glorified catalogue described for what they have become, rather than what they are still advertised as. Kamna Malik does not perform radicalism; she states a loss plainly, the way someone states a loss they watched happen slowly rather than one that surprised them. The texture of the hour is her refusal to pretend the old recipe still works — she says twice, unhedged, that she does not know how a tier-2-city studio breaks in today, and that admission carries more weight than a confident wrong answer would have. The <em>dal-tarka</em> line does in one breath what several paragraphs of structural critique would have done more slowly, and it is delivered with the same plainness as everything else she says, which is part of why it lands. She flags the professional cost of her own candour before incurring it — <em>\"this is gonna be an episode that will get me into a lot of trouble\"</em> — and then continues anyway, through the harder claims about magazines, about the herd, about what studios and platforms have stopped doing for the people who make the work. The close is not despair; it is instruction, offered as something closer to free advice than to a consulting pitch, and it asks both sides of the trade — the studios and the magazines — to do a different, harder thing than either has been doing.",
+ "sentprose": "The episode reads as measured, specific and plainly stated, closer to diagnosis than to performance. The dominant note is a composed defiance: the glorified catalogue, the herd mechanism and the exhausted fair format are named without raised voice, and the admission that speaking will cost her something precedes rather than follows the hardest lines. Candour runs high — twice she says plainly that she does not know an answer rather than inventing one — and the register stays generous toward the people the diagnosis might otherwise read as scolding, naming customers and consumers as co-authors of the herd rather than villains of it. The locatedness is strong, grounded in named fairs, named cities and a specific seventeen-year vantage, and the conversation closes on instruction rather than complaint.",
+ "sentiments": [
+  {
+   "code": "S01",
+   "label": "Optimism",
+   "full": "Pessimism ↔ Optimism",
+   "score": 38,
+   "reading": "More pessimistic than not — the forecast that Western magazine shutdowns are \"a matter of time\" before they reach India, and the charge that the field risks celebrating mediocrity — but with real pockets of possibility in the platform she proposes and the talent she says India has plenty of."
+  },
+  {
+   "code": "S02",
+   "label": "Agency",
+   "full": "Fatalism ↔ Agency",
+   "score": 78,
+   "reading": "Strong agency: studios need to hire content people, magazines need to reinvent. The prescription is action-shaped throughout, never lament-shaped."
+  },
+  {
+   "code": "S03",
+   "label": "Urgency",
+   "full": "Patience ↔ Urgency",
+   "score": 68,
+   "reading": "Builds across the hour. Earlier sections are measured and historical; the close is urgent — the Western precedent is named and the Indian version of it is framed as imminent, not hypothetical."
+  },
+  {
+   "code": "S04",
+   "label": "Equanimity",
+   "full": "Anger ↔ Equanimity",
+   "score": 62,
+   "reading": "Composure dominant. The anger in the diagnosis is channelled into structural claims — sameness, mediocrity, the sold feature — rather than into raised-voice complaint."
+  },
+  {
+   "code": "S05",
+   "label": "Forward-Orientation",
+   "full": "Nostalgia ↔ Forward-Orientation",
+   "score": 45,
+   "reading": "Genuinely split. The Orkut-to-Facebook, ten-pages-of-ads, pen-drives-at-a-fair memories are vivid and frequent, but they are used as a benchmark for the forward argument rather than as a refuge from it."
+  },
+  {
+   "code": "S06",
+   "label": "Satisfaction",
+   "full": "Frustration ↔ Satisfaction",
+   "score": 30,
+   "reading": "Frustration is the dominant note — sameness, the sold feature, the vanished editorial filter — and it is named institutionally rather than as personal grievance."
+  },
+  {
+   "code": "S07",
+   "label": "Solidarity",
+   "full": "Isolation ↔ Solidarity",
+   "score": 70,
+   "reading": "High solidarity. The refusal to discuss former colleagues’ current work by name is itself a solidarity gesture, and the closing instruction is addressed to the whole community of studios and magazines, not to any single target."
+  },
+  {
+   "code": "S08",
+   "label": "Defiance",
+   "full": "Resignation ↔ Defiance",
+   "score": 78,
+   "reading": "Defiance stated in advance of its own cost: \"this is gonna be an episode that will get me into a lot of trouble\" — said before the hardest lines, and then said anyway."
+  },
+  {
+   "code": "S09",
+   "label": "Hope",
+   "full": "Despair ↔ Hope",
+   "score": 46,
+   "reading": "Mid-range, honestly held. Hope sits in the proposed platform and in the praise for Indian talent; the close’s forecast for magazines sits closer to despair-honesty than to collapse."
+  },
+  {
+   "code": "S10",
+   "label": "Earnestness",
+   "full": "Irony ↔ Earnestness",
+   "score": 80,
+   "reading": "Highly earnest. The <em>dal-tarka</em> code-switch is the one moment of lightness, and it does real analytical work rather than deflecting — the register otherwise stays direct throughout."
+  },
+  {
+   "code": "S11",
+   "label": "Passion",
+   "full": "Detachment ↔ Passion",
+   "score": 55,
+   "reading": "Invested but plain rather than performed — her register is described as measured and specific, yet she is willing to risk being \"unwelcome\" to say what she thinks, which is its own kind of investment."
+  },
+  {
+   "code": "S12",
+   "label": "Energy",
+   "full": "Exhaustion ↔ Energy",
+   "score": 58,
+   "reading": "Moderate-to-high, with two clear peaks — the glorified-catalogue denunciation and the closing two-part prescription — set against more measured, historical stretches earlier in the hour."
+  },
+  {
+   "code": "S13",
+   "label": "Trust",
+   "full": "Suspicion ↔ Trust",
+   "score": 42,
+   "reading": "Mixed. Clear loyalty and trust toward former colleagues, protected by her refusal to speculate about their current work; clear suspicion toward the institutions — fairs, magazines, awards circuits — she says have stopped doing what they are still advertised as doing."
+  },
+  {
+   "code": "S14",
+   "label": "Generosity",
+   "full": "Territoriality ↔ Generosity",
+   "score": 72,
+   "reading": "Highly generous. The closing prescription is framed explicitly as <em>free advice</em> rather than a consulting pitch, and she declines to take credit for insight she attributes to simply having been in the room for seventeen years."
+  },
+  {
+   "code": "S15",
+   "label": "Vulnerability",
+   "full": "Armour ↔ Vulnerability",
+   "score": 68,
+   "reading": "Genuinely high. Saying <em>\"I genuinely don’t know\"</em> twice, unhedged, and naming the professional cost of speaking before paying it, are not armoured moves."
+  },
+  {
+   "code": "S16",
+   "label": "Wonder",
+   "full": "Disenchantment ↔ Wonder",
+   "score": 28,
+   "reading": "Mostly disenchanted — the bubble, the catalogue, the sameness — with small bright pockets where she notes India has some of the best talent and the industry has genuinely grown."
+  },
+  {
+   "code": "S17",
+   "label": "Locatedness",
+   "full": "Placelessness ↔ Locatedness",
+   "score": 78,
+   "reading": "Strongly located — named fairs, named magazines, named tier-2 cities, specific years, a seventeen-year vantage and a stated London/India position at the time of recording."
+  },
+  {
+   "code": "S18",
+   "label": "Stewardship",
+   "full": "Extraction ↔ Stewardship",
+   "score": 58,
+   "reading": "The closing instruction to both studios and magazines is explicitly about the field’s longer-term health, not about her own position in it — a caretaking move rather than an extractive one."
+  }
+ ],
+ "compass": {
+  "x": 38.0,
+  "y": 63.6,
+  "quadrant": "independent and critical",
+  "indicators": [
+   [
+    "X1",
+    "Platform reach / circulation",
+    22,
+    "Independent podcast (The Better Architecture Project), niche architecture-media audience, Season 2; limited Spotify circulation."
+   ],
+   [
+    "X2",
+    "Capital & sponsorship embeddedness",
+    15,
+    "No commercial sponsorship or advertising on the podcast; non-monetised, independent production."
+   ],
+   [
+    "X3",
+    "Institutional affiliation",
+    40,
+    "Independent post-corporate operator with a substantial institutional career in design media; no current academic position or major-publication editorship at the time of recording."
+   ],
+   [
+    "X4",
+    "Geographic & linguistic reach",
+    45,
+    "English-language conversation; London-based with continuing ties to the Indian design-media industry; practice reach spans both markets."
+   ],
+   [
+    "X5",
+    "Audience / social following",
+    46,
+    "A recognised senior figure in Indian design-media circles with an established professional network, though no large current public platform of her own."
+   ]
+  ],
+  "prose": "The episode sits in the independent and critical quadrant, low on resource allocation and well above the midpoint on critical autonomy. The resource reading is modest: an independent, unsponsored podcast, with a guest who speaks from outside any current institutional or editorial seat. The autonomy reading is high because the conversation names what the field usually protects — the sold feature, the herd mechanism, the fair emptied of its own stated purpose — and does so while admitting the professional cost of saying it out loud. The position is that of a post-corporate insider spending the standing she built inside the industry to describe, plainly, what has stopped working in it."
+ },
+ "refcats": [
+  "Institutions & bodies",
+  "Media platforms",
+  "Concepts & events",
+  "Places"
+ ],
+ "refs": [
+  {
+   "n": "India Design ID",
+   "u": "https://indiadesignid.com/",
+   "c": "Institutions & bodies",
+   "d": "Annual design fair launched in Delhi, in operation since the early 2010s; one of the two reference shows KM cites for the discovery era."
+  },
+  {
+   "n": "ACETECH",
+   "u": "https://www.etacetech.com/",
+   "c": "Institutions & bodies",
+   "d": "India's largest exhibition for the architecture and construction industry; long-running fair that, with India Design ID, defined the early-2010s discovery circuit."
+  },
+  {
+   "n": "Salone del Mobile",
+   "u": "https://www.salonemilano.it/en",
+   "c": "Institutions & bodies",
+   "d": "Milan furniture and design fair held annually since 1961; international counter-example KM offers as a cultural moment rather than a fair."
+  },
+  {
+   "n": "London Design Festival",
+   "u": "https://www.londondesignfestival.com/",
+   "c": "Institutions & bodies",
+   "d": "Annual citywide design event held across London since 2003; second international counter-example."
+  },
+  {
+   "n": "Design Miami",
+   "u": "https://miami.designmiami.com/",
+   "c": "Institutions & bodies",
+   "d": "Annual collectible-design fair held in Miami Beach (and now Basel, Paris, Los Angeles) since 2005; third international counter-example."
+  },
+  {
+   "n": "World Architecture Festival",
+   "u": "https://www.worldarchitecturefestival.com/",
+   "c": "Institutions & bodies",
+   "d": "International architecture awards programme founded in 2008; KM names it as an example of an awards platform whose competitive sanctity still holds, by contrast."
+  },
+  {
+   "n": "ELLE Decor",
+   "u": "https://elledecor.com/",
+   "c": "Media platforms",
+   "d": "Decor and lifestyle magazine, Indian edition published by Ogaan Media (and earlier Living Media); part of the mainstream design-magazine landscape SHM grew up with."
+  },
+  {
+   "n": "Architecture+Design (A+D)",
+   "u": "https://www.architectureplusdesign.in/",
+   "c": "Media platforms",
+   "d": "Indian architecture and interiors magazine, in print since 1984; the other reference title in SHM's railway-station-bookshop memory."
+  },
+  {
+   "n": "Filmfare",
+   "u": "https://www.filmfare.com/",
+   "c": "Media platforms",
+   "d": "Indian film magazine published since 1952; named by KM as an example of the rare title for which subscriptions historically mattered."
+  },
+  {
+   "n": "Femina",
+   "u": "https://www.femina.in/",
+   "c": "Media platforms",
+   "d": "Indian women's magazine published since 1959; second example of a subscription-led title from the older mainstream."
+  },
+  {
+   "n": "Orkut",
+   "u": "https://en.wikipedia.org/wiki/Orkut",
+   "c": "Concepts & events",
+   "d": "Google's social-networking service (2004–2014); KM uses Orkut moving into Facebook to date her entry into the industry, before social media existed as a workplace category."
+  },
+  {
+   "n": "Indore",
+   "u": "https://en.wikipedia.org/wiki/Indore",
+   "c": "Places",
+   "d": "Tier-2 city in Madhya Pradesh; example KM uses for the researching new talent exercise of her early career."
+  },
+  {
+   "n": "Chandigarh",
+   "u": "https://en.wikipedia.org/wiki/Chandigarh",
+   "c": "Places",
+   "d": "Planned city, capital of Punjab and Haryana; second example for the talent-research exercise."
+  },
+  {
+   "n": "Indian Institute of Architects (IIA)",
+   "u": "https://www.indianinstituteofarchitects.com/",
+   "c": "Institutions & bodies",
+   "d": "National professional body for architects in India, founded 1917; named in passing in SHM's question about industry-body absences for media-design practitioners."
+  },
+  {
+   "n": "Council of Architecture (COA)",
+   "u": "https://www.coa.gov.in/",
+   "c": "Institutions & bodies",
+   "d": "Statutory regulator for the architecture profession in India, established 1972; named alongside IIA in the same enumeration of existing professional bodies."
+  },
+  {
+   "n": "Institute of Town Planners, India (ITPI)",
+   "u": "https://www.itpi.org.in/",
+   "c": "Institutions & bodies",
+   "d": "National professional body for town planning, founded 1951; third example in the bodies-exist-for-everything-but-this list."
+  },
+  {
+   "n": "Pantone",
+   "u": "https://www.pantone.com/",
+   "c": "Concepts & events",
+   "d": "Colour-matching system used in design and print since 1963; SHM names Pantones as shorthand for the standardisation of fashionable design colour palettes."
+  }
+ ],
+ "related": [
+  {
+   "t": "Media as a Mirror",
+   "g": "Rohan Shivkumar",
+   "d": "The season’s opening diagnosis of a media that flatters rather than reflects — the same charge Kamna Malik brings to the fair and the feature.",
+   "id": "axm-01"
+  },
+  {
+   "t": "Beyond Laudatory Texts",
+   "g": "Soumya Dasgupta",
+   "d": "Past the laudatory register: what architectural writing looks like when it stops applauding.",
+   "id": "axm-23"
+  },
+  {
+   "t": "Strategic Communications",
+   "g": "",
+   "d": "Branding, positioning and the communications work this episode’s closing prescription asks every studio to bring in-house.",
+   "id": "axm-07"
+  }
+ ],
+ "materials": [
+  {
+   "t": "The show on Spotify",
+   "d": "Architecture X Media Studies, streaming.",
+   "u": "https://open.spotify.com/show/7glojNr7jxfFlu5FF9RjjF",
+   "c": "Listen"
+  },
+  {
+   "t": "Theme page · Architecture X Media Studies",
+   "d": "All conversations in the theme, with the framework note.",
+   "u": "/theme/archxmedia",
+   "c": "On this site"
+  },
+  {
+   "t": "AXM Unified Framework v5",
+   "d": "13 clusters, 34 thematic lines, 102 parameters, 18 sentiments; the instrument behind every analysis page.",
+   "u": "/about",
+   "c": "Method"
+  }
+ ],
+ "txnote": "The corrected transcript for this episode attaches through the BetterArch Console (section 02 of the episode record) and renders here in full. The opening exchange below is an excerpt from the corrected turns.",
+ "tx": [
+  [
+   "H",
+   "Hi, and, good afternoon and welcome you all to one more episode of Architecture × Media Studies. Today in the house we have with us Kamna Malik joining us, I believe it is afternoon out there from where you're joining the call. Kamna, good evening. How are you doing today?"
+  ],
+  [
+   "G",
+   "Good afternoon. I am joining, from London and it is about 2:00 PM here, so good afternoon. I would say"
+  ],
+  [
+   "H",
+   "Good afternoon. Good afternoon. Great to hear. Okay, so before we move on with the episode for my audience, please do have a look at the description section for our guest bio as we move on for you to have a better understanding of the conversation. And with that, let's come directly to what we are going to discuss today. The primary avenues of them being how architecture and media or. The different avenues of media interact with each other and how they go line in line or hand in hand. With that, I would really love to open the conversation with your larger understanding. You have a long history in this entire segment. How are you placing architecture or the overall built or construction industry? And it's. Interactions with the market facing models or tools that you have been involved in, say, design fairs, mainstream lifestyle and decor magazines, and this, extremely public facing methods of, information dissemination. If you can start the conversation with your understanding of how architecture and these kind of avenues interact and what the role of these type of formats have in building a public perception of architecture or the built environment, it would be absolutely great."
+  ],
+  [
+   "G",
+   "I think, you know, Shubhayan, I mean, that's a very, heavy loaded question."
+  ]
+ ]
+}
+</script>
+
+</body>
+</html>

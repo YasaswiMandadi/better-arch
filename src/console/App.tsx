@@ -3,6 +3,8 @@ import { ConsoleContext, useConsoleState } from './store/useConsole';
 import Topbar from './components/Topbar';
 import Sidebar from './components/Sidebar';
 import Toast from './components/Toast';
+import ConsoleLogin from './components/ConsoleLogin';
+import { useSiteData } from '../data/store';
 import Dashboard from './views/Dashboard';
 import Seasons from './views/Seasons';
 import Episodes from './views/Episodes';
@@ -10,11 +12,19 @@ import Editor from './views/Editor';
 import Pages from './views/Pages';
 import Inbox from './views/Inbox';
 import Settings from './views/Settings';
+import ThemeRepository from './views/ThemeRepository';
+import ThemeEditor from './views/ThemeEditor';
+import EpisodeAnalysisRepository from './views/EpisodeAnalysisRepository';
+import EpisodeAnalysisEditor from './views/EpisodeAnalysisEditor';
 import type { ViewName } from './types';
 import type { ComponentType } from 'react';
 
 const VIEWS: Record<ViewName, ComponentType> = {
   dashboard: Dashboard,
+  themes: ThemeRepository,
+  themeEditor: ThemeEditor,
+  episodeAnalysis: EpisodeAnalysisRepository,
+  episodeAnalysisEditor: EpisodeAnalysisEditor,
   seasons: Seasons,
   episodes: Episodes,
   editor: Editor,
@@ -24,7 +34,8 @@ const VIEWS: Record<ViewName, ComponentType> = {
 };
 
 const MOBILE_NAV: [ViewName, string][] = [
-  ['dashboard', 'Dashboard'], ['seasons', 'Seasons'], ['episodes', 'Episodes'],
+  ['dashboard', 'Dashboard'], ['themes', 'Themes'], ['episodeAnalysis', 'Episode Analysis'],
+  ['seasons', 'Seasons'], ['episodes', 'Episodes'],
   ['pages', 'Pages'], ['inbox', 'Inbox'], ['settings', 'Settings'],
 ];
 
@@ -39,6 +50,14 @@ const MOBILE_NAV: [ViewName, string][] = [
  * into the public site, and vice versa.
  */
 export default function ConsoleApp() {
+  const { remote } = useSiteData();
+  // On the shared-database build the console is behind the admin password.
+  // (Browser-only builds, and a database that can't be reached, keep today's open console.)
+  if (remote.enabled && remote.available && !remote.admin) return <ConsoleLogin />;
+  return <ConsoleShell />;
+}
+
+function ConsoleShell() {
   const state = useConsoleState();
   const ViewComponent = VIEWS[state.view] || Dashboard;
 

@@ -6,7 +6,7 @@
 export function slugify(input: string): string {
   return input
     .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '') // strip accents
+    .replace(/[̀-ͯ]/g, '') // strip accents
     .toLowerCase()
     .replace(/'/g, '')
     .replace(/[^a-z0-9]+/g, '-')
