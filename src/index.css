@@ -112,11 +112,21 @@ html[data-protect="on"] svg {
 html[data-protect="on"] ::selection { background: transparent; }
 html[data-protect="on"] input::selection,
 html[data-protect="on"] textarea::selection { background: Highlight; }
-/* Content is hidden while the window is unfocused / a capture key was pressed. */
-html[data-protect="on"][data-shield="on"] #root {
-  filter: blur(26px) brightness(.85);
-  pointer-events: none;
-  transition: none;
+/* Solid cover while a capture may be in progress: raised by a capture shortcut or by
+   the window losing focus, lifted by the next click / key press. */
+html[data-protect="on"][data-shield="on"]::after {
+  content: "Content hidden \2014  click or press a key to continue";
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  color: var(--muted);
+  font: 600 15px/1.4 system-ui, sans-serif;
+  letter-spacing: .02em;
+  text-align: center;
+  padding: 2rem;
 }
 @media print {
   html[data-protect="on"] #root { display: none !important; }
