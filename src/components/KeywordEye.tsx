@@ -22,7 +22,7 @@ const FALLBACK: Array<[string, number]> = [
 
 const LEVELS = 10;
 const INK = [228, 231, 234];
-const REST = 0.62; // relaxed, slightly lowered lids
+const REST = 0.8; // open, relaxed and friendly
 const BL = { close: 280, hold: 70, open: 460 };
 
 type Pt = [number, number];
@@ -62,22 +62,22 @@ const browR = rng(21);
 const BROW = Array.from({ length: 46 }, () => [browR(), browR(), browR()]);
 
 function drawEye(c: CanvasRenderingContext2D, cx: number, cy: number, e: number, open: number, gx: number, gy: number, k: number) {
-  const A: Pt = [cx - 0.5 * e, cy + 0.04 * e];
-  const B: Pt = [cx + 0.5 * e, cy - 0.05 * e];
+  const A: Pt = [cx - 0.5 * e, cy + 0.05 * e];
+  const B: Pt = [cx + 0.5 * e, cy - 0.085 * e]; // outer corner lifted a little: a friendlier line
   const U1 = lerp(0.13, -0.38, open) * e;
   const U2 = lerp(0.13, -0.38, open) * e;
   const up: [Pt, Pt, Pt, Pt] = [A, [cx - 0.18 * e, cy + U1], [cx + 0.2 * e, cy + U2], B];
-  const lo: [Pt, Pt, Pt, Pt] = [A, [cx - 0.18 * e, cy + 0.19 * e], [cx + 0.2 * e, cy + 0.2 * e], B];
+  const lo: [Pt, Pt, Pt, Pt] = [A, [cx - 0.18 * e, cy + 0.15 * e], [cx + 0.2 * e, cy + 0.15 * e], B]; // lower lid gently lifted, as in a smile
 
   // skin around the eye
-  soft(c, cx + 0.05 * e, cy - 0.02 * e, 1.1 * e, 0.62 * e, 0.5 * k, 0.8);
+  soft(c, cx + 0.05 * e, cy - 0.02 * e, 1.1 * e, 0.62 * e, 0.34 * k, 0.8);
   soft(c, cx, cy - 0.03 * e, 0.78 * e, 0.32 * e, 0.1, 0.3 * k + 0.1);
   soft(c, cx + 0.08 * e, cy - 0.58 * e, 0.8 * e, 0.12 * e, 0.66 * k, 0.5);
   c.lineCap = 'round';
   for (const [a1, a2, a3] of BROW) {
     const x = cx - 0.62 * e + a1 * 1.35 * e;
-    const y = cy - 0.66 * e - Math.sin(a1 * 3.1) * 0.1 * e + (a2 - 0.5) * 0.07 * e;
-    c.strokeStyle = grey((0.1 + a3 * 0.14) * k, 0.55);
+    const y = cy - 0.74 * e - Math.sin(a1 * 3.1) * 0.12 * e + (a2 - 0.5) * 0.07 * e;
+    c.strokeStyle = grey((0.1 + a3 * 0.14) * k, 0.4);
     c.lineWidth = Math.max(0.6, 0.011 * e);
     c.beginPath();
     c.moveTo(x, y);
@@ -85,7 +85,7 @@ function drawEye(c: CanvasRenderingContext2D, cx: number, cy: number, e: number,
     c.stroke();
   }
   const top = cy + 0.75 * U1;
-  soft(c, cx + 0.02 * e, top - 0.1 * e, 0.6 * e, 0.045 * e, 0.1, 0.45);
+  soft(c, cx + 0.02 * e, top - 0.1 * e, 0.6 * e, 0.045 * e, 0.1, 0.3);
   soft(c, cx + 0.02 * e, top - 0.04 * e, 0.5 * e, 0.07 * e, 0.45 * k, 0.28);
 
   // the eyeball, clipped to the lids
@@ -103,12 +103,12 @@ function drawEye(c: CanvasRenderingContext2D, cx: number, cy: number, e: number,
   c.fillStyle = sc;
   c.fillRect(cx - 0.6 * e, cy - 0.5 * e, 1.2 * e, 1.0 * e);
   const ix = cx + gx;
-  const iy = cy + gy + 0.04 * e;
-  const ri = 0.2 * e;
+  const iy = cy + gy + 0.015 * e;
+  const ri = 0.215 * e;
   const ir = c.createRadialGradient(ix, iy, ri * 0.15, ix, iy, ri);
-  ir.addColorStop(0, grey(0.2 * k));
-  ir.addColorStop(0.55, grey(0.4 * k));
-  ir.addColorStop(0.88, grey(0.3 * k));
+  ir.addColorStop(0, grey(0.24 * k));
+  ir.addColorStop(0.55, grey(0.5 * k));
+  ir.addColorStop(0.88, grey(0.36 * k));
   ir.addColorStop(1, grey(0.14 * k));
   c.fillStyle = ir;
   c.beginPath();
@@ -132,9 +132,10 @@ function drawEye(c: CanvasRenderingContext2D, cx: number, cy: number, e: number,
   c.beginPath();
   c.arc(ix, iy, ri * 0.36, 0, 7);
   c.fill();
-  soft(c, ix + 0.07 * e, iy - 0.06 * e, 0.035 * e, 0.035 * e, 1, 0.55);
+  soft(c, ix + 0.075 * e, iy - 0.07 * e, 0.045 * e, 0.045 * e, 1, 0.8);
+  soft(c, ix - 0.07 * e, iy + 0.07 * e, 0.025 * e, 0.025 * e, 1, 0.35);
   const sh = c.createLinearGradient(0, top - 0.02 * e, 0, top + 0.17 * e);
-  sh.addColorStop(0, 'rgba(0,0,0,.34)');
+  sh.addColorStop(0, 'rgba(0,0,0,.18)');
   sh.addColorStop(1, 'rgba(0,0,0,0)');
   c.fillStyle = sh;
   c.fillRect(cx - 0.6 * e, top - 0.4 * e, 1.2 * e, 0.6 * e);
@@ -142,8 +143,8 @@ function drawEye(c: CanvasRenderingContext2D, cx: number, cy: number, e: number,
   c.restore();
 
   // lid edge and lashes
-  c.strokeStyle = grey(0.05, 0.85);
-  c.lineWidth = Math.max(1, 0.02 * e);
+  c.strokeStyle = grey(0.08, 0.75);
+  c.lineWidth = Math.max(1, 0.016 * e);
   c.beginPath();
   c.moveTo(...up[0]);
   c.bezierCurveTo(...up[1], ...up[2], ...up[3]);
@@ -293,11 +294,11 @@ export default function KeywordEye({ className = '' }: { className?: string }) {
       if (W < 760) {
         eye.cx = W * 0.64;
         eye.cy = H * 0.66;
-        eye.ew = W * 0.66;
+        eye.ew = W * 0.74;
       } else {
-        eye.cx = W * 0.71;
+        eye.cx = W * 0.7;
         eye.cy = H * 0.47;
-        eye.ew = Math.min(W * 0.34, H * 0.7);
+        eye.ew = Math.min(W * 0.4, H * 0.82);
       }
       dirty = true;
     }
@@ -306,11 +307,17 @@ export default function KeywordEye({ className = '' }: { className?: string }) {
       const c = pctx!;
       c.setTransform(S, 0, 0, S, 0, 0);
       const base = c.createLinearGradient(0, 0, W, 0);
-      base.addColorStop(0, '#040404');
-      base.addColorStop(Math.max(0, (eye.cx - eye.ew * 1.9) / W), '#060606');
-      base.addColorStop(Math.min(0.95, (eye.cx - eye.ew * 0.95) / W), '#262626');
-      base.addColorStop(Math.min(0.97, (eye.cx - eye.ew * 0.3) / W), '#3d3d3d');
-      base.addColorStop(1, '#505050');
+      // stops are clamped to 0..1 and kept in order, whatever the eye size / screen width
+      let prev = 0;
+      const stop = (x: number, col: string) => {
+        prev = Math.max(prev, Math.min(1, Math.max(0, x)));
+        base.addColorStop(prev, col);
+      };
+      stop(0, '#040404');
+      stop((eye.cx - eye.ew * 1.9) / W, '#060606');
+      stop(Math.min(0.95, (eye.cx - eye.ew * 0.95) / W), '#262626');
+      stop(Math.min(0.97, (eye.cx - eye.ew * 0.3) / W), '#3d3d3d');
+      stop(1, '#505050');
       c.fillStyle = base;
       c.fillRect(0, 0, W, H);
       soft(c, eye.cx, eye.cy, eye.ew * 1.6, eye.ew * 1.1, 0.6, 0.22);
@@ -341,7 +348,7 @@ export default function KeywordEye({ className = '' }: { className?: string }) {
           if (ci < 0) continue;
           const o = i * 4;
           let L = (px[o] * 0.299 + px[o + 1] * 0.587 + px[o + 2] * 0.114) / 255;
-          L = Math.min(1, Math.pow(L, 1.35) * 1.5) * grain[i] * (1 + shimmer * Math.sin(ph + i * 0.37));
+          L = Math.min(1, Math.pow(L, 1.5) * 1.6) * grain[i] * (1 + shimmer * Math.sin(ph + i * 0.37));
           if (lens > 0.01) {
             // cell centre and pointer are both in CSS pixels, so the glow sits right under the pointer
             const ddx = (c + 0.5) * cw - lensX;
@@ -465,7 +472,7 @@ export default function KeywordEye({ className = '' }: { className?: string }) {
       <div
         aria-hidden="true"
         className="fixed inset-0 z-[1] pointer-events-none hidden md:block"
-        style={{ background: 'linear-gradient(90deg, rgba(7,7,7,.94) 0%, rgba(7,7,7,.80) 30%, rgba(7,7,7,.25) 55%, rgba(7,7,7,0) 70%)' }}
+        style={{ background: 'linear-gradient(180deg, rgba(7,7,7,.82) 0, rgba(7,7,7,0) 110px), linear-gradient(0deg, rgba(7,7,7,.78) 0, rgba(7,7,7,0) 90px), linear-gradient(90deg, rgba(7,7,7,.94) 0%, rgba(7,7,7,.80) 30%, rgba(7,7,7,.25) 55%, rgba(7,7,7,0) 70%)' }}
       />
       <div
         aria-hidden="true"

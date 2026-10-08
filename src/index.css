@@ -80,6 +80,15 @@ body{
 ::selection{background:color-mix(in srgb, var(--red) 18%, transparent)}
 a{color:var(--deep)}
 
+/* Homepage (always dark): the global `a` rule above is unlayered, so it beats Tailwind's
+   text-* utilities and turned these links dark red. These classes win by specificity and
+   work the same whether the visitor's theme is light or dark. */
+a.hp-brand{color:#F1F3F5}
+a.hp-link{color:#A3A8AD;transition:color .2s}
+a.hp-link:hover,a.hp-link:focus-visible{color:#FFFFFF}
+a.hp-solid{color:#0A0A0A}
+a.hp-ghost{color:#F1F3F5}
+
 .cpt{font-style:italic;color:var(--acd, var(--deep));font-weight:500}
 .read p:first-of-type::first-letter{font:800 3rem/.8 var(--font-head);float:left;padding:6px 12px 0 0;color:var(--acd)}
 
