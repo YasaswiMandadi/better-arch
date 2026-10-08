@@ -91,3 +91,39 @@ a{color:var(--deep)}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:var(--hair);border-radius:8px}
 ::-webkit-scrollbar-track{background:transparent}
+
+/* ---- Content protection (public site only; see src/lib/contentProtection.tsx) ---- */
+html[data-protect="on"] body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+html[data-protect="on"] input,
+html[data-protect="on"] textarea,
+html[data-protect="on"] [contenteditable=""],
+html[data-protect="on"] [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+html[data-protect="on"] img,
+html[data-protect="on"] svg {
+  -webkit-user-drag: none;
+}
+html[data-protect="on"] ::selection { background: transparent; }
+html[data-protect="on"] input::selection,
+html[data-protect="on"] textarea::selection { background: Highlight; }
+/* Content is hidden while the window is unfocused / a capture key was pressed. */
+html[data-protect="on"][data-shield="on"] #root {
+  filter: blur(26px) brightness(.85);
+  pointer-events: none;
+  transition: none;
+}
+@media print {
+  html[data-protect="on"] #root { display: none !important; }
+  html[data-protect="on"] body::before {
+    content: "Printing is not available for this site.";
+    display: block;
+    padding: 2rem;
+    font: 16px system-ui, sans-serif;
+  }
+}

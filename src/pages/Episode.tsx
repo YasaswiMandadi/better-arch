@@ -367,7 +367,7 @@ export default function Episode() {
           {hasCite && (
             <Section ac="ac2" num={hasSpectacle ? '12' : '11'} title="Cite this episode">
               <div className="bg-card border border-hair rounded-[10px] px-6 py-5 shadow-[var(--shs)]">
-                <p className="text-[.98rem] leading-[1.65] m-0 select-all">{A.cite}</p>
+                <p className="text-[.98rem] leading-[1.65] m-0">{A.cite}</p>
                 <button
                   onClick={() => { try { navigator.clipboard?.writeText(String(A.cite)); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* clipboard unavailable */ } }}
                   className="mt-3.5 font-head font-bold text-[.78rem] border border-hair rounded-lg px-4 py-2 hover:border-muted transition-colors"
