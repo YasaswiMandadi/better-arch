@@ -234,7 +234,7 @@ export default function ThemeEditor() {
       <Panel>
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <h3 className="font-display italic text-[18px]">Conversations</h3>
-          <Btn size="sm" onClick={() => go('episodes')}>Go to Episode Repository</Btn>
+          <Btn size="sm" onClick={() => go('episodeAnalysis')}>Go to Episode Analysis</Btn>
         </div>
         <div className="space-y-2 mb-3">
           {themeEpisodes.map((e) => (
@@ -312,7 +312,6 @@ export default function ThemeEditor() {
       <Panel>
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <h3 className="font-display italic text-[18px]">Essays</h3>
-          <Btn size="sm" onClick={() => go('pages')}>Go to Essay Repository</Btn>
         </div>
         <div className="space-y-2 mb-3">
           {themeEssays.map((e) => (

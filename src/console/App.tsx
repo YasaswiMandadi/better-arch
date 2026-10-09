@@ -5,13 +5,6 @@ import Sidebar from './components/Sidebar';
 import Toast from './components/Toast';
 import ConsoleLogin from './components/ConsoleLogin';
 import { useSiteData } from '../data/store';
-import Dashboard from './views/Dashboard';
-import Seasons from './views/Seasons';
-import Episodes from './views/Episodes';
-import Editor from './views/Editor';
-import Pages from './views/Pages';
-import Inbox from './views/Inbox';
-import Settings from './views/Settings';
 import ThemeRepository from './views/ThemeRepository';
 import ThemeEditor from './views/ThemeEditor';
 import EpisodeAnalysisRepository from './views/EpisodeAnalysisRepository';
@@ -19,24 +12,15 @@ import EpisodeAnalysisEditor from './views/EpisodeAnalysisEditor';
 import type { ViewName } from './types';
 import type { ComponentType } from 'react';
 
-const VIEWS: Record<ViewName, ComponentType> = {
-  dashboard: Dashboard,
+const VIEWS: Partial<Record<ViewName, ComponentType>> = {
   themes: ThemeRepository,
   themeEditor: ThemeEditor,
   episodeAnalysis: EpisodeAnalysisRepository,
   episodeAnalysisEditor: EpisodeAnalysisEditor,
-  seasons: Seasons,
-  episodes: Episodes,
-  editor: Editor,
-  pages: Pages,
-  inbox: Inbox,
-  settings: Settings,
 };
 
 const MOBILE_NAV: [ViewName, string][] = [
-  ['dashboard', 'Dashboard'], ['themes', 'Themes'], ['episodeAnalysis', 'Episode Analysis'],
-  ['seasons', 'Seasons'], ['episodes', 'Episodes'],
-  ['pages', 'Pages'], ['inbox', 'Inbox'], ['settings', 'Settings'],
+  ['themes', 'Themes'], ['episodeAnalysis', 'Episode Analysis'],
 ];
 
 /**
@@ -59,7 +43,7 @@ export default function ConsoleApp() {
 
 function ConsoleShell() {
   const state = useConsoleState();
-  const ViewComponent = VIEWS[state.view] || Dashboard;
+  const ViewComponent = VIEWS[state.view] || ThemeRepository;
 
   return (
     <div className="consoleApp">
