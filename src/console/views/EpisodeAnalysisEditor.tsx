@@ -5,6 +5,8 @@ import {
   AddRow, Btn, Chip, Field, Grid2, Grid3, Panel, RepCard, Select, SlRow, TextArea, TextInput, Toggle, VHead,
 } from '../components/ui';
 import SectionHead from '../components/SectionHead';
+import SectionOrderPanel from '../components/SectionOrderPanel';
+import { EPISODE_SECTIONS, isSectionHidden } from '../../data/sectionLayout';
 import type { Episode, EpisodeAnalysis } from '../../data/types';
 import { importAnalysisHtml, importAnalysisJson, type ImportResult } from '../lib/parseAnalysisHtml';
 import { bestKeywordMatchForTag, collectKeywordSuggestions, rankKeywordSuggestions } from '../../data/keywords';
@@ -197,7 +199,24 @@ export default function EpisodeAnalysisEditor() {
   const published = episode.status !== 'draft';
   const A = episode.analysisData;
 
+  const sectionAnchors: Record<string, string> = {
+    reading: 's04', lexical: 's05', themes: 's06', phrases: 's07', lived: 's08', sentiment: 's09',
+    criticality: 's10', references: 's11', related: 's12', collaborators: 's01', spectacle: 's15', cite: 's15',
+  };
+
   return (
+    <div className="secLayoutWrap">
+      <aside className="secLayoutAside">
+        <SectionOrderPanel
+          title="Page sections"
+          hint="The headings of the published episode. Drag to change their order; switch one off and it won't appear on the published page. (Collaborators comes from the Guest field.)"
+          defs={EPISODE_SECTIONS}
+          layout={episode.sectionLayout}
+          anchors={sectionAnchors}
+          available={(k) => (k === 'spectacle' ? Boolean(A?.spectacle?.domains?.length) : k === 'cite' ? Boolean(A?.cite) : true)}
+          onChange={(next) => patch((ep) => { if (next) ep.sectionLayout = next; else delete ep.sectionLayout; })}
+        />
+      </aside>
     <div>
       <VHead
         title={<>Episode: {episode.title || 'Untitled'}</>}
@@ -350,7 +369,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 04 reading */}
-      <SectionHead id="s04" num="04" title="A Reading of the Conversation" mirror="section 01 · drop-cap prose">
+      <SectionHead id="s04" num="04" title="A Reading of the Conversation" mirror="section 01 · drop-cap prose" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'reading')}>
         <Panel>
           {(A?.reading ?? []).map((p, i) => (
             <RepCard key={i} index={i}>
@@ -365,7 +384,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 05 lexical terrain */}
-      <SectionHead id="s05" num="05" title="Lexical Terrain" mirror="section 02 · bubble map">
+      <SectionHead id="s05" num="05" title="Lexical Terrain" mirror="section 02 · bubble map" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'lexical')}>
         <Panel>
           <Field label="Intro prose"><TextArea value={A?.lexnarr ?? ''} onChange={(ev) => patchAnalysis((a) => { a.lexnarr = (ev.target as any).value; })} /></Field>
           {(A?.keywords ?? []).map((k, i) => (
@@ -424,7 +443,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 06 themes */}
-      <SectionHead id="s06" num="06" title="Key Themes" mirror="section 03 · numbered cards">
+      <SectionHead id="s06" num="06" title="Key Themes" mirror="section 03 · numbered cards" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'themes')}>
         <Panel>
           {(A?.themes ?? []).map((t, i) => (
             <RepCard key={i} index={i}>
@@ -465,7 +484,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 07 quotes */}
-      <SectionHead id="s07" num="07" title="Selected Highlights / Quotes" mirror="section 04 · filterable card list">
+      <SectionHead id="s07" num="07" title="Selected Highlights / Quotes" mirror="section 04 · filterable card list" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'phrases')}>
         <Panel>
           <Field label="Quote categories (the filter pills)">
             <div className="flex flex-wrap gap-2 bg-paper border border-hair rounded p-2">
@@ -512,7 +531,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 08 lived experience */}
-      <SectionHead id="s08" num="08" title="Lived Experience" mirror="section 05 · single-card prose">
+      <SectionHead id="s08" num="08" title="Lived Experience" mirror="section 05 · single-card prose" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'lived')}>
         <Panel>
           <Field label="Lived experience analysis (one continuous paragraph)">
             <TextArea className="min-h-[150px]" value={A?.lived ?? ''} onChange={(ev) => patchAnalysis((a) => { a.lived = (ev.target as any).value; })} />
@@ -521,7 +540,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 09 sentiment */}
-      <SectionHead id="s09" num="09" title="Sentiment Register" mirror="section 06 · spider chart">
+      <SectionHead id="s09" num="09" title="Sentiment Register" mirror="section 06 · spider chart" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'sentiment')}>
         <Panel>
           <Field label="Register prose"><TextArea className="min-h-[80px]" value={A?.sentprose ?? ''} onChange={(ev) => patchAnalysis((a) => { a.sentprose = (ev.target as any).value; })} /></Field>
           {(A?.sentiments ?? []).map((sn, i) => (
@@ -541,7 +560,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 10 compass */}
-      <SectionHead id="s10" num="10" title="Criticality Compass" mirror="section 07 · x/y plot">
+      <SectionHead id="s10" num="10" title="Criticality Compass" mirror="section 07 · x/y plot" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'criticality')}>
         <Panel>
           <Grid3>
             <Field label="x · resource allocation"><TextInput type="number" min={0} max={100} value={A?.compass.x ?? 50} onChange={(ev) => patchAnalysis((a) => { a.compass.x = +(ev.target as any).value; })} /></Field>
@@ -565,7 +584,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 11 references */}
-      <SectionHead id="s11" num="11" title="References" mirror="section 08 · tabbed table">
+      <SectionHead id="s11" num="11" title="References" mirror="section 08 · tabbed table" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'references')}>
         <Panel>
           <Field label="Reference categories (tabs)">
             <div className="flex flex-wrap gap-2 bg-paper border border-hair rounded p-2">
@@ -604,7 +623,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 12 related episodes */}
-      <SectionHead id="s12" num="12" title="Related Episodes" mirror="section 09 · cards">
+      <SectionHead id="s12" num="12" title="Related Episodes" mirror="section 09 · cards" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'related')}>
         <Panel>
           {(A?.related ?? []).map((r, i) => (
             <RepCard key={i} index={i}>
@@ -631,7 +650,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 13 materials */}
-      <SectionHead id="s13" num="13" title="Related Links & Material" mirror="section 10 · reference-style list">
+      <SectionHead id="s13" num="13" title="Related Links & Material" mirror="section 10 · reference-style list" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'related')}>
         <Panel>
           {(A?.materials ?? []).map((m, i) => (
             <RepCard key={i} index={i}>
@@ -674,7 +693,7 @@ export default function EpisodeAnalysisEditor() {
       </SectionHead>
 
       {/* 15 spectacle & record details */}
-      <SectionHead id="s15" num="15" title="SPECTACLE & record details" mirror="meta line, SPECTACLE profile, cite box">
+      <SectionHead id="s15" num="15" title="SPECTACLE & record details" mirror="meta line, SPECTACLE profile, cite box" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'spectacle') && isSectionHidden(episode.sectionLayout, 'cite')}>
         <Panel>
           <Grid3>
             <Field label="Record ID"><TextInput value={A?.meta?.id ?? ''} onChange={(ev) => patchAnalysis((a) => { (a.meta ??= {}).id = (ev.target as any).value; })} /></Field>
@@ -708,6 +727,7 @@ export default function EpisodeAnalysisEditor() {
           <Btn variant="primary" onClick={() => publish(episode)}>Publish</Btn>
         )}
       </div>
+    </div>
     </div>
   );
 }

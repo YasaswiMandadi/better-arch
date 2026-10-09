@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useConsole } from '../store/useConsole';
 import { useSiteData } from '../../data/store';
 import { useCollaboratorRoster } from '../../data/useCollaborators';
+import SectionOrderPanel from '../components/SectionOrderPanel';
+import { SUBTHEME_SECTIONS, THEME_SECTIONS } from '../../data/sectionLayout';
 import { Btn, Chip, Field, Grid2, Grid3, Panel, Select, TextArea, TextInput, Toggle, VHead } from '../components/ui';
 import { slugify } from '../../lib/slug';
 import type { SubTheme, Theme } from '../../data/types';
@@ -143,6 +145,17 @@ export default function ThemeEditor() {
   const unassignedEssays = data.essays.filter((e) => e.season !== theme.slug);
 
   return (
+    <div className="secLayoutWrap">
+      <aside className="secLayoutAside">
+        <SectionOrderPanel
+          title="Page sections"
+          hint="The headings of this theme's public page. Drag to change their order; switch one off and it won't appear on the page. (Sub-themes have their own list inside each sub-theme card below.)"
+          defs={THEME_SECTIONS}
+          layout={theme.sectionLayout}
+          available={(k) => (k === 'links' ? theme.links.length > 0 : true)}
+          onChange={(next) => patch((t) => { if (next) t.sectionLayout = next; else delete t.sectionLayout; })}
+        />
+      </aside>
     <div>
       <VHead
         title={<>Theme: <Rich>{theme.title || 'Untitled'}</Rich></>}
@@ -256,6 +269,18 @@ export default function ThemeEditor() {
               <Field label="Light accent HEX"><TextInput value={s.lightHex || ''} onChange={(e) => updateSubTheme(i, (x) => { x.lightHex = (e.target as any).value; })} /></Field>
             </Grid2>
 
+            <div className="mt-3 mb-3">
+              <SectionOrderPanel
+                compact
+                title="Page sections for this sub-theme"
+                hint="Drag to change the order of this sub-theme's page headings; switch one off to leave it out of the page."
+                defs={SUBTHEME_SECTIONS}
+                layout={s.sectionLayout}
+                available={(k) => (k === 'tertiary' ? Boolean(s.tertiaryThemes?.length) : true)}
+                onChange={(next) => updateSubTheme(i, (x) => { if (next) x.sectionLayout = next; else delete x.sectionLayout; })}
+              />
+            </div>
+
             <div className="mt-2">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-sans text-[12px] font-semibold uppercase tracking-wide text-muted">Tertiary themes</span>
@@ -336,6 +361,7 @@ export default function ThemeEditor() {
           </Field>
         </Grid2>
       </Panel>
+    </div>
     </div>
   );
 }

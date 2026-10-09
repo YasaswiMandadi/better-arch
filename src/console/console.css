@@ -84,3 +84,18 @@
 .consoleApp .rte-content h2 { font-size: 1.25em; font-weight: 600; margin: 0.2em 0; }
 .consoleApp .rte-content h3 { font-size: 1.1em; font-weight: 600; margin: 0.2em 0; }
 .consoleApp .rte-content a { color: var(--rust); text-decoration: underline; }
+
+/* Editors with a "Page sections" side panel: on wide screens the panel sits to the right of the
+   form (sticky); below that it is stacked above the form as a collapsible card. */
+.consoleApp .secLayoutWrap { display: block; }
+.consoleApp .secLayoutWrap > .secLayoutAside { margin-bottom: 18px; }
+@media (min-width: 1280px) {
+  .consoleApp .secLayoutWrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 24px;
+    width: min(calc(100% + 314px), calc(100vw - 248px - 64px));
+  }
+  .consoleApp .secLayoutWrap > .secLayoutAside { order: 2; margin-bottom: 0; }
+  .consoleApp .secLayoutWrap > .secLayoutAside > div { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow: auto; }
+}

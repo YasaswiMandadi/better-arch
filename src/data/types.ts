@@ -1,3 +1,5 @@
+import type { SectionLayout } from './sectionLayout';
+
 export interface KeywordItem {
   word: string;
   freq: number;
@@ -19,6 +21,8 @@ export interface SubTheme {
   lightHex?: string;
   tertiaryThemes?: TertiaryTheme[];
   keywords?: KeywordItem[];
+  /** Which sections its page shows, and in what order (see sectionLayout.ts). */
+  sectionLayout?: SectionLayout;
 }
 
 export interface KeyConcept {
@@ -45,6 +49,8 @@ export interface Theme {
   keywords: KeywordItem[]; // theme-level, autopulled top keywords or curated
   links: [string, string][]; // further reading
   status: 'draft' | 'published';
+  /** Which sections its page shows, and in what order (see sectionLayout.ts). */
+  sectionLayout?: SectionLayout;
 }
 
 /**
@@ -130,6 +136,9 @@ export interface Episode {
   url: string;
   analysis: boolean;
   analysisData?: EpisodeAnalysis;
+  /** Which sections the published page shows, and in what order (see sectionLayout.ts).
+   * Kept on the episode, not inside analysisData, so re-uploading a template never resets it. */
+  sectionLayout?: SectionLayout;
   /** 'draft' hides the episode from public listings, search and its
    * theme's Conversations section until published. Optional and absent on
    * every seeded episode on purpose — they're already live, so "absent"

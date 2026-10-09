@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
+import { THEME_SECTIONS, sectionNum, visibleKeys } from '../data/sectionLayout';
 import InnerLayout from '../components/InnerLayout';
 import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
@@ -40,33 +42,24 @@ export default function Theme() {
   }
   const topKeywords = Array.from(keywordTotals.values()).sort((a, b) => b.freq - a.freq).slice(0, 30);
 
-  const items = [
-    { num: '01', label: 'About this theme', href: '#s01' },
-    { num: '02', label: 'Investigator Team', href: '#s02' },
-    { num: '03', label: 'Key Concepts', href: '#s03' },
-    { num: '04', label: 'Conversations', href: '#s04' },
-    { num: '05', label: 'Sub-themes', href: '#s05' },
-    { num: '06', label: 'Essays', href: '#s06' },
-    { num: '07', label: 'Future Directions', href: '#s07' },
-    { num: '08', label: 'Collaborators', href: '#s08' },
-    { num: '09', label: 'Keywords', href: '#s09' },
-    ...(t.links?.length ? [{ num: '10', label: 'Further reading', href: '#s10' }] : []),
-  ];
-
-  return (
-    <InnerLayout sideItems={items}>
-      <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">{t.no} · {t.statusLabel} · {t.period}</p>
-      <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">{t.title}</h1>
-      <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">{t.one}</p>
-
-      <Section ac="ac1" num="01" title="About this theme">
+  const sections: Record<string, { ac: string; title: string; body: () => ReactNode }> = {
+    about: {
+      ac: 'ac1',
+      title: 'About this theme',
+      body: () => (
+        <>
         <div className="read space-y-4">
           {t.summary.map((p, i) => <p key={i}>{p}</p>)}
           {t.summary.length === 0 && <p className="text-muted">No long description published yet.</p>}
         </div>
-      </Section>
-
-      <Section ac="ac5" num="02" title="Investigator Team">
+        </>
+      ),
+    },
+    investigators: {
+      ac: 'ac5',
+      title: 'Investigator Team',
+      body: () => (
+        <>
         {investigators.length ? (
           <div className="grid sm:grid-cols-2 gap-3.5">
             {investigators.map((c) => (
@@ -83,9 +76,14 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No investigators assigned to this theme yet.</p>
         )}
-      </Section>
-
-      <Section ac="ac3" num="03" title="Key Concepts">
+        </>
+      ),
+    },
+    concepts: {
+      ac: 'ac3',
+      title: 'Key Concepts',
+      body: () => (
+        <>
         {t.keyConcepts.length ? (
           <div className="space-y-3.5">
             {t.keyConcepts.map((kc, i) => (
@@ -101,9 +99,14 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No key concepts published yet.</p>
         )}
-      </Section>
-
-      <Section ac="ac6" num="04" title="Conversations">
+        </>
+      ),
+    },
+    conversations: {
+      ac: 'ac6',
+      title: 'Conversations',
+      body: () => (
+        <>
         {eps.length ? (
           <div className="space-y-2">
             {eps.map((e) => {
@@ -131,9 +134,14 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">Episodes will appear here as they are published.</p>
         )}
-      </Section>
-
-      <Section ac="ac2" num="05" title="Sub-themes">
+        </>
+      ),
+    },
+    subthemes: {
+      ac: 'ac2',
+      title: 'Sub-themes',
+      body: () => (
+        <>
         {t.subThemes.length ? (
           <div className="grid sm:grid-cols-2 gap-4">
             {t.subThemes.map((st) => (
@@ -152,9 +160,14 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No sub-themes yet.</p>
         )}
-      </Section>
-
-      <Section ac="ac9" num="06" title="Essays">
+        </>
+      ),
+    },
+    essays: {
+      ac: 'ac9',
+      title: 'Essays',
+      body: () => (
+        <>
         {themeEssays.length ? (
           <div className="space-y-2">
             {themeEssays.map((es) => (
@@ -173,16 +186,26 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">Essays will appear here as they are published.</p>
         )}
-      </Section>
-
-      <Section ac="ac4" num="07" title="Future Directions">
+        </>
+      ),
+    },
+    future: {
+      ac: 'ac4',
+      title: 'Future Directions',
+      body: () => (
+        <>
         <p className="text-[.99rem] leading-[1.62] mb-4">{t.future.desc || 'No future directions published yet.'}</p>
         <Link to="/contact#contribute" className="inline-flex items-center gap-2 font-head font-bold text-[.82rem] border border-hair rounded-lg px-5 py-3 hover:border-muted transition-colors">
           How can I contribute?
         </Link>
-      </Section>
-
-      <Section ac="ac8" num="08" title="Collaborators">
+        </>
+      ),
+    },
+    collaborators: {
+      ac: 'ac8',
+      title: 'Collaborators',
+      body: () => (
+        <>
         {collaborators.length ? (
           <p className="text-[.97rem] leading-[1.8]">
             {collaborators.map((c, i) => (
@@ -195,9 +218,14 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No collaborators linked to this theme yet.</p>
         )}
-      </Section>
-
-      <Section ac="ac2" num="09" title="Keywords">
+        </>
+      ),
+    },
+    keywords: {
+      ac: 'ac2',
+      title: 'Keywords',
+      body: () => (
+        <>
         {topKeywords.length ? (
           <div className="flex flex-wrap gap-2">
             {topKeywords.map((k) => (
@@ -213,10 +241,14 @@ export default function Theme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No keywords have been mapped to this theme yet.</p>
         )}
-      </Section>
-
-      {t.links?.length ? (
-        <Section ac="ac8" num="10" title="Further reading">
+        </>
+      ),
+    },
+    links: {
+      ac: 'ac8',
+      title: 'Further reading',
+      body: () => (
+        <>
           <ul className="space-y-3 pl-0 list-none">
             {t.links.map((l) => (
               <li key={l[1]} className="flex flex-wrap items-baseline justify-between gap-2 border-b border-hair pb-3">
@@ -227,8 +259,24 @@ export default function Theme() {
               </li>
             ))}
           </ul>
+        </>
+      ),
+    },
+  };
+  const sectionKeys = visibleKeys(THEME_SECTIONS, t.sectionLayout, (k) => (k === 'links' ? Boolean(t.links?.length) : true));
+  const items = sectionKeys.map((k, i) => ({ num: sectionNum(i), label: sections[k].title, href: `#s${sectionNum(i)}` }));
+
+  return (
+    <InnerLayout sideItems={items}>
+      <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">{t.no} · {t.statusLabel} · {t.period}</p>
+      <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">{t.title}</h1>
+      <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">{t.one}</p>
+
+      {sectionKeys.map((k, i) => (
+        <Section key={k} ac={sections[k].ac} num={sectionNum(i)} title={sections[k].title}>
+          {sections[k].body()}
         </Section>
-      ) : null}
+      ))}
 
       <SiteFooter />
     </InnerLayout>

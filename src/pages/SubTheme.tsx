@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
+import { SUBTHEME_SECTIONS, sectionNum, visibleKeys } from '../data/sectionLayout';
 import InnerLayout from '../components/InnerLayout';
 import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
@@ -23,30 +25,21 @@ export default function SubTheme() {
   const mappedEpisodes: typeof data.episodes = [];
   const mappedEssays: typeof data.essays = [];
 
-  const items = [
-    { num: '01', label: 'About this sub-theme', href: '#s01' },
-    { num: '02', label: 'Episodes', href: '#s02' },
-    { num: '03', label: 'Essays', href: '#s03' },
-    { num: '04', label: 'Keywords', href: '#s04' },
-    { num: '05', label: 'Collaborators', href: '#s05' },
-    ...(st.tertiaryThemes?.length ? [{ num: '06', label: 'Tertiary themes', href: '#s06' }] : []),
-  ];
-
-  return (
-    <InnerLayout sideItems={items}>
-      <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">
-        {t.no} · {t.title} · Sub-theme
-      </p>
-      <h1 className="font-head font-extrabold text-[clamp(2.2rem,6.5vw,3.8rem)] leading-[1.02] tracking-tight mb-4">
-        {st.title}
-      </h1>
-      <p className="font-head font-semibold text-[1.1rem] leading-[1.5] text-muted max-w-[56ch]">{st.shortDesc}</p>
-
-      <Section ac="ac1" num="01" title="About this sub-theme">
+  const sections: Record<string, { ac: string; title: string; body: () => ReactNode }> = {
+    about: {
+      ac: 'ac1',
+      title: 'About this sub-theme',
+      body: () => (
+        <>
         <p className="text-[.99rem] leading-[1.62]">{st.longDesc || st.shortDesc}</p>
-      </Section>
-
-      <Section ac="ac6" num="02" title="Episodes">
+        </>
+      ),
+    },
+    episodes: {
+      ac: 'ac6',
+      title: 'Episodes',
+      body: () => (
+        <>
         {mappedEpisodes.length ? (
           <div className="space-y-2" />
         ) : (
@@ -55,9 +48,14 @@ export default function SubTheme() {
             mapping is done.
           </p>
         )}
-      </Section>
-
-      <Section ac="ac5" num="03" title="Essays">
+        </>
+      ),
+    },
+    essays: {
+      ac: 'ac5',
+      title: 'Essays',
+      body: () => (
+        <>
         {mappedEssays.length ? (
           <div className="space-y-2" />
         ) : (
@@ -66,9 +64,14 @@ export default function SubTheme() {
             mapping is done.
           </p>
         )}
-      </Section>
-
-      <Section ac="ac2" num="04" title="Keywords">
+        </>
+      ),
+    },
+    keywords: {
+      ac: 'ac2',
+      title: 'Keywords',
+      body: () => (
+        <>
         {st.keywords?.length ? (
           <div className="flex flex-wrap gap-2">
             {st.keywords.map((k) => (
@@ -84,9 +87,14 @@ export default function SubTheme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No keywords have been mapped to this sub-theme yet.</p>
         )}
-      </Section>
-
-      <Section ac="ac8" num="05" title="Collaborators">
+        </>
+      ),
+    },
+    collaborators: {
+      ac: 'ac8',
+      title: 'Collaborators',
+      body: () => (
+        <>
         {collaborators.length ? (
           <div className="grid sm:grid-cols-2 gap-3.5">
             {collaborators.map((c) => (
@@ -103,20 +111,44 @@ export default function SubTheme() {
         ) : (
           <p className="text-muted max-w-[62ch]">No collaborators are linked to this theme yet.</p>
         )}
-      </Section>
-
-      {st.tertiaryThemes?.length ? (
-        <Section ac="ac3" num="06" title="Tertiary themes">
+        </>
+      ),
+    },
+    tertiary: {
+      ac: 'ac3',
+      title: 'Tertiary themes',
+      body: () => (
+        <>
           <div className="space-y-3">
-            {st.tertiaryThemes.map((tier) => (
+            {(st.tertiaryThemes ?? []).map((tier) => (
               <div key={tier.slug} className="bg-card border border-hair rounded-[10px] px-5 py-4 shadow-[var(--shs)]">
                 <h4 className="font-head font-bold text-[.98rem] mb-1">{tier.title}</h4>
                 <p className="text-sm text-muted">{tier.desc}</p>
               </div>
             ))}
           </div>
+        </>
+      ),
+    },
+  };
+  const sectionKeys = visibleKeys(SUBTHEME_SECTIONS, st.sectionLayout, (k) => (k === 'tertiary' ? Boolean(st.tertiaryThemes?.length) : true));
+  const items = sectionKeys.map((k, i) => ({ num: sectionNum(i), label: sections[k].title, href: `#s${sectionNum(i)}` }));
+
+  return (
+    <InnerLayout sideItems={items}>
+      <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">
+        {t.no} · {t.title} · Sub-theme
+      </p>
+      <h1 className="font-head font-extrabold text-[clamp(2.2rem,6.5vw,3.8rem)] leading-[1.02] tracking-tight mb-4">
+        {st.title}
+      </h1>
+      <p className="font-head font-semibold text-[1.1rem] leading-[1.5] text-muted max-w-[56ch]">{st.shortDesc}</p>
+
+      {sectionKeys.map((k, i) => (
+        <Section key={k} ac={sections[k].ac} num={sectionNum(i)} title={sections[k].title}>
+          {sections[k].body()}
         </Section>
-      ) : null}
+      ))}
 
       <SiteFooter />
     </InnerLayout>
