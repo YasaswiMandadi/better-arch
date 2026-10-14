@@ -15,8 +15,21 @@ import { useLocation } from 'react-router-dom';
  */
 /** Where visitors are sent when they want to use content from the site. */
 export const CONTENT_REQUEST_EMAIL = 'ar.shubhayan.m@gmail.com';
+
+/**
+ * ===== MASTER SWITCH =====
+ * false → content protection is OFF everywhere (temporarily, while the portal
+ *         is in development): copying, selecting, right-click, printing and
+ *         screenshots/recordings/snipping all work normally; no notice screen.
+ * true  → protection is back ON for the public site exactly as before
+ *         (production builds; the console is never protected).
+ * This is the only line to change. Nothing else was removed or altered.
+ */
+const PROTECTION_MASTER_SWITCH: boolean = false;
+
 const flag = import.meta.env.VITE_PROTECT as string | undefined;
-export const PROTECTION_ENABLED = flag === '1' ? true : flag === '0' ? false : import.meta.env.PROD;
+export const PROTECTION_ENABLED =
+  PROTECTION_MASTER_SWITCH && (flag === '1' ? true : flag === '0' ? false : import.meta.env.PROD);
 
 const root = () => document.documentElement;
 const active = () => root().dataset.protect === 'on';
