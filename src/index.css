@@ -88,6 +88,14 @@ a.hp-link{color:#A3A8AD;transition:color .2s}
 a.hp-link:hover,a.hp-link:focus-visible{color:#FFFFFF}
 a.hp-solid{color:#0A0A0A}
 a.hp-ghost{color:#F1F3F5}
+/* homepage eye (src/components/VideoEye.tsx) */
+.hp-shade{text-shadow:0 0 3px #070707,0 0 10px #070707,0 0 18px #070707}
+.hp-cross{position:fixed;z-index:50;left:0;top:0;width:22px;height:22px;margin:-11px 0 0 -11px;pointer-events:none;opacity:0;transition:opacity .2s}
+.hp-cross::before,.hp-cross::after{content:"";position:absolute;background:#E4E7EA}
+.hp-cross::before{left:10px;top:0;width:2px;height:22px}
+.hp-cross::after{top:10px;left:0;height:2px;width:22px}
+@media (hover:hover) and (pointer:fine){ .hp-eye{cursor:none} }
+@media (hover:none),(pointer:coarse){ .hp-cross{display:none} }
 
 .cpt{font-style:italic;color:var(--acd, var(--deep));font-weight:500}
 .read p:first-of-type::first-letter{font:800 3rem/.8 var(--font-head);float:left;padding:6px 12px 0 0;color:var(--acd)}

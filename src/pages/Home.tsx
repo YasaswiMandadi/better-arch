@@ -1,16 +1,30 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useTheme } from '../lib/theme';
 import { Moon, Sun, ChevronDown } from 'lucide-react';
-import KeywordEye from '../components/KeywordEye';
+import VideoEye, { useEyeKeywords } from '../components/VideoEye';
 import TypeSwap from '../components/TypeSwap';
 import HeaderSearch from '../components/HeaderSearch';
 
+/** Live New Delhi time for the corner label. */
+function useDelhiClock(): string {
+  const fmt = () => new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' });
+  const [now, setNow] = useState(fmt);
+  useEffect(() => {
+    const id = setInterval(() => setNow(fmt()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return now;
+}
+
 export default function Home() {
   const { theme, toggle } = useTheme();
+  const eyeWords = useEyeKeywords();
+  const clock = useDelhiClock();
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#070707]" style={{ colorScheme: 'dark' }}>
-      <KeywordEye />
+    <div className="hp-eye relative min-h-screen min-h-[100dvh] flex flex-col overflow-hidden bg-[#070707]" style={{ colorScheme: 'dark' }}>
+      <VideoEye words={eyeWords} />
 
       {/* nav */}
       <nav className="relative z-20 flex items-center gap-6 px-6 sm:px-8 py-5 font-mono text-[12px] tracking-[.12em] text-[#E4E7EA]">
@@ -32,36 +46,45 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* hero */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 px-6 sm:px-10 lg:px-[min(9vw,120px)] pt-6 pb-16 lg:pt-10 lg:min-h-[calc(100vh-180px)]">
-        <div className="flex-1 max-w-[20ch] lg:max-w-none">
-          <p className="font-mono text-[11px] tracking-[.34em] uppercase text-[#8e9398] mb-5">
-            A spatial research agency · New Delhi · Kolkata · everywhere virtual
-          </p>
-          <h1 className="font-mono font-bold text-[clamp(1.9rem,5.4vw,4.1rem)] leading-[1.1] tracking-[.01em] text-[#E4E7EA] max-w-[18ch]">
-            This is <span className="text-[#E0825C]">The Better Architecture Project</span>.
-          </h1>
-          <p className="mt-6 font-mono text-[clamp(.85rem,1.5vw,1.02rem)] leading-[1.7] tracking-[.06em] text-[#A3A8AD] min-h-[1.7em]">
-            <TypeSwap lines={['Make Better Architecture for all...', 'Make architecture better for all...']} />
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3.5">
-            <Link
-              to="/theme/archxmedia"
-              className="hp-solid font-mono font-medium text-[11px] tracking-[.18em] uppercase rounded-full px-6 py-3.5
-                bg-[#E4E7EA] text-[#060606] hover:brightness-110 transition-all"
-            >
-              Enter the conversations
-            </Link>
-            <Link
-              to="/about"
-              className="hp-ghost font-mono font-medium text-[11px] tracking-[.18em] uppercase rounded-full px-6 py-3.5
-                border border-white/20 text-[#E4E7EA] hover:bg-white/[.06] hover:border-white/40 hover:-translate-y-0.5 transition-all"
-            >
-              What is this?
-            </Link>
-          </div>
-        </div>
+      {/* corner labels (wide screens) */}
+      <div className="hp-shade pointer-events-none absolute z-10 top-[70px] left-8 hidden md:block font-mono text-[10px] tracking-[.16em] uppercase text-[#5d6166] leading-[1.6]">
+        [B.A — Spatial Research]<br />New Delhi {clock}
+      </div>
+      <div className="hp-shade pointer-events-none absolute z-10 top-[70px] right-8 hidden md:block text-right font-mono text-[10px] tracking-[.16em] uppercase text-[#5d6166] leading-[1.6]">
+        The eye is made of<br /><b className="text-[#E0825C] font-semibold">{eyeWords.length}</b> keywords
+      </div>
 
+      {/* hero: centred over the eye */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-12">
+        <p className="hp-shade font-mono text-[11px] tracking-[.34em] uppercase text-[#8e9398] mb-3.5">
+          A spatial research agency · <span className="text-[#E0825C]">New Delhi · Kolkata</span> · everywhere virtual
+        </p>
+        <p className="hp-shade font-mono text-[clamp(.8rem,1.5vw,1rem)] tracking-[.42em] uppercase text-[#E4E7EA] mb-1">This is</p>
+        <h1 className="font-num font-normal text-[#E0825C] text-[clamp(2.6rem,6.6vw,6.4rem)] leading-[.9] tracking-[.01em] max-w-[16ch] [text-shadow:0_0_40px_rgba(0,0,0,.6)]">
+          The Better Architecture Project
+        </h1>
+        <p className="hp-shade mt-4 font-mono text-[10.5px] tracking-[.3em] uppercase text-[#5d6166]">
+          [ Est. 2025 ] &nbsp;·&nbsp; [ Media as a mirror ]
+        </p>
+        <p className="hp-shade mt-5 font-mono text-[clamp(.85rem,1.4vw,1rem)] leading-[1.7] tracking-[.06em] text-[#A3A8AD] min-h-[1.7em]">
+          <TypeSwap lines={['Make Better Architecture for all...', 'Make architecture better for all...']} />
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3.5">
+          <Link
+            to="/theme/archxmedia"
+            className="hp-solid font-mono font-medium text-[11px] tracking-[.18em] uppercase rounded-full px-6 py-3.5
+              bg-[#E4E7EA] text-[#060606] hover:brightness-110 transition-all"
+          >
+            Enter the conversations
+          </Link>
+          <Link
+            to="/about"
+            className="hp-ghost font-mono font-medium text-[11px] tracking-[.18em] uppercase rounded-full px-6 py-3.5
+              border border-white/20 bg-[#070707]/40 text-[#E4E7EA] hover:bg-white/[.06] hover:border-white/40 hover:-translate-y-0.5 transition-all"
+          >
+            What is this?
+          </Link>
+        </div>
       </div>
 
       {/* footer */}
