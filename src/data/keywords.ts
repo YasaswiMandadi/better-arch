@@ -174,3 +174,16 @@ export function rankKeywordSuggestions(all: KeywordSuggestion[], query: string, 
   const by = (a: KeywordSuggestion, b: KeywordSuggestion) => b.uses - a.uses || a.word.localeCompare(b.word);
   return [...starts.sort(by), ...contains.sort(by)].slice(0, limit);
 }
+
+/** Keyword pages always open in a new browser tab, from every page of the site.
+ * Spread onto a <Link to={keywordHref(...)}> to make it open in a new tab. */
+export const KEYWORD_LINK_PROPS = { target: '_blank', rel: 'noopener' } as const;
+
+/** True for a link to a keyword page (as built by keywordHref). */
+export const isKeywordHref = (href: string): boolean => href.startsWith('/keyword/');
+
+/** Opens a keyword page in a new tab (for clicks handled in code, e.g. the
+ * bubble map and the search results). Must be called from a click or key press. */
+export function openKeywordInNewTab(href: string): void {
+  window.open(href, '_blank', 'noopener');
+}

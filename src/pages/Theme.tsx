@@ -8,7 +8,7 @@ import ExpandableCard from '../components/ExpandableCard';
 import { useSiteData } from '../data/store';
 import { isEpisodePublished } from '../data/types';
 import { useCollaboratorRoster, useCollaboratorsForTheme } from '../data/useCollaborators';
-import { keywordHref } from '../data/keywords';
+import { KEYWORD_LINK_PROPS, keywordHref } from '../data/keywords';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 import { ExternalLink } from 'lucide-react';
 
@@ -232,6 +232,7 @@ export default function Theme() {
               <Link
                 key={k.word}
                 to={keywordHref(k.word)}
+                {...KEYWORD_LINK_PROPS}
                 className="text-[.8rem] lowercase text-deep bg-[color-mix(in_srgb,var(--red)_9%,transparent)] px-3 py-1.5 rounded-full hover:bg-[color-mix(in_srgb,var(--red)_16%,transparent)] transition-colors"
               >
                 {k.word} · {k.freq}

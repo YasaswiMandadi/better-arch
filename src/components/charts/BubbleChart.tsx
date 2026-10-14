@@ -1,12 +1,10 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { keywordHref } from '../../data/keywords';
+import { keywordHref, openKeywordInNewTab } from '../../data/keywords';
 
 interface KW { word: string; typ: string; freq: number; gloss: string }
 
 export default function BubbleChart({ kws, hue, preview }: { kws: KW[]; hue: Record<string, string>; preview?: string }) {
   const [hover, setHover] = useState<KW | null>(null);
-  const navigate = useNavigate();
 
   const placed = useMemo(() => {
     const Wv = 760, Hv = 460;
@@ -41,7 +39,7 @@ export default function BubbleChart({ kws, hue, preview }: { kws: KW[]; hue: Rec
               key={p.k.word}
               onMouseEnter={() => setHover(p.k)}
               onMouseLeave={() => setHover(null)}
-              onClick={() => navigate(keywordHref(p.k.word, preview))}
+              onClick={() => openKeywordInNewTab(keywordHref(p.k.word, preview))}
               className="cursor-pointer"
             >
               <circle cx={p.x} cy={p.y} r={p.r} fill={c} fillOpacity={hover?.word === p.k.word ? 0.32 : 0.16} stroke={c} strokeWidth={1.6} style={{ transition: 'fill-opacity .15s' }} />

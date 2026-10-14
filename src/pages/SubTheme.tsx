@@ -5,7 +5,7 @@ import InnerLayout from '../components/InnerLayout';
 import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
 import { useSiteData } from '../data/store';
-import { keywordHref } from '../data/keywords';
+import { KEYWORD_LINK_PROPS, keywordHref } from '../data/keywords';
 import { useCollaboratorsForTheme } from '../data/useCollaborators';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 
@@ -78,6 +78,7 @@ export default function SubTheme() {
               <Link
                 key={k.word}
                 to={keywordHref(k.word)}
+                {...KEYWORD_LINK_PROPS}
                 className="text-[.8rem] lowercase text-deep bg-[color-mix(in_srgb,var(--red)_9%,transparent)] px-3 py-1.5 rounded-full hover:bg-[color-mix(in_srgb,var(--red)_16%,transparent)] transition-colors"
               >
                 {k.word} · {k.freq}

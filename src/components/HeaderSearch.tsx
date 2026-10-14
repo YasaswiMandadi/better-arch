@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { useSiteSearch } from '../data/useSiteSearch';
+import { isKeywordHref, openKeywordInNewTab } from '../data/keywords';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 
 /** The header's search icon → feeds the keyword/collaborator/theme/episode/
@@ -40,6 +41,8 @@ export default function HeaderSearch({ variant }: { variant: 'dark' | 'light' })
   function go(href: string) {
     if (href.startsWith('#collaborator:')) {
       openCollaborator(href.slice('#collaborator:'.length));
+    } else if (isKeywordHref(href)) {
+      openKeywordInNewTab(href);
     } else {
       navigate(href);
     }

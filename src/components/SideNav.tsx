@@ -4,6 +4,7 @@ import { ChevronDown, Mail, PanelsTopLeft, Search, X } from 'lucide-react';
 import { useTheme } from '../lib/theme';
 import { useSiteData } from '../data/store';
 import { useSiteSearch } from '../data/useSiteSearch';
+import { isKeywordHref, openKeywordInNewTab } from '../data/keywords';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 
 export interface SideItem { num: string; label: string; href: string }
@@ -29,6 +30,8 @@ function UpperBox({ collapsed, onToggle, onNavigate }: { collapsed: boolean; onT
   function goToResult(href: string) {
     if (href.startsWith('#collaborator:')) {
       openCollaborator(href.slice('#collaborator:'.length));
+    } else if (isKeywordHref(href)) {
+      openKeywordInNewTab(href);
     } else {
       navigate(href);
     }

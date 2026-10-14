@@ -8,7 +8,7 @@ import SentimentSpider from '../components/charts/SentimentSpider';
 import CriticalityCompass from '../components/charts/CriticalityCompass';
 import { useSiteData } from '../data/store';
 import { useEpisodeAnalysis } from '../data/useEpisodeAnalysis';
-import { bestKeywordMatchForTag, keywordHref } from '../data/keywords';
+import { KEYWORD_LINK_PROPS, bestKeywordMatchForTag, keywordHref } from '../data/keywords';
 import { collaboratorSlugForName } from '../data/collaborators';
 import { useCollaborator } from '../data/useCollaborators';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
@@ -390,7 +390,7 @@ export default function Episode() {
               const match = bestKeywordMatchForTag(t, A.keywords);
               const cls = "text-[.74rem] lowercase text-deep bg-[color-mix(in_srgb,var(--red)_9%,transparent)] px-3 py-1.5 rounded-full";
               return match ? (
-                <Link key={t} to={keywordHref(match.word, pv)} className={`${cls} hover:bg-[color-mix(in_srgb,var(--red)_16%,transparent)] transition-colors`}>
+                <Link key={t} to={keywordHref(match.word, pv)} {...KEYWORD_LINK_PROPS} className={`${cls} hover:bg-[color-mix(in_srgb,var(--red)_16%,transparent)] transition-colors`}>
                   {t}
                 </Link>
               ) : (
