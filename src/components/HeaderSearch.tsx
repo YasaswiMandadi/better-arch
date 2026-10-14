@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { useSiteSearch } from '../data/useSiteSearch';
-import { isKeywordHref, openKeywordInNewTab } from '../data/keywords';
+import { KEYWORD_LINK_PROPS, isBackgroundClick, isKeywordHref } from '../data/keywords';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 
 /** The header's search icon → feeds the keyword/collaborator/theme/episode/
@@ -41,8 +41,6 @@ export default function HeaderSearch({ variant }: { variant: 'dark' | 'light' })
   function go(href: string) {
     if (href.startsWith('#collaborator:')) {
       openCollaborator(href.slice('#collaborator:'.length));
-    } else if (isKeywordHref(href)) {
-      openKeywordInNewTab(href);
     } else {
       navigate(href);
     }
@@ -91,18 +89,33 @@ export default function HeaderSearch({ variant }: { variant: 'dark' | 'light' })
                   <span className={`block text-[10px] font-semibold uppercase tracking-wide px-2 py-1 ${variant === 'dark' ? 'text-[#6b6f73]' : 'text-faint'}`}>
                     {g}
                   </span>
-                  {results.filter((r) => r.group === g).map((r) => (
-                    <button
-                      key={r.group + r.label + r.href}
-                      onClick={() => go(r.href)}
-                      className={`w-full text-left px-2 py-2 rounded-lg text-sm transition-colors ${
-                        variant === 'dark' ? 'text-[#E4E7EA] hover:bg-white/[.07]' : 'text-ink hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]'
-                      }`}
-                    >
-                      <span className="block font-medium">{r.label}</span>
-                      {r.sub && <span className={`block text-xs ${variant === 'dark' ? 'text-[#7A7F84]' : 'text-muted'}`}>{r.sub}</span>}
-                    </button>
-                  ))}
+                  {results.filter((r) => r.group === g).map((r) => {
+                    const cls = `w-full text-left px-2 py-2 rounded-lg text-sm transition-colors ${
+                      variant === 'dark' ? 'text-[#E4E7EA] hover:bg-white/[.07]' : 'text-ink hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]'
+                    }`;
+                    const body = (
+                      <>
+                        <span className="block font-medium">{r.label}</span>
+                        {r.sub && <span className={`block text-xs ${variant === 'dark' ? 'text-[#7A7F84]' : 'text-muted'}`}>{r.sub}</span>}
+                      </>
+                    );
+                    // Keyword results are real links (new tab; Ctrl/⌘+click or middle-click = background tab).
+                    return isKeywordHref(r.href) ? (
+                      <a
+                        key={r.group + r.label + r.href}
+                        href={r.href}
+                        {...KEYWORD_LINK_PROPS}
+                        onClick={(e) => { if (!isBackgroundClick(e)) { setOpen(false); setQ(''); } }}
+                        className={`block ${cls}`}
+                      >
+                        {body}
+                      </a>
+                    ) : (
+                      <button key={r.group + r.label + r.href} onClick={() => go(r.href)} className={cls}>
+                        {body}
+                      </button>
+                    );
+                  })}
                 </div>
               ))}
             </div>

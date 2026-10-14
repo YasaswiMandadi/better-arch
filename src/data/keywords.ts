@@ -175,15 +175,19 @@ export function rankKeywordSuggestions(all: KeywordSuggestion[], query: string, 
   return [...starts.sort(by), ...contains.sort(by)].slice(0, limit);
 }
 
+/** Hover hint on keyword links. Browsers don't let a website open a tab in the
+ * background; only the visitor can, with Ctrl/Cmd+click or a middle-click, and
+ * that works on every keyword link because they are all real links. */
+export const KEYWORD_LINK_HINT = 'Opens in a new tab · Ctrl/⌘+click or middle-click to open it in the background and stay here';
+
 /** Keyword pages always open in a new browser tab, from every page of the site.
  * Spread onto a <Link to={keywordHref(...)}> to make it open in a new tab. */
-export const KEYWORD_LINK_PROPS = { target: '_blank', rel: 'noopener' } as const;
+export const KEYWORD_LINK_PROPS = { target: '_blank', rel: 'noopener', title: KEYWORD_LINK_HINT } as const;
+
+/** A click with a modifier key or a non-primary button: the browser is opening
+ * the link in a background tab/window, so the page should stay as it is. */
+export const isBackgroundClick = (e: { button: number; ctrlKey: boolean; metaKey: boolean; shiftKey: boolean }): boolean =>
+  e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey;
 
 /** True for a link to a keyword page (as built by keywordHref). */
 export const isKeywordHref = (href: string): boolean => href.startsWith('/keyword/');
-
-/** Opens a keyword page in a new tab (for clicks handled in code, e.g. the
- * bubble map and the search results). Must be called from a click or key press. */
-export function openKeywordInNewTab(href: string): void {
-  window.open(href, '_blank', 'noopener');
-}

@@ -4,7 +4,7 @@ import { ChevronDown, Mail, PanelsTopLeft, Search, X } from 'lucide-react';
 import { useTheme } from '../lib/theme';
 import { useSiteData } from '../data/store';
 import { useSiteSearch } from '../data/useSiteSearch';
-import { isKeywordHref, openKeywordInNewTab } from '../data/keywords';
+import { KEYWORD_LINK_PROPS, isBackgroundClick, isKeywordHref } from '../data/keywords';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
 
 export interface SideItem { num: string; label: string; href: string }
@@ -30,8 +30,6 @@ function UpperBox({ collapsed, onToggle, onNavigate }: { collapsed: boolean; onT
   function goToResult(href: string) {
     if (href.startsWith('#collaborator:')) {
       openCollaborator(href.slice('#collaborator:'.length));
-    } else if (isKeywordHref(href)) {
-      openKeywordInNewTab(href);
     } else {
       navigate(href);
     }
@@ -94,6 +92,19 @@ function UpperBox({ collapsed, onToggle, onNavigate }: { collapsed: boolean; onT
                   <div key={g} className="py-1">
                     <span className="block text-[9.5px] font-semibold uppercase tracking-wide text-faint px-2.5 py-1">{g}</span>
                     {results.filter((r) => r.group === g).map((r) => (
+                      isKeywordHref(r.href) ? (
+                        // a real link: new tab; Ctrl/⌘+click or middle-click = background tab
+                        <a
+                          key={r.group + r.label + r.href}
+                          href={r.href}
+                          {...KEYWORD_LINK_PROPS}
+                          onClick={(e) => { if (!isBackgroundClick(e)) { setQ(''); onNavigate?.(); } }}
+                          className="block w-full text-left px-2.5 py-1.5 text-[12px] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] transition-colors"
+                        >
+                          <span className="block font-medium">{r.label}</span>
+                          {r.sub && <span className="block text-[10.5px] text-muted">{r.sub}</span>}
+                        </a>
+                      ) : (
                       <button
                         key={r.group + r.label + r.href}
                         onClick={() => goToResult(r.href)}
@@ -102,6 +113,7 @@ function UpperBox({ collapsed, onToggle, onNavigate }: { collapsed: boolean; onT
                         <span className="block font-medium">{r.label}</span>
                         {r.sub && <span className="block text-[10.5px] text-muted">{r.sub}</span>}
                       </button>
+                      )
                     ))}
                   </div>
                 ))}
