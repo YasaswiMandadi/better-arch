@@ -9,6 +9,7 @@ import SectionOrderPanel from '../components/SectionOrderPanel';
 import { EPISODE_SECTIONS, isSectionHidden } from '../../data/sectionLayout';
 import type { Episode, EpisodeAnalysis } from '../../data/types';
 import { importAnalysisHtml, importAnalysisJson, type ImportResult } from '../lib/parseAnalysisHtml';
+import { htmlToReading, readingToHtml } from '../lib/readingHtml';
 import { bestKeywordMatchForTag, collectKeywordSuggestions, rankKeywordSuggestions } from '../../data/keywords';
 import { resolveAnalysis } from '../../data/useEpisodeAnalysis';
 import { slugify } from '../../lib/slug';
@@ -371,15 +372,19 @@ export default function EpisodeAnalysisEditor() {
       {/* 04 reading */}
       <SectionHead id="s04" num="04" title="A Reading of the Conversation" mirror="section 01 · drop-cap prose" hiddenOnPage={isSectionHidden(episode.sectionLayout, 'reading')}>
         <Panel>
-          {(A?.reading ?? []).map((p, i) => (
-            <RepCard key={i} index={i}>
-              <Field label={`Paragraph ${i + 1}`}>
-                <TextArea className="min-h-[90px]" value={p} onChange={(ev) => patchAnalysis((a) => { a.reading[i] = (ev.target as any).value; })} />
-              </Field>
-              <div className="flex justify-end"><Btn size="sm" variant="danger" onClick={() => patchAnalysis((a) => { a.reading.splice(i, 1); })}>Remove</Btn></div>
-            </RepCard>
-          ))}
-          <AddRow onClick={() => patchAnalysis((a) => { a.reading.push(''); })}>+ Paragraph</AddRow>
+          {/* One box for the whole reading. Press Enter to start a new paragraph;
+              each paragraph is still saved separately, so the published page
+              (drop cap, spacing) is unchanged. */}
+          <Field label={`Reading (${(A?.reading ?? []).length} paragraph${(A?.reading ?? []).length === 1 ? '' : 's'})`}>
+            <TextArea
+              style={{ minHeight: 360 }}
+              value={readingToHtml(A?.reading)}
+              onChange={(ev) => {
+                const paragraphs = htmlToReading((ev.target as any).value);
+                patchAnalysis((a) => { a.reading = paragraphs; });
+              }}
+            />
+          </Field>
         </Panel>
       </SectionHead>
 
