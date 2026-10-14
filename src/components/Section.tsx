@@ -1,12 +1,33 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 export default function Section({
   ac, num, title, children, defaultOpen = true,
 }: { ac: string; num: string; title: string; children: ReactNode; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const id = `s${num}`;
+  const [open, setOpen] = useState(() => defaultOpen || (typeof window !== 'undefined' && window.location.hash === `#${id}`));
+
+  // A section that starts collapsed opens itself when someone jumps to it:
+  // a click on any link to "#sNN" (the "On this page" navigator, desktop and
+  // mobile), the URL's #sNN changing, or a page opened with #sNN in its URL.
+  useEffect(() => {
+    if (defaultOpen) return; // open sections never need this
+    const target = `#${id}`;
+    function onClick(ev: MouseEvent) {
+      const a = (ev.target as Element | null)?.closest?.('a[href]');
+      if (a && a.getAttribute('href') === target) setOpen(true);
+    }
+    function onHash() { if (window.location.hash === target) setOpen(true); }
+    document.addEventListener('click', onClick, true);
+    window.addEventListener('hashchange', onHash);
+    return () => {
+      document.removeEventListener('click', onClick, true);
+      window.removeEventListener('hashchange', onHash);
+    };
+  }, [id, defaultOpen]);
+
   return (
-    <section className={`${ac} border-t border-hair mt-9 pt-7 scroll-mt-20`} id={`s${num}`}>
+    <section className={`${ac} border-t border-hair mt-9 pt-7 scroll-mt-20`} id={id}>
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}

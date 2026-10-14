@@ -434,7 +434,9 @@ export default function Episode() {
           </div>
 
           {sectionKeys.map((k, i) => (
-            <Section key={k} ac={deepSections[k].ac} num={sectionNum(i)} title={deepSections[k].title}>
+            // Collapsed when the page opens (the visitor clicks a heading to read it).
+            // The key includes the episode id so moving to another episode starts collapsed again.
+            <Section key={`${e.id}:${k}`} defaultOpen={false} ac={deepSections[k].ac} num={sectionNum(i)} title={deepSections[k].title}>
               {deepSections[k].body()}
             </Section>
           ))}
@@ -443,7 +445,7 @@ export default function Episode() {
 
       {!isDeep && (
         <>
-          <Section ac="ac1" num="01" title="This episode">
+          <Section key={`${e.id}:this`} defaultOpen={false} ac="ac1" num="01" title="This episode">
             <p className="text-muted max-w-[62ch]">
               The full episode is available on Spotify above. A deep analysis record for this conversation hasn't been published yet — the exemplar full record lives on{' '}
               <Link to="/episode/axm-01" className="underline">Ep. 01 · Media as a Mirror</Link>.
@@ -453,7 +455,7 @@ export default function Episode() {
             </a>
           </Section>
 
-          <Section ac="ac8" num="02" title="Collaborators">
+          <Section key={`${e.id}:collab`} defaultOpen={false} ac="ac8" num="02" title="Collaborators">
             {collaborator ? (
               <button
                 onClick={() => open(collaborator.slug)}
