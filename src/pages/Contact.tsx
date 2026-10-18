@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import InnerLayout from '../components/InnerLayout';
 import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
@@ -20,7 +20,10 @@ export default function Contact() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
-  const [website, setWebsite] = useState(''); // honeypot: hidden from people, bots fill it
+  // Spam trap: a hidden field people never see. Deliberately has a meaningless name and no
+  // label, so phone autofill leaves it alone. The server never drops a message because of it.
+  const [trap, setTrap] = useState('');
+  const openedAt = useRef(Date.now());
 
   const items = [
     { num: '01', label: 'The form', href: '#s01' },
@@ -51,7 +54,7 @@ export default function Contact() {
       const r = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, ...form, website }),
+        body: JSON.stringify({ type, ...form, ba_check: trap, elapsed: Date.now() - openedAt.current }),
       });
       const j = (r.headers.get('content-type') || '').includes('json') ? await r.json().catch(() => null) : null;
       if (r.ok && j?.ok) {
@@ -138,9 +141,19 @@ export default function Contact() {
               <span className="block text-xs text-faint mt-1.5">Writing, research, translation, production — tell us what you bring.</span>
             </div>
           )}
-          {/* honeypot (spam trap): hidden from people and screen readers */}
+          {/* spam trap: hidden from people and screen readers; no label so autofill ignores it */}
           <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
-            <label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>
+            <input
+              type="text"
+              name="ba_check"
+              tabIndex={-1}
+              autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true"
+              data-form-type="other"
+              value={trap}
+              onChange={(e) => setTrap(e.target.value)}
+            />
           </div>
           <div>
             <label className={labelCls}>Message</label>

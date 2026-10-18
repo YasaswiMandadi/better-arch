@@ -57,8 +57,12 @@ export default async function handler(req: Req, res: Res) {
   }
   if (!body || typeof body !== 'object') return send(res, 400, { ok: false, error: 'Malformed request.' });
 
-  // Honeypot: a hidden field real visitors never fill. Bots that fill it get a quiet "ok".
-  if (clean(body.website, 200)) return send(res, 200, { ok: true });
+  // Spam signals never drop a message (phone autofill can fill hidden fields, and a lost real
+  // message is worse than a spam one). A suspicious message is still emailed, marked in the subject.
+  const flags: string[] = [];
+  if (clean(body.ba_check, 200) || clean(body.website, 200)) flags.push('hidden spam-trap field was filled');
+  const elapsed = Number(body.elapsed);
+  if (Number.isFinite(elapsed) && elapsed >= 0 && elapsed < 2500) flags.push(`sent ${Math.round(elapsed / 100) / 10}s after the page opened`);
 
   const f = {
     name: clean(body.name, LIMITS.name),
@@ -84,7 +88,7 @@ export default async function handler(req: Req, res: Res) {
   }
 
   const label = TYPES[type];
-  const subject = oneLine(`[BetterArch · ${label}] ${f.subject || `Message from ${f.name}`}`).slice(0, 250);
+  const subject = oneLine(`${flags.length ? '[Possible spam] ' : ''}[BetterArch · ${label}] ${f.subject || `Message from ${f.name}`}`).slice(0, 250);
   const rows: [string, string][] = [
     ['Type', label],
     ['Name', f.name],
@@ -93,6 +97,7 @@ export default async function handler(req: Req, res: Res) {
     ...(f.subject ? ([['Subject', f.subject]] as [string, string][]) : []),
     ...(f.guest ? ([['Proposed guest', f.guest]] as [string, string][]) : []),
     ...(f.topic ? ([['Topic', f.topic]] as [string, string][]) : []),
+    ...(flags.length ? ([['Spam check', flags.join('; ')]] as [string, string][]) : []),
   ];
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${f.msg}\n\n— Sent from the BetterArch.org contact form`;
   const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.55;color:#111">
@@ -112,6 +117,8 @@ export default async function handler(req: Req, res: Res) {
       console.error('[api/contact] Resend error', r.status, (await r.text()).slice(0, 500));
       return send(res, 502, { ok: false, error: 'The message could not be sent right now.' });
     }
+    const sent = await r.json().catch(() => ({}));
+    console.log('[api/contact] sent', (sent as any)?.id ?? '', flags.length ? `(flagged: ${flags.join('; ')})` : '');
     return send(res, 200, { ok: true });
   } catch (e: any) {
     console.error('[api/contact]', e?.message || e);
