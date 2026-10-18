@@ -17,7 +17,7 @@ export default function Sidebar() {
           key={v}
           onClick={() => go(v)}
           className={`w-full flex items-center gap-2.5 text-left px-3 py-2.5 mb-0.5 border-l-2 transition-colors ${
-            view === v ? 'border-l-rust text-ink bg-rust/[0.06]' : 'border-l-transparent text-muted hover:border-l-hair hover:text-ink'
+            view === v ? 'border-l-rust text-ink bg-rust/[0.12] font-semibold' : 'border-l-transparent text-muted hover:border-l-hair hover:text-ink hover:bg-ink/[0.04]'
           }`}
         >
           <span className={`font-mono text-[11px] w-6 ${view === v ? 'text-rust font-bold' : 'text-faint'}`}>{k}</span>

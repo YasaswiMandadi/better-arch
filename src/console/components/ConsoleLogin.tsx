@@ -22,7 +22,7 @@ export default function ConsoleLogin() {
 
   return (
     <div className="consoleApp min-h-screen grid place-items-center px-4">
-      <form onSubmit={submit} className="w-full max-w-[380px] bg-card border border-hair border-l-[3px] border-l-rust/60 rounded-sm p-7">
+      <form onSubmit={submit} className="w-full max-w-[380px] c-card bg-card border border-hair border-l-[3px] border-l-rust rounded-md p-7">
         <h1 className="font-display italic font-semibold text-[22px] tracking-tight mb-1">BetterArch Console</h1>
         <p className="text-[14px] text-muted mb-5">Sign in to edit the site. Visitors only see published content.</p>
         {remote.status === 'readonly' && remote.message && <p className="text-[13px] text-rust mb-3">{remote.message}</p>}
@@ -34,7 +34,7 @@ export default function ConsoleLogin() {
           autoComplete="current-password"
           value={pw}
           onChange={(e) => setPw(e.target.value)}
-          className="w-full bg-paper text-ink border border-hair rounded px-3 py-2.5 text-[14px] font-sans focus:outline-none focus:border-rust"
+          className="w-full bg-paper text-ink border border-hair rounded-md px-3 py-2.5 text-[14px] font-sans focus:outline-none focus:border-rust"
         />
         {err && <p role="alert" className="text-[13px] text-rust mt-2">{err}</p>}
         <button

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { useSiteSearch } from '../data/useSiteSearch';
@@ -20,6 +20,22 @@ export default function HeaderSearch({ variant }: { variant: 'dark' | 'light' })
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
+  }, [open]);
+
+  // Phones (< 640px): the results box spans the screen width just under the icon,
+  // instead of hanging off the icon (which pushed it off the left edge).
+  const [phonePlace, setPhonePlace] = useState<CSSProperties | undefined>(undefined);
+  useLayoutEffect(() => {
+    if (!open) return;
+    function place() {
+      const el = boxRef.current;
+      if (!el || window.innerWidth >= 640) { setPhonePlace(undefined); return; }
+      const top = Math.round(el.getBoundingClientRect().bottom + 10);
+      setPhonePlace({ position: 'fixed', left: 12, right: 12, top, width: 'auto', marginTop: 0, maxHeight: `calc(100dvh - ${top + 12}px)`, overflow: 'auto' });
+    }
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
   }, [open]);
 
   useEffect(() => {
@@ -62,7 +78,8 @@ export default function HeaderSearch({ variant }: { variant: 'dark' | 'light' })
       </button>
       {open && (
         <div
-          className={`absolute top-full right-0 mt-3 w-[min(90vw,380px)] rounded-[10px] p-3 shadow-[0_26px_70px_rgba(0,0,0,.35)] ${
+          style={phonePlace}
+          className={`absolute top-full right-0 mt-3 w-[min(90vw,380px)] z-50 rounded-[10px] p-3 shadow-[0_26px_70px_rgba(0,0,0,.35)] ${
             variant === 'dark'
               ? 'bg-[rgba(10,10,11,.95)] backdrop-blur-md border border-white/10'
               : 'bg-card border border-hair'

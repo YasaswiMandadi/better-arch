@@ -10,22 +10,46 @@
  * those utilities render as anywhere outside the console.
  */
 .consoleApp {
-  --paper: #EBEBE5;
-  --card: #FCFCFA;
-  --ink: #121418;
-  --muted: #5C6068;
-  --faint: #96989C;
-  --hair: #D5D4CB;
-  --hair2: #E0DFD6;
+  /* ---- LIGHT: crisp white cards on a warm off-white desk, near-black ink, BetterArch coral ---- */
+  --paper: #F1EFEA;
+  --card: #FFFFFF;
+  --ink: #0F1013;
+  --muted: #474B53;
+  --faint: #868991;
+  --hair: #D6D2C8;
+  --hair2: #E6E3DB;
 
-  --rust: #29447A;
-  --rustDeep: #18284A;
-  --moss: #276A5C;
-  --mossBg: #E2EEE9;
-  --amber: #966412;
-  --amberBg: #F7EED9;
-  --danger: #A8372A;
-  --dangerBg: #F8E7E2;
+  --rust: #C2502B;      /* accent: BetterArch coral, deepened for contrast on white */
+  --rustDeep: #8C3214;
+  --moss: #17734F;
+  --mossBg: #DAF0E5;
+  --amber: #8F6100;
+  --amberBg: #FAEDCC;
+  --danger: #B42318;
+  --dangerBg: #FCE4E0;
+
+  --c-shadow: 0 1px 2px rgba(20, 16, 10, .06), 0 10px 28px -16px rgba(20, 16, 10, .22);
+  --c-shadow-lift: 0 2px 4px rgba(20, 16, 10, .08), 0 18px 40px -18px rgba(20, 16, 10, .30);
+  --c-focus: 0 0 0 3px color-mix(in srgb, var(--rust) 22%, transparent);
+
+  /* The site's Tailwind colour utilities (bg-card, text-ink, border-hair, bg-rust…) are bound
+     to the page root; re-binding them here makes them follow the console's own palette and
+     its light/dark toggle. (Without this, dark mode showed white cards with light text.) */
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-hair: var(--hair);
+  --color-hair2: var(--hair2);
+  --color-rust: var(--rust);
+  --color-rustDeep: var(--rustDeep);
+  --color-moss: var(--moss);
+  --color-mossBg: var(--mossBg);
+  --color-amber: var(--amber);
+  --color-amberBg: var(--amberBg);
+  --color-danger: var(--danger);
+  --color-dangerBg: var(--dangerBg);
 
   --font-sans: 'Space Grotesk', system-ui, sans-serif;
   --font-display: 'Newsreader', 'Georgia', serif;
@@ -39,25 +63,38 @@
 }
 
 .dark .consoleApp {
-  --paper: #101216;
-  --card: #181B20;
-  --ink: #E7E8E4;
-  --muted: #A2A5AC;
-  --faint: #6C6F76;
-  --hair: #2F333A;
-  --hair2: #26292F;
+  /* ---- DARK: deep graphite, raised cards, bright readable ink, glowing coral ---- */
+  --paper: #0C0D0F;
+  --card: #17191D;
+  --ink: #F2F1ED;
+  --muted: #B9BCC3;
+  --faint: #7F838B;
+  --hair: #2F333B;
+  --hair2: #23262C;
 
-  --rust: #6C91D6;
-  --rustDeep: #9EBAEB;
-  --moss: #7AC4B2;
-  --mossBg: #1A2E29;
-  --amber: #D6A552;
-  --amberBg: #332B1A;
-  --danger: #E07A64;
-  --dangerBg: #3A221D;
+  --rust: #F0865D;
+  --rustDeep: #FFB596;
+  --moss: #5BCB9C;
+  --mossBg: #11302A;
+  --amber: #EBB54C;
+  --amberBg: #33290E;
+  --danger: #FF7B67;
+  --dangerBg: #3B1915;
+
+  --c-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 1px 2px rgba(0, 0, 0, .5), 0 14px 34px -18px rgba(0, 0, 0, .9);
+  --c-shadow-lift: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 2px 4px rgba(0, 0, 0, .55), 0 22px 46px -20px rgba(0, 0, 0, .95);
+  --c-focus: 0 0 0 3px color-mix(in srgb, var(--rust) 30%, transparent);
 
   color-scheme: dark;
 }
+
+/* cards, fields and the top bar (used by console components) */
+.consoleApp .c-card { box-shadow: var(--c-shadow); }
+.consoleApp .c-card-hover { transition: box-shadow .2s, transform .2s, border-color .2s; }
+.consoleApp .c-card-hover:hover { box-shadow: var(--c-shadow-lift); transform: translateY(-1px); }
+.consoleApp input:focus-visible, .consoleApp select:focus-visible, .consoleApp textarea:focus-visible { box-shadow: var(--c-focus); }
+.consoleApp .c-topbar { background: #101114; border-bottom: 1px solid #23262C; box-shadow: inset 0 -2px 0 var(--rust); }
+.dark .consoleApp .c-topbar { background: #08090A; }
 
 .consoleApp ::selection { background: color-mix(in srgb, var(--rust) 20%, transparent); }
 
@@ -65,6 +102,7 @@
 
 .consoleApp .thin-scroll::-webkit-scrollbar { width: 6px; }
 .consoleApp .thin-scroll::-webkit-scrollbar-thumb { background: var(--hair); border-radius: 4px; }
+.consoleApp { scrollbar-color: var(--hair) transparent; }
 
 .consoleApp .folio {
   font-family: var(--font-display);

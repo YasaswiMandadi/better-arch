@@ -56,7 +56,7 @@ export default function ThemeRepository() {
       )}
 
       {data.themes.map((t) => (
-        <Panel key={t.slug} className="cursor-pointer hover:border-l-rust" >
+        <Panel key={t.slug} className="c-card-hover cursor-pointer">
           <button onClick={() => go('themeEditor', t.slug)} className="text-left w-full">
             <div className="flex items-center gap-3 flex-wrap mb-2">
               <span className="font-mono text-[13px] font-semibold text-rust bg-rust/[0.08] rounded-full px-2.5 py-1">{t.no}</span>

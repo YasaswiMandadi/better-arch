@@ -3,7 +3,7 @@ import { RichText } from './RichText'
 
 export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`relative bg-card border border-hair border-l-[3px] border-l-rust/60 rounded-sm pl-5 pr-5 sm:pl-6 sm:pr-6 py-5 sm:py-6 mb-4 ${className}`}>
+    <div className={`c-card relative bg-card border border-hair border-l-[3px] border-l-rust rounded-md pl-5 pr-5 sm:pl-6 sm:pr-6 py-5 sm:py-6 mb-4 ${className}`}>
       {children}
     </div>
   )
@@ -14,7 +14,7 @@ export function Field({
 }: { label: string; hint?: string; children: ReactNode }) {
   return (
     <div className="mb-4">
-      <label className="block font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-muted mb-1.5">
+      <label className="block font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-ink/80 mb-1.5">
         {label}
       </label>
       {children}
@@ -24,7 +24,7 @@ export function Field({
 }
 
 const inputCls =
-  'w-full bg-paper text-ink border border-hair rounded px-3 py-2.5 text-[14px] font-sans focus:outline-none focus:border-rust transition-colors placeholder:text-faint'
+  'w-full bg-paper text-ink border border-hair rounded-md px-3 py-2.5 text-[14px] font-sans focus:outline-none focus:border-rust transition-colors placeholder:text-faint'
 
 const PLAIN_TYPES = new Set(['number', 'url', 'email', 'date', 'checkbox', 'range', 'file'])
 
@@ -79,7 +79,7 @@ export function Btn({
   const sizeCls = size === 'sm' ? 'text-[12px] px-3 py-1.5' : 'text-[13px] px-4 py-2.5'
   const variantCls =
     variant === 'primary'
-      ? 'bg-ink text-paper border-ink hover:bg-rustDeep hover:border-rustDeep hover:text-white'
+      ? 'bg-rust text-white border-rust shadow-sm hover:bg-rustDeep hover:border-rustDeep'
       : variant === 'danger'
       ? 'bg-card text-danger border-hair hover:border-danger'
       : 'bg-card text-ink border-hair hover:border-rust'

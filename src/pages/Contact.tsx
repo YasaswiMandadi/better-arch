@@ -6,6 +6,9 @@ import { Mail } from 'lucide-react';
 
 type FormType = 'general' | 'episode' | 'propose' | 'contribute';
 
+/** Where contact mail goes for now (testing). Change this and CONTACT_TO in Vercel together. */
+const CONTACT_EMAIL = 'ptgsaay@gmail.com';
+
 export default function Contact() {
   const [type, setType] = useState<FormType>(() => {
     const h = window.location.hash.replace('#', '');
@@ -15,6 +18,9 @@ export default function Contact() {
   });
   const [form, setForm] = useState({ name: '', email: '', org: '', subject: '', guest: '', topic: '', msg: '' });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const [website, setWebsite] = useState(''); // honeypot: hidden from people, bots fill it
 
   const items = [
     { num: '01', label: 'The form', href: '#s01' },
@@ -27,24 +33,45 @@ export default function Contact() {
     setForm((f) => ({ ...f, [k]: v }));
   }
 
-  function send() {
+  /** Emails the message (POST /api/contact → Resend → CONTACT_EMAIL). */
+  async function send() {
+    if (sending) return;
+    setError('');
+    setSent(false);
     if (!form.name.trim() || !form.email.trim() || !form.msg.trim()) {
-      alert('Name, email and message are needed.');
+      setError('Name, email and message are needed.');
       return;
     }
-    let inbox: any[] = [];
-    try { inbox = JSON.parse(localStorage.getItem('ba-inbox') || '[]'); } catch { inbox = []; }
-    inbox.unshift({ ts: new Date().toISOString(), type, ...form, status: 'new' });
-    localStorage.setItem('ba-inbox', JSON.stringify(inbox));
-    setSent(true);
-    setForm({ name: '', email: '', org: '', subject: '', guest: '', topic: '', msg: '' });
+    if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(form.email.trim())) {
+      setError('Please check the email address.');
+      return;
+    }
+    setSending(true);
+    try {
+      const r = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, ...form, website }),
+      });
+      const j = (r.headers.get('content-type') || '').includes('json') ? await r.json().catch(() => null) : null;
+      if (r.ok && j?.ok) {
+        setSent(true);
+        setForm({ name: '', email: '', org: '', subject: '', guest: '', topic: '', msg: '' });
+      } else {
+        setError(j?.error || 'The message could not be sent right now.');
+      }
+    } catch {
+      setError('The message could not be sent right now.');
+    } finally {
+      setSending(false);
+    }
   }
 
   function mailtoHref() {
     const subjectPrefix =
       type === 'episode' ? 'Episode request' : type === 'propose' ? 'Project proposal' : type === 'contribute' ? 'Contribution' : 'Enquiry';
     const body = `${form.msg}\n\n${form.name}${form.org ? ' · ' + form.org : ''}${form.guest ? '\nProposed guest: ' + form.guest : ''}${form.topic ? '\nTopic: ' + form.topic : ''}`;
-    return `mailto:hello@betterarch.org?subject=${encodeURIComponent(`[${subjectPrefix}] ${form.subject || ''}`)}&body=${encodeURIComponent(body)}`;
+    return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`[${subjectPrefix}] ${form.subject || ''}`)}&body=${encodeURIComponent(body)}`;
   }
 
   const inputCls = "w-full bg-card border border-hair rounded-lg px-3.5 py-3 text-[.95rem] outline-none focus:border-red transition-colors";
@@ -55,7 +82,7 @@ export default function Contact() {
       <p className="font-head font-semibold text-[11px] tracking-[.2em] uppercase text-red mb-4.5">Contact · The Better Architecture Project</p>
       <h1 className="font-head font-extrabold text-[clamp(2.4rem,7.5vw,4.4rem)] leading-[1.02] tracking-tight mb-4">Write to us.</h1>
       <p className="font-head font-semibold text-[1.18rem] leading-[1.5] text-muted max-w-[56ch]">
-        General enquiries, collaborations, a request to sit down for an episode, a project to propose, or a way to contribute: every route runs through the same form. Submissions land in the Console inbox; we reply from there.
+        General enquiries, collaborations, a request to sit down for an episode, a project to propose, or a way to contribute: every route runs through the same form. Submissions reach us by email and we reply to the address you give.
       </p>
 
       <Section ac="ac1" num="01" title="The form">
@@ -111,21 +138,35 @@ export default function Contact() {
               <span className="block text-xs text-faint mt-1.5">Writing, research, translation, production — tell us what you bring.</span>
             </div>
           )}
+          {/* honeypot (spam trap): hidden from people and screen readers */}
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+            <label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>
+          </div>
           <div>
             <label className={labelCls}>Message</label>
             <textarea className={`${inputCls} min-h-[120px] resize-y`} value={form.msg} onChange={(e) => set('msg', e.target.value)} />
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-1">
-            <button onClick={send} className="font-head font-bold text-[.82rem] bg-ink text-paper rounded-lg px-5 py-3 hover:bg-deep hover:text-white transition-colors">Send</button>
+            <button onClick={send} disabled={sending} className="font-head font-bold text-[.82rem] bg-ink text-paper rounded-lg px-5 py-3 hover:bg-deep hover:text-white transition-colors disabled:opacity-60 disabled:cursor-wait">
+              {sending ? 'Sending…' : 'Send'}
+            </button>
             <a href={mailtoHref()} className="font-head font-bold text-[.82rem] border border-hair rounded-lg px-5 py-3 inline-flex items-center gap-2 hover:border-muted transition-colors">
               <Mail size={14} /> Or open in your mail app
             </a>
           </div>
 
           {sent && (
-            <div className="bg-[var(--okbg,transparent)] border border-hair text-ink rounded-lg px-4 py-3.5 text-sm mt-2">
-              Received. Your note is in the Console inbox; we will write back to the email above.
+            <div role="status" className="bg-[var(--okbg,transparent)] border border-hair text-ink rounded-lg px-4 py-3.5 text-sm mt-2">
+              Sent. Thank you, we will write back to the email you gave.
+            </div>
+          )}
+          {error && (
+            <div role="alert" className="bg-[var(--warnbg,transparent)] border border-hair text-ink rounded-lg px-4 py-3.5 text-sm mt-2">
+              {error}{' '}
+              {error !== 'Name, email and message are needed.' && error !== 'Please check the email address.' && (
+                <>You can also <a href={mailtoHref()} className="underline font-semibold">send it from your mail app</a>; your text is still in the form.</>
+              )}
             </div>
           )}
         </div>
