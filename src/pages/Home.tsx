@@ -27,15 +27,18 @@ export default function Home() {
       <VideoEye words={eyeWords} />
 
       {/* nav */}
-      <nav className="relative z-20 flex items-center gap-6 px-6 sm:px-8 py-5 font-mono text-[12px] tracking-[.12em] text-[#E4E7EA]">
+      {/* phones: brand + search + Light/Dark on the first row, the four links on a second row */}
+      <nav className="relative z-20 flex flex-wrap items-center gap-x-4 md:gap-x-6 gap-y-1 px-4 sm:px-8 pt-4 pb-2 md:py-5 font-mono text-[12px] tracking-[.12em] text-[#E4E7EA]">
         <Link to="/" className="hp-brand font-bold tracking-[.16em] whitespace-nowrap">
           BETTERARCH<b className="text-[#E0825C]">.ORG</b>
         </Link>
         <span className="flex-1" />
-        <Link to="/" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Home</Link>
-        <Link to="/themes" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Themes</Link>
-        <Link to="/essays" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Essays</Link>
-        <Link to="/contact" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Contact Us</Link>
+        <div className="order-last md:order-none w-full md:w-auto flex items-center justify-between md:justify-end gap-x-4 md:gap-x-6 text-[11px] md:text-[12px]">
+          <Link to="/" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Home</Link>
+          <Link to="/themes" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Themes</Link>
+          <Link to="/essays" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2">Essays</Link>
+          <Link to="/contact" className="hp-link uppercase text-[#7A7F84] hover:text-[#E4E7EA] transition-colors py-2 whitespace-nowrap">Contact Us</Link>
+        </div>
         <HeaderSearch variant="dark" />
         <button
           onClick={toggle}

@@ -26,7 +26,10 @@ const RGB = [224, 130, 92]; // BetterArch coral (#E0825C)
 const BG = '#070707'; // the homepage background
 const SPEED = 1.5; // eye video playback rate
 const ZOOM = 1.2; // the eye shown ~15% bigger than a plain "cover" fit (also room for the drift)
-const PHONE_PORTRAIT_SCALE = 0.65; // phones held upright: the eye 35% smaller (laptop/landscape unchanged)
+// Phones held upright: the eye is sized to the screen WIDTH (not its height), so the
+// whole eye shape fits across the screen, corners just cropped (laptop/landscape unchanged).
+const PHONE_EYE_WIDTH = 1.55; // video width as a multiple of the screen width
+const AMBIENT = 0.08; // faint words above/below the eye on phones, so the screen never looks empty
 /** A phone held upright: narrow screen, taller than wide. */
 const isPhonePortrait = (w: number, h: number) => w < 768 && h > w;
 const LEVELS = 14;
@@ -75,7 +78,8 @@ export default function VideoEye({ words }: { words: string[] }) {
     if (!ctx || !pctx) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let W = 0, H = 0, FS = 9, cw = 6, chh = 11, cols = 0, rows = 0, zoom = ZOOM;
+    let W = 0, H = 0, FS = 9, cw = 6, chh = 11, cols = 0, rows = 0, phone = false;
+    let bandTop = 0, bandBot = 0; // rows where the eye starts/ends (whole screen except on upright phones)
     let chars: string[] = [];
     let glyph: ({ g: string; until: number } | null)[] = [];
 
@@ -84,7 +88,7 @@ export default function VideoEye({ words }: { words: string[] }) {
       W = window.innerWidth;
       H = window.innerHeight;
       FS = W < 720 ? 8 : 9;
-      zoom = isPhonePortrait(W, H) ? ZOOM * PHONE_PORTRAIT_SCALE : ZOOM; // re-checked on rotate/resize
+      phone = isPhonePortrait(W, H); // re-checked on rotate/resize
       cvs!.width = Math.round(W * dpr);
       cvs!.height = Math.round(H * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -139,7 +143,7 @@ export default function VideoEye({ words }: { words: string[] }) {
     function sample(): Uint8ClampedArray | null {
       if (!(vid!.readyState >= 2 && vid!.videoWidth)) return null;
       const vw = vid!.videoWidth, vh = vid!.videoHeight;
-      const s = Math.max((cols * cw) / vw, (rows * chh) / vh) * zoom;
+      const s = phone ? ((cols * cw) / vw) * PHONE_EYE_WIDTH : Math.max((cols * cw) / vw, (rows * chh) / vh) * ZOOM;
       const sw = (cols * cw) / s, sh = (rows * chh) / s;
       const sx = (vw - sw) / 2 + (par.x * (vw - sw)) / 2;
       const sy = (vh - sh) / 2 + (par.y * (vh - sh)) / 2;
@@ -150,6 +154,8 @@ export default function VideoEye({ words }: { words: string[] }) {
       const x1 = Math.min(vw, sx + sw), y1 = Math.min(vh, sy + sh);
       if (x1 <= x0 || y1 <= y0) return null;
       pctx!.clearRect(0, 0, cols, rows);
+      bandTop = ((y0 - sy) * rows) / sh;
+      bandBot = bandTop + ((y1 - y0) * rows) / sh;
       pctx!.drawImage(vid!, x0, y0, x1 - x0, y1 - y0,
         ((x0 - sx) * cols) / sw, ((y0 - sy) * rows) / sh, ((x1 - x0) * cols) / sw, ((y1 - y0) * rows) / sh);
       return pctx!.getImageData(0, 0, cols, rows).data;
@@ -191,15 +197,25 @@ export default function VideoEye({ words }: { words: string[] }) {
 
       for (const b of buckets) b.length = 0;
       const lens2 = LENS * LENS;
+      const feather = Math.max(2, (bandBot - bandTop) * 0.18);
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const i = r * cols + c;
           if (chars[i] === ' ' || chars[i] === undefined) continue;
           const p = i * 4;
-          if (px[p + 3] < 128) continue; // outside the video (phones held upright): stays empty
-          const lum = (px[p] * 0.299 + px[p + 1] * 0.587 + px[p + 2] * 0.114) / 255;
-          let a = Math.min(1, Math.max(0, (lum - LO) / (HI - LO)));
-          a = Math.pow(a, 1.15); // dark parts stay empty, mid-tones stay readable
+          let a: number;
+          if (px[p + 3] < 128) {
+            a = AMBIENT; // above/below the eye on upright phones: faint words
+          } else {
+            const lum = (px[p] * 0.299 + px[p + 1] * 0.587 + px[p + 2] * 0.114) / 255;
+            a = Math.min(1, Math.max(0, (lum - LO) / (HI - LO)));
+            a = Math.pow(a, 1.15); // dark parts stay empty, mid-tones stay readable
+            // soften the eye's top/bottom edge where it ends inside the screen (upright phones)
+            const top = bandTop > 0.5 ? (r - bandTop) / feather : 1;
+            const bot = bandBot < rows - 0.5 ? (bandBot - r) / feather : 1;
+            const e = Math.max(0, Math.min(1, top, bot));
+            if (e < 1) a = AMBIENT + (a - AMBIENT) * e;
+          }
           if (pointerIn) {
             const dx = c * cw + cw / 2 - mx, dy = r * chh + chh / 2 - my, d2 = dx * dx + dy * dy;
             if (d2 < lens2) a = Math.min(1, a + 0.55 * (1 - Math.sqrt(d2) / LENS));

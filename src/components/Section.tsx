@@ -27,7 +27,7 @@ export default function Section({
   }, [id, defaultOpen]);
 
   return (
-    <section className={`${ac} border-t border-hair mt-9 pt-7 scroll-mt-20`} id={id}>
+    <section className={`${ac} border-t border-hair mt-9 pt-7 scroll-mt-28 md:scroll-mt-20`} id={id}>
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}

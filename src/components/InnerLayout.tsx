@@ -9,7 +9,7 @@ export default function InnerLayout({
   sideItems: SideItem[];
 }) {
   return (
-    <div className="pt-[54px]">
+    <div className="pt-[94px] md:pt-[54px]">
       <Topbar />
       <SideNav items={sideItems} />
       <main className="lg:pl-[268px]">
