@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { EYE_FONTS, type HomeEyeSettings } from '../../data/homeEye';
+import { EyeFlow } from './flow';
 
 /**
  * The homepage eye: a looping video drawn as a field of words (port of the client's
@@ -101,6 +102,10 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
     let rowBuf: Int16Array[] = [], rowHi: Uint8Array[] = [], rowSettle: Float32Array[] = [];
     let rowSpans: { s: number; e: number; next: number }[][] = [];
     let bPrev = new Float32Array(0), ph = new Float32Array(0), sp = new Float32Array(0), nextFlip = new Float32Array(0);
+    // cursor flow: the mouse stirs the image like ink in water (see flow.ts); bImg holds this frame's image brightness per cell
+    const flow = new EyeFlow();
+    const srcXY = new Float32Array(2);
+    let bImg = new Float32Array(0), flowT = 0, lastPX = NaN, lastPY = NaN;
     let bgOn = new Uint8Array(0), jit = new Int8Array(0);
     const atlas = { n: document.createElement('canvas'), b: document.createElement('canvas'), hn: document.createElement('canvas'), hb: document.createElement('canvas') };
 
@@ -257,6 +262,7 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
       sample.width = COLS;
       sample.height = ROWS;
       bPrev = new Float32Array(N); ph = new Float32Array(N); sp = new Float32Array(N); nextFlip = new Float32Array(N);
+      bImg = new Float32Array(N); flow.resize(COLS, ROWS); lastPX = lastPY = NaN;
       bgOn = new Uint8Array(N); jit = new Int8Array(N);
       for (let i = 0; i < N; i++) {
         ph[i] = Math.random() * Math.PI * 2; sp[i] = 0.5 + Math.random() * 2.2; bgOn[i] = Math.random() < 0.45 ? 1 : 0;
@@ -370,13 +376,19 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
       my = e.clientY - (fixed ? 0 : r.top);
       pointerIn = mx >= 0 && my >= 0 && mx <= W && my <= H;
       if (pointerIn) { parT.x = (mx / W - 0.5) * 2; parT.y = (my / H - 0.5) * 2; }
+      // cursor flow: feed the path since the last move (in cell units) to the fluid
+      if (pointerIn && !reduce && cfg().flow > 0 && CW > 0) {
+        const cx = mx / CW, cy = my / CH;
+        if (lastPX === lastPX) flow.push(lastPX, lastPY, cx, cy);
+        lastPX = cx; lastPY = cy;
+      } else { lastPX = lastPY = NaN; }
       if (cross) {
         const overUi = (e.target as Element | null)?.closest?.('a, button, input, textarea, select, label, [role="button"], [role="dialog"]');
         cross.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
         cross.style.opacity = overUi || !pointerIn ? '0' : '1';
       }
     }
-    function onLeave() { pointerIn = false; mx = my = -9999; if (cross) cross.style.opacity = '0'; }
+    function onLeave() { pointerIn = false; mx = my = -9999; lastPX = lastPY = NaN; if (cross) cross.style.opacity = '0'; }
 
     // ---------------- render ----------------
     let LO = 0.2, HI_L = 0.8, last = 0, raf = 0, gap = 33;
@@ -401,6 +413,13 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
       ctx!.fillStyle = c.bg;
       ctx!.fillRect(0, 0, W, H);
       const d = sampleFrame();
+
+      // cursor flow: advance the fluid (time-based, so a slower draw rate doesn't change the feel)
+      const fdt = flowT ? Math.min(3, (t - flowT) / 33.3) : 1;
+      flowT = t;
+      if (c.flow > 0 && !reduce) flow.step(fdt, { strength: c.flow, linger: c.flowLinger });
+      else if (flow.energy > 0) flow.calm();
+      const warp = flow.energy > 0;
 
       if (wordMode) churnRows(t, c.seam && seamW > 0 && !reduce ? Math.sin(Math.PI * seamW) * 0.6 : 0);
 
@@ -428,17 +447,35 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
       const statics = c.statics, torch = c.torch && pointerIn, lens2 = LENS * LENS;
       const step = (t / 45) | 0;
       const flick = !reduce;
-      for (let row = 0, i = 0, k = 0; row < ROWS; row++) {
+      // the image's brightness per cell (0 where there is no video)
+      for (let i = 0, k = 0; i < N; i++, k += 4) {
+        let b = 0;
+        if (d && d[k + 3] >= 128) {
+          let lum = (0.2126 * d[k] + 0.7152 * d[k + 1] + 0.0722 * d[k + 2]) / 255;
+          if (c.autoLevels) lum = Math.min(1, Math.max(0, (lum - LO) / Math.max(0.02, HI_L - LO)));
+          if (c.invert) lum = 1 - lum;
+          b = (lum - 0.5) * c.contrast + 0.5 + c.bright;
+          if (b < 0) b = 0; else if (b > 1) b = 1;
+        }
+        bImg[i] = b;
+      }
+      const maxC = COLS - 1.001, maxR = ROWS - 1.001;
+      for (let row = 0, i = 0; row < ROWS; row++) {
         const y = row * CH;
         const buf = wordMode ? rowBuf[row] : null, hb = wordMode ? rowHi[row] : null, stl = wordMode ? rowSettle[row] : null;
-        for (let col = 0; col < COLS; col++, i++, k += 4) {
-          let b = 0;
-          if (d && d[k + 3] >= 128) {
-            let lum = (0.2126 * d[k] + 0.7152 * d[k + 1] + 0.0722 * d[k + 2]) / 255;
-            if (c.autoLevels) lum = Math.min(1, Math.max(0, (lum - LO) / Math.max(0.02, HI_L - LO)));
-            if (c.invert) lum = 1 - lum;
-            b = (lum - 0.5) * c.contrast + 0.5 + c.bright;
-            if (b < 0) b = 0; else if (b > 1) b = 1;
+        for (let col = 0; col < COLS; col++, i++) {
+          let b = bImg[i];
+          if (warp) {
+            // read the image from where the fluid has carried this cell's view (smooth, between cells)
+            flow.source(col, row, srcXY);
+            let sx = srcXY[0], sy = srcXY[1];
+            if (sx < 0) sx = 0; else if (sx > maxC) sx = maxC;
+            if (sy < 0) sy = 0; else if (sy > maxR) sy = maxR;
+            const x0 = sx | 0, y0 = sy | 0, fx = sx - x0, fy = sy - y0, q = y0 * COLS + x0;
+            const x1 = x0 + 1 < COLS ? 1 : 0, y1 = y0 + 1 < ROWS ? COLS : 0;
+            const top = bImg[q] + (bImg[q + x1] - bImg[q]) * fx;
+            const bot = bImg[q + y1] + (bImg[q + y1 + x1] - bImg[q + y1]) * fx;
+            b = top + (bot - top) * fy;
           }
           if (torch) {
             const dx = col * CW + CW / 2 - mx, dy = y + CH / 2 - my, d2 = dx * dx + dy * dy;
@@ -503,6 +540,8 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
     document.addEventListener('pointerleave', onLeave);
     document.addEventListener('pointerdown', startOnTap, { once: true });
     document.addEventListener('visibilitychange', onVis);
+    const onBlur = () => { lastPX = lastPY = NaN; };
+    window.addEventListener('blur', onBlur);
 
     let alive = true;
     const f = EYE_FONTS[cfg().font];
@@ -522,6 +561,7 @@ export default function EyeField({ settings, words, highlight, sources, fixed, c
       document.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('pointerdown', startOnTap);
       document.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener('blur', onBlur);
       vA.removeEventListener('timeupdate', onTime);
       vA.removeEventListener('error', onErr, true);
       for (const v of [vA, vB]) { v.pause(); v.removeAttribute('src'); while (v.firstChild) v.removeChild(v.firstChild); v.load(); }

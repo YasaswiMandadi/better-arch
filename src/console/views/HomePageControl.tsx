@@ -406,6 +406,8 @@ export default function HomePageControl() {
               <Range label="Burst" value={draft.burst} min={0} max={400} step={10} fmt={(v) => `${Math.round(v)}ms`} onChange={(v) => set('burst', v)} hint="Scramble time before a swapped word settles" />
               <Range label="Smooth" value={draft.smooth} min={0} max={0.9} step={0.05} fmt={pct} onChange={(v) => set('smooth', v)} hint="Smooths brightness changes between frames" />
               <Row label="Static" hint="Faint flickering words in the dark areas"><Toggle checked={draft.statics} onChange={(v) => set('statics', v)} label={draft.statics ? 'On' : 'Off'} /></Row>
+              <Range label="Cursor flow" value={draft.flow} min={0} max={1} step={0.05} fmt={(v) => (v === 0 ? 'Off' : pct(v))} onChange={(v) => set('flow', v)} hint="Moving the mouse stirs the eye like ink in water (0 = off)" />
+              <Range label="Flow linger" value={draft.flowLinger} min={0} max={1} step={0.05} fmt={pct} onChange={(v) => set('flowLinger', v)} hint="How long the swirl keeps moving before the eye settles" />
             </Group>
             <Group title="Look">
               <Row label="Font"><Select value={draft.font} onChange={(e) => set('font', e.target.value as EyeFont)} aria-label="Font">{Object.entries(EYE_FONTS).map(([k, f]) => <option key={k} value={k}>{f.label}</option>)}</Select></Row>

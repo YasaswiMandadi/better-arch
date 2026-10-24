@@ -58,6 +58,8 @@ export interface HomeEyeSettings {
   burst: number; // 0–400 ms: scramble before a swapped word settles
   smooth: number; // 0–0.9: temporal smoothing of brightness
   statics: boolean; // faint flickering words in the dark areas
+  flow: number; // 0–1: how strongly the mouse stirs the eye like ink in water (0 = off)
+  flowLinger: number; // 0–1: how long the stirred image keeps flowing before it settles
 
   // ---- loop ----
   blend: number; // 0.1–1.5 s crossfade at the loop seam
@@ -99,6 +101,8 @@ export const HOME_EYE_DEFAULTS: HomeEyeSettings = {
   burst: 120,
   smooth: 0.3,
   statics: true,
+  flow: 0.6,
+  flowLinger: 0.5,
   blend: 0.5,
   seam: true,
   font: 'robotomono',
@@ -168,6 +172,8 @@ export function resolveHomeEye(saved: Partial<HomeEyeSettings> | undefined): Hom
     burst: num(s.burst, D.burst, 0, 400),
     smooth: num(s.smooth, D.smooth, 0, 0.9),
     statics: bool(s.statics, D.statics),
+    flow: num(s.flow, D.flow, 0, 1),
+    flowLinger: num(s.flowLinger, D.flowLinger, 0, 1),
     blend: num(s.blend, D.blend, 0.1, 1.5),
     seam: bool(s.seam, D.seam),
     font: s.font && s.font in EYE_FONTS ? s.font : D.font,
