@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTheme } from '../lib/theme';
 import { Moon, Sun, ChevronDown } from 'lucide-react';
-import VideoEye, { useEyeKeywords } from '../components/VideoEye';
+import VideoEye from '../components/VideoEye';
+import { useHomeEye } from '../data/useHomeEye';
 import TypeSwap from '../components/TypeSwap';
 import HeaderSearch from '../components/HeaderSearch';
 
@@ -19,12 +20,12 @@ function useDelhiClock(): string {
 
 export default function Home() {
   const { theme, toggle } = useTheme();
-  const eyeWords = useEyeKeywords();
+  const eye = useHomeEye();
   const clock = useDelhiClock();
 
   return (
-    <div className="hp-eye relative min-h-screen min-h-[100dvh] flex flex-col overflow-hidden bg-[#070707]" style={{ colorScheme: 'dark' }}>
-      <VideoEye words={eyeWords} />
+    <div className="hp-eye relative min-h-screen min-h-[100dvh] flex flex-col overflow-hidden" style={{ colorScheme: 'dark', background: eye.settings.bg }}>
+      <VideoEye eye={eye} />
 
       {/* nav */}
       {/* phones: brand + search + Light/Dark on the first row, the four links on a second row */}
@@ -54,7 +55,7 @@ export default function Home() {
         [B.A — Spatial Research]<br />New Delhi {clock}
       </div>
       <div className="hp-shade pointer-events-none absolute z-10 top-[70px] right-8 hidden md:block text-right font-mono text-[10px] tracking-[.16em] uppercase text-[#5d6166] leading-[1.6]">
-        The eye is made of<br /><b className="text-[#E0825C] font-semibold">{eyeWords.length}</b> keywords
+        The eye is made of<br /><b className="text-[#E0825C] font-semibold">{eye.words.length + eye.highlight.length}</b> keywords
       </div>
 
       {/* hero: centred over the eye */}

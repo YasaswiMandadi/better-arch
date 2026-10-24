@@ -17,6 +17,7 @@ import CollaboratorRepository from './views/CollaboratorRepository';
 import CollaboratorEditor from './views/CollaboratorEditor';
 import KeywordRepository from './views/KeywordRepository';
 import ReferenceRepository from './views/ReferenceRepository';
+import HomePageControl from './views/HomePageControl';
 import type { ViewName } from './types';
 import { NAV_SECTION } from './nav';
 import type { ComponentType } from 'react';
@@ -34,10 +35,11 @@ const VIEWS: Partial<Record<ViewName, ComponentType>> = {
   collaboratorEditor: CollaboratorEditor,
   keywords: KeywordRepository,
   references: ReferenceRepository,
+  homepage: HomePageControl,
 };
 
 const MOBILE_NAV: [ViewName, string][] = [
-  ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
+  ['homepage', 'Home page'], ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
   ['collaborators', 'Collaborators'], ['keywords', 'Keywords'], ['references', 'References'],
 ];
 

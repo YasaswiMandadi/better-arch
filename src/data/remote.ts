@@ -113,3 +113,32 @@ export async function loginRequest(password: string): Promise<{ ok: true; token:
     return { ok: false, error: 'Could not reach the server.' };
   }
 }
+
+/** Uploads the converted homepage eye video (admin). Resolves to an error message, or null on success. */
+export async function uploadEyeVideo(token: string | null, video: { id: string; mime: string; base64: string }): Promise<string | null> {
+  if (!token) return 'Sign in again to upload.';
+  try {
+    const r = await fetch('/api/eye-video', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id: video.id, mime: video.mime, data: video.base64 }),
+    });
+    const j = await readJson(r);
+    if (r.ok && j?.ok) return null;
+    return j?.error || `Upload failed (${r.status}).`;
+  } catch {
+    return 'Could not reach the server.';
+  }
+}
+
+/** Removes the uploaded eye video (admin); the homepage falls back to the built-in eye. */
+export async function deleteEyeVideo(token: string | null): Promise<string | null> {
+  if (!token) return 'Sign in again to change the video.';
+  try {
+    const r = await fetch('/api/eye-video', { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    const j = await readJson(r);
+    return r.ok && j?.ok ? null : j?.error || `Request failed (${r.status}).`;
+  } catch {
+    return 'Could not reach the server.';
+  }
+}

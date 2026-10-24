@@ -15,6 +15,12 @@ function client(): Promise<MongoClient> {
   return clientPromise;
 }
 
+/** The site's database (also used for uploaded media such as the homepage eye video). */
+export async function mongoDb() {
+  const c = await client();
+  return c.db(process.env.MONGODB_DB || 'betterarch');
+}
+
 export async function mongoStore(): Promise<ItemsStore> {
   const c = await client();
   const col = c.db(process.env.MONGODB_DB || 'betterarch').collection<ItemDoc>('items');

@@ -115,3 +115,4 @@ export type ViewName =
   | 'collaboratorEditor'
   | 'keywords'
   | 'references'
+  | 'homepage'

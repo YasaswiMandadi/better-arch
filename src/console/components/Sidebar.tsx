@@ -2,6 +2,10 @@ import { useConsole } from '../store/useConsole'
 import type { ViewName } from '../types'
 import { NAV_SECTION } from '../nav'
 
+const SITE: [ViewName, string, string][] = [
+  ['homepage', 'HP', 'Home page'],
+]
+
 const NAV: [ViewName, string, string][] = [
   ['themes', 'TH', 'Theme Repository'],
   ['essays', 'ES', 'Essay Repository'],
@@ -17,8 +21,15 @@ export default function Sidebar() {
 
   return (
     <nav className="hidden md:block bg-card border-r border-hair px-3 py-4 pb-10 sticky top-[60px] h-[calc(100vh-60px)] overflow-y-auto thin-scroll">
-      <div className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] text-faint px-3 pt-2 pb-2">01 · Repositories</div>
-      {NAV.map(([v, k, t]) => (
+      <div className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] text-faint px-3 pt-2 pb-2">01 · Site</div>
+      {SITE.map(([v, k, t]) => item(v, k, t))}
+      <div className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.2em] text-faint px-3 pt-5 pb-2">02 · Repositories</div>
+      {NAV.map(([v, k, t]) => item(v, k, t))}
+    </nav>
+  )
+
+  function item(v: ViewName, k: string, t: string) {
+    return (
         <button
           key={v}
           onClick={() => go(v)}
@@ -29,7 +40,6 @@ export default function Sidebar() {
           <span className={`font-mono text-[11px] w-6 ${current === v ? 'text-rust font-bold' : 'text-faint'}`}>{k}</span>
           <span className="font-sans text-[13px] font-medium flex-1">{t}</span>
         </button>
-      ))}
-    </nav>
-  )
+    )
+  }
 }
