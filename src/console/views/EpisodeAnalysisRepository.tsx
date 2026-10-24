@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useConsole } from '../store/useConsole';
 import { useSiteData } from '../../data/store';
-import { Btn, Pill, StatusPill, VHead } from '../components/ui';
+import { Btn, Panel, Pill, StatusPill, VHead } from '../components/ui';
 import { randId } from '../lib/storage';
 import { isEpisodePublished } from '../../data/types';
+import { resolveAnalysis } from '../../data/useEpisodeAnalysis';
 
 /**
  * Lists every live episode (from the shared SiteDataProvider store — the
@@ -17,7 +18,7 @@ export default function EpisodeAnalysisRepository() {
   const { data, update } = useSiteData();
   const [filter, setFilter] = useState('all');
 
-  const list = data.episodes.filter((e) => filter === 'all' || e.season === filter);
+  const list = data.episodes.filter((e) => filter === 'all' || (filter === 'draft' ? !isEpisodePublished(e) : e.season === filter));
 
   function addEpisode() {
     const id = randId('axm');
@@ -38,61 +39,52 @@ export default function EpisodeAnalysisRepository() {
     go('episodeAnalysisEditor', id);
   }
 
+  const drafts = data.episodes.filter((e) => !isEpisodePublished(e)).length;
+  const themeTitle = (slug: string) => (data.themes.find((x) => x.slug === slug)?.title ?? slug).replace(/<[^>]*>/g, '');
+
   return (
     <div>
       <VHead
-        title="Episode Analysis"
-        sub="Every episode in the live store. Open a row to edit its metadata and upload its deep-analysis JSON — this writes straight to the public Episode page, the same way Theme edits do."
+        title="Episode Repository"
+        sub="Every episode on the site, published and draft. Click a card to edit its details and upload its analysis template; changes go straight to the public episode page."
       >
         <Btn variant="primary" onClick={addEpisode}>+ New episode</Btn>
       </VHead>
 
       <div className="flex items-center gap-2 flex-wrap mb-4">
-        <Pill active={filter === 'all'} onClick={() => setFilter('all')}>All</Pill>
-        {data.themes.map((t) => (
-          <Pill key={t.slug} active={filter === t.slug} onClick={() => setFilter(t.slug)}>{t.title}</Pill>
-        ))}
+        <Pill active={filter === 'all'} onClick={() => setFilter('all')}>{`All (${data.episodes.length})`}</Pill>
+        {drafts > 0 && <Pill active={filter === 'draft'} onClick={() => setFilter('draft')}>{`Drafts (${drafts})`}</Pill>}
+        {data.themes.map((t) => {
+          const n = data.episodes.filter((e) => e.season === t.slug).length;
+          return n ? <Pill key={t.slug} active={filter === t.slug} onClick={() => setFilter(t.slug)}>{`${themeTitle(t.slug)} (${n})`}</Pill> : null;
+        })}
       </div>
 
-      <div className="bg-card border border-hair rounded overflow-x-auto">
-        <table className="w-full text-[13.5px]">
-          <thead>
-            <tr className="text-left">
-              {['Ep', 'Title', 'Guest', 'Theme', 'Analysis', 'Status', ''].map((h) => (
-                <th key={h} className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted px-3.5 py-2.5 border-b border-hair bg-ink/[0.02]">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {list.length ? list.map((e) => {
-              const t = data.themes.find((x) => x.slug === e.season);
-              return (
-                <tr key={e.id} className="hover:bg-rust/[0.04] cursor-pointer" onClick={() => go('episodeAnalysisEditor', e.id)}>
-                  <td className="px-3.5 py-2.5 border-t border-hair2">{e.no}</td>
-                  <td className="px-3.5 py-2.5 border-t border-hair2"><b>{e.title || '(untitled)'}</b></td>
-                  <td className="px-3.5 py-2.5 border-t border-hair2">{e.guest}</td>
-                  <td className="px-3.5 py-2.5 border-t border-hair2">{t?.title ?? e.season}</td>
-                  <td className="px-3.5 py-2.5 border-t border-hair2">
-                    <StatusPill status={e.analysisData ? 'published' : e.analysis ? 'draft' : 'archived'}>
-                      {e.analysisData ? 'Live record' : e.analysis ? 'Flagged, no record' : 'None'}
-                    </StatusPill>
-                  </td>
-                  <td className="px-3.5 py-2.5 border-t border-hair2">
-                    <StatusPill status={isEpisodePublished(e) ? 'published' : 'draft'}>
-                      {isEpisodePublished(e) ? 'Published' : 'Draft'}
-                    </StatusPill>
-                  </td>
-                  <td className="px-3.5 py-2.5 border-t border-hair2" />
-                </tr>
-              );
-            }) : (
-              <tr><td colSpan={7} className="text-center py-10 text-faint">
-                <b className="block font-display text-[16px] text-muted mb-1">No episodes in this theme yet.</b>
-              </td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {list.length === 0 && (
+        <Panel><p className="text-muted text-[14.5px]">No episodes match this filter.</p></Panel>
+      )}
+
+      {list.map((e) => {
+        const live = isEpisodePublished(e);
+        const analysis = e.analysisData ? 'live' : resolveAnalysis(e) ? 'builtin' : e.analysis ? 'missing' : 'none';
+        return (
+          <Panel key={e.id} className="c-card-hover cursor-pointer">
+            <button onClick={() => go('episodeAnalysisEditor', e.id)} className="text-left w-full">
+              <div className="flex items-center gap-3 flex-wrap mb-2">
+                {e.no && <span className="font-mono text-[13px] font-semibold text-rust bg-rust/[0.08] rounded-full px-2.5 py-1">Ep. {e.no}</span>}
+                <b className="font-display italic font-medium text-[17px]">{e.title || '(untitled)'}</b>
+                <StatusPill status={live ? 'published' : 'draft'}>{live ? 'Published' : 'Draft'}</StatusPill>
+                <StatusPill status={analysis === 'live' || analysis === 'builtin' ? 'published' : analysis === 'missing' ? 'draft' : 'archived'}>
+                  {analysis === 'live' ? 'Analysis: live record' : analysis === 'builtin' ? 'Analysis: built-in record' : analysis === 'missing' ? 'Analysis: flagged, no record' : 'No analysis'}
+                </StatusPill>
+                <span className="flex-1" />
+                <span className="text-[12px] text-faint font-mono">{themeTitle(e.season)}</span>
+              </div>
+              <p className="text-[13.5px] text-muted font-sans">{e.guest ? `with ${e.guest}` : 'No guest named'}{e.sub ? ` · ${e.sub}` : ''}</p>
+            </button>
+          </Panel>
+        );
+      })}
     </div>
   );
 }

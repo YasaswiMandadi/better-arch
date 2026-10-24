@@ -1,4 +1,5 @@
 import type { SiteDB, Collaborator as CollaboratorRecord } from './types';
+import { isEssayPublished } from './types';
 import { slugify } from '../lib/slug';
 
 export interface Collaborator {
@@ -21,7 +22,7 @@ export function collaboratorSlugForName(name: string): string {
  * slug, so console-authored bio/designation always wins over the derived
  * stub.
  */
-export function buildCollaboratorRoster(data: SiteDB): Collaborator[] {
+export function buildCollaboratorRoster(data: SiteDB, opts: { includeDrafts?: boolean } = {}): Collaborator[] {
   const bySlug = new Map<string, Collaborator>();
 
   for (const c of data.collaborators) {
@@ -37,7 +38,7 @@ export function buildCollaboratorRoster(data: SiteDB): Collaborator[] {
   }
 
   for (const es of data.essays) {
-    if (!es.author) continue;
+    if (!es.author || (!opts.includeDrafts && !isEssayPublished(es))) continue; // drafts aren't credited publicly yet
     const slug = slugify(es.author);
     const existing = bySlug.get(slug);
     if (existing) existing.essayIds.push(es.id);

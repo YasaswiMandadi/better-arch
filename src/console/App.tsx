@@ -9,7 +9,16 @@ import ThemeRepository from './views/ThemeRepository';
 import ThemeEditor from './views/ThemeEditor';
 import EpisodeAnalysisRepository from './views/EpisodeAnalysisRepository';
 import EpisodeAnalysisEditor from './views/EpisodeAnalysisEditor';
+import ThemesPageEditor from './views/ThemesPageEditor';
+import EssayRepository from './views/EssayRepository';
+import EssayEditor from './views/EssayEditor';
+import EssaysPageEditor from './views/EssaysPageEditor';
+import CollaboratorRepository from './views/CollaboratorRepository';
+import CollaboratorEditor from './views/CollaboratorEditor';
+import KeywordRepository from './views/KeywordRepository';
+import ReferenceRepository from './views/ReferenceRepository';
 import type { ViewName } from './types';
+import { NAV_SECTION } from './nav';
 import type { ComponentType } from 'react';
 
 const VIEWS: Partial<Record<ViewName, ComponentType>> = {
@@ -17,10 +26,19 @@ const VIEWS: Partial<Record<ViewName, ComponentType>> = {
   themeEditor: ThemeEditor,
   episodeAnalysis: EpisodeAnalysisRepository,
   episodeAnalysisEditor: EpisodeAnalysisEditor,
+  themesPage: ThemesPageEditor,
+  essays: EssayRepository,
+  essayEditor: EssayEditor,
+  essaysPage: EssaysPageEditor,
+  collaborators: CollaboratorRepository,
+  collaboratorEditor: CollaboratorEditor,
+  keywords: KeywordRepository,
+  references: ReferenceRepository,
 };
 
 const MOBILE_NAV: [ViewName, string][] = [
-  ['themes', 'Themes'], ['episodeAnalysis', 'Episode Analysis'],
+  ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
+  ['collaborators', 'Collaborators'], ['keywords', 'Keywords'], ['references', 'References'],
 ];
 
 /**
@@ -55,7 +73,7 @@ function ConsoleShell() {
               key={v}
               onClick={() => state.go(v)}
               className={`inline-block mr-2 px-3 py-1.5 rounded-full text-[12.5px] font-sans font-medium ${
-                state.view === v ? 'bg-rust text-white' : 'text-muted bg-ink/[0.05]'
+                (NAV_SECTION[state.view] ?? state.view) === v ? 'bg-rust text-white' : 'text-muted bg-ink/[0.05]'
               }`}
             >
               {label}

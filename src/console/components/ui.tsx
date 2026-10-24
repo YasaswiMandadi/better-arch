@@ -201,3 +201,46 @@ export function SlRow({
     </div>
   )
 }
+
+/** Plain-text input (no rich formatting) for values the public site shows as plain text. */
+export function PlainInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input {...props} className={`${inputCls} disabled:opacity-60 ${props.className || ''}`} />
+}
+
+/** Plain-text multi-line box. */
+export function PlainArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea {...props} className={`${inputCls} resize-y min-h-[96px] leading-relaxed ${props.className || ''}`} />
+}
+
+/** Small "what this is" note at the top of a panel. */
+export function PanelNote({ children }: { children: ReactNode }) {
+  return <p className="text-[13px] text-muted font-sans leading-relaxed mb-4 max-w-[70ch]">{children}</p>
+}
+
+/** Numbered panel title, e.g. "01 · Page header". */
+export function PanelTitle({ num, title, right }: { num: string; title: string; right?: ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 flex-wrap mb-3">
+      <span className="font-mono text-[12px] font-semibold text-rust bg-rust/[0.10] rounded-full px-2.5 py-1 leading-none">{num}</span>
+      <h2 className="font-display italic font-medium text-[19px] tracking-tight flex-1">{title}</h2>
+      {right}
+    </div>
+  )
+}
+
+/** Up/down reorder button with a drawn chevron (text arrows render as boxes in some fonts). */
+export function MoveBtn({ dir, disabled, onClick, label }: { dir: 'up' | 'down'; disabled?: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      className="w-7 h-7 grid place-items-center rounded border border-hair bg-card text-ink hover:text-rust hover:border-rust disabled:opacity-30 disabled:hover:border-hair disabled:hover:text-ink transition-colors"
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style={{ transform: dir === 'down' ? 'rotate(180deg)' : undefined }}>
+        <path d="M2.5 7.5 6 4l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  )
+}

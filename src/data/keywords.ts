@@ -1,4 +1,5 @@
 import type { SiteDB } from './types';
+import { isEssayPublished } from './types';
 import { slugify } from '../lib/slug';
 
 export type KeywordOccurrenceType = 'episode' | 'essay' | 'subtheme';
@@ -33,7 +34,7 @@ export function buildKeywordRegistry(data: SiteDB): Map<string, KeywordEntry> {
   // callers that have analysis data merge it in with mergeEpisodeKeywords().
 
   for (const es of data.essays) {
-    if (!es.keywords?.length) continue;
+    if (!es.keywords?.length || !isEssayPublished(es)) continue; // drafts stay off keyword pages
     for (const kw of es.keywords) {
       addOccurrence(registry, kw.word, {
         type: 'essay',

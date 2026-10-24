@@ -6,7 +6,7 @@ import Section from '../components/Section';
 import SiteFooter from '../components/SiteFooter';
 import ExpandableCard from '../components/ExpandableCard';
 import { useSiteData } from '../data/store';
-import { isEpisodePublished } from '../data/types';
+import { isEpisodePublished, isEssayPublished } from '../data/types';
 import { useCollaboratorRoster, useCollaboratorsForTheme } from '../data/useCollaborators';
 import { KEYWORD_LINK_PROPS, keywordHref } from '../data/keywords';
 import { useCollaboratorPopup } from '../lib/collaboratorPopup';
@@ -23,7 +23,7 @@ export default function Theme() {
   if (!t) return <Navigate to="/themes" replace />;
 
   const eps = data.episodes.filter((e) => e.season === slug && isEpisodePublished(e));
-  const themeEssays = data.essays.filter((e) => e.season === slug);
+  const themeEssays = data.essays.filter((e) => e.season === slug && isEssayPublished(e));
   const investigators = t.investigatorSlugs.map((s) => roster.find((c) => c.slug === s)).filter(Boolean) as typeof roster;
 
   const keywordTotals = new Map<string, { word: string; freq: number }>();

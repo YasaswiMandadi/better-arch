@@ -13,6 +13,7 @@ export default function Essay() {
   const { open } = useCollaboratorPopup();
   const { data } = useSiteData();
   const essay = data.essays.find((x) => x.slug === slug);
+  // Drafts never reach visitors (the database API doesn't send them); a signed-in admin can preview them.
   const collaborator = useCollaborator(essay?.author ? collaboratorSlugForName(essay.author) : undefined);
   if (!essay) return <Navigate to="/" replace />;
   const s = data.themes.find((x) => x.slug === essay.season);
@@ -42,7 +43,7 @@ export default function Essay() {
       <Section ac="ac1" num="01" title="Essay">
         <div className="read space-y-4">
           {essay.body.map((p, i) => (
-            <p key={i}>{p}</p>
+            <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
           ))}
         </div>
       </Section>

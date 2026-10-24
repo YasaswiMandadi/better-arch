@@ -3,7 +3,7 @@ import { useSiteData } from './store';
 import { useAllKeywords } from './useKeywords';
 import { useCollaboratorRoster } from './useCollaborators';
 import { keywordHref } from './keywords';
-import { isEpisodePublished } from './types';
+import { isEpisodePublished, isEssayPublished } from './types';
 
 export interface SearchResult {
   group: 'Themes' | 'Episodes' | 'Essays' | 'Keywords' | 'Collaborators';
@@ -47,6 +47,7 @@ export function useSiteSearch(query: string): SearchResult[] {
     }
 
     for (const es of data.essays) {
+      if (!isEssayPublished(es)) continue;
       if (results.filter((r) => r.group === 'Essays').length >= 5) break;
       if (es.title.toLowerCase().includes(q)) {
         results.push({ group: 'Essays', label: es.title, sub: es.author ? `by ${es.author}` : undefined, href: `/essay/${es.slug}` });

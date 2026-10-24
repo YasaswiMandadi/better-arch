@@ -164,6 +164,14 @@ export interface Essay {
   sub: string;
   body: string[];
   keywords?: EssayKeyword[];
+  /** 'draft' keeps the essay off the public site. Absent on every existing essay on purpose:
+   * absent reads as published (see isEssayPublished()); essays made in the console start as drafts. */
+  status?: 'draft' | 'published';
+}
+
+/** An essay with no status field (every existing essay) counts as published. */
+export function isEssayPublished(e: Pick<Essay, 'status'>): boolean {
+  return e.status !== 'draft';
 }
 
 export interface Collaborator {
@@ -173,11 +181,40 @@ export interface Collaborator {
   bio: string;
 }
 
+/** A titled block with one button, used by the master pages ("Propose a Project", "A Better Vision"…). */
+export interface CtaBlock {
+  show: boolean;
+  title: string;
+  desc: string;
+  buttonLabel: string;
+  /** '/contact#…' style paths open inside the site; full https:// links open in a new tab. */
+  buttonHref: string;
+}
+
+/** Editable text of the Themes masterpage (/themes). Every field optional: missing ones use the defaults in pageCopy.ts. */
+export interface ThemesPageCopy {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  propose?: Partial<CtaBlock>;
+  vision?: Partial<CtaBlock>;
+}
+
+/** Editable text of the Essays masterpage (/essays). */
+export interface EssaysPageCopy {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  cta?: Partial<CtaBlock>;
+}
+
 export interface SiteSettings {
   title: string;
   line: string;
   footer: string;
   socials: [string, string][];
+  themesPage?: ThemesPageCopy;
+  essaysPage?: EssaysPageCopy;
 }
 
 export interface SiteDB {

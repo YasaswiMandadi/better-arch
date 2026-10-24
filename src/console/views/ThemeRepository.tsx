@@ -1,7 +1,7 @@
 import { useConsole } from '../store/useConsole';
 import { useSiteData } from '../../data/store';
 import { Btn, Panel, StatusPill, VHead } from '../components/ui';
-import { slugify } from '../../lib/slug';
+import { createTheme } from '../lib/create';
 
 /**
  * Lists every Theme added to the site, published and unpublished, per the
@@ -14,29 +14,7 @@ export default function ThemeRepository() {
   const { data, update } = useSiteData();
 
   function addTheme() {
-    const n = data.themes.length + 1;
-    const title = `New Theme ${n}`;
-    const slug = slugify(`${title}-${Date.now().toString(36)}`);
-    update((d) => {
-      d.themes.push({
-        slug,
-        no: `S${n}`,
-        title,
-        period: '',
-        statusLabel: 'draft',
-        one: '',
-        summary: [],
-        darkHex: '#E0825C',
-        lightHex: '#C75B39',
-        investigatorSlugs: [],
-        keyConcepts: [],
-        subThemes: [],
-        future: { header: 'Future directions', desc: '' },
-        keywords: [],
-        links: [],
-        status: 'draft',
-      });
-    });
+    const slug = createTheme(data, update);
     go('themeEditor', slug);
   }
 
@@ -46,7 +24,10 @@ export default function ThemeRepository() {
         title="Theme Repository"
         sub="Every Theme added to the site — published and unpublished. Click a card to edit it; these render directly as the Themes Masterpage and the individual Theme pages on the public site."
       >
-        <Btn variant="primary" onClick={addTheme}>+ Add Theme</Btn>
+        <div className="flex flex-wrap gap-2.5">
+          <Btn onClick={() => go('themesPage')} title="Edit the text visitors see on the /themes page">Edit Themes page</Btn>
+          <Btn variant="primary" onClick={addTheme}>+ Add Theme</Btn>
+        </div>
       </VHead>
 
       {data.themes.length === 0 && (
