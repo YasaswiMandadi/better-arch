@@ -92,21 +92,47 @@ export async function convertEyeVideo(
   const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: q.bitrate })
   const chunks: Blob[] = []
   rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data) }
-  const stopped = new Promise<void>((res) => { rec.onstop = () => res() })
+  let stopResolve: () => void = () => {}
+  const stopped = new Promise<void>((res) => { stopResolve = res; rec.onstop = () => res() })
 
+  // The clip is done when the video reaches the end point, or the file itself ends. A video's
+  // clock can stop a few milliseconds short of its own length, and no new frame arrives after the
+  // last one, so "ended", a one-frame tolerance, a watchdog and a hard time limit all finish it.
+  const FRAME = 1 / 30
+  const atEnd = () => v.ended || v.currentTime >= end - FRAME
   let finished = false
-  const finish = () => { if (finished) return; finished = true; v.pause(); if (rec.state !== 'inactive') rec.stop() }
+  let watchdog: ReturnType<typeof setInterval> | undefined
+  const finish = () => {
+    if (finished) return
+    finished = true
+    clearInterval(watchdog)
+    v.removeEventListener('ended', finish)
+    draw() // keep the very last frame
+    v.pause()
+    if (rec.state !== 'inactive') rec.stop()
+    setTimeout(() => stopResolve(), 5000) // the recorder never confirmed: carry on with what it gave
+  }
   signal.addEventListener('abort', finish)
+  v.addEventListener('ended', finish)
   const tick = () => {
     if (finished) return
     draw()
-    onProgress(Math.min(1, (v.currentTime - start) / (end - start)))
-    if (v.currentTime >= end || v.ended) { finish(); return }
+    onProgress(Math.min(0.99, (v.currentTime - start) / (end - start)))
+    if (atEnd()) { finish(); return }
     const rv = v as HTMLVideoElement & { requestVideoFrameCallback?: (cb: () => void) => number }
     if (rv.requestVideoFrameCallback) rv.requestVideoFrameCallback(tick); else requestAnimationFrame(tick)
   }
+  const deadline = Date.now() + ((end - start) * 2 + 15) * 1000 // never wait forever
+  let lastTime = -1, stalledSince = Date.now()
+  watchdog = setInterval(() => {
+    if (finished) return
+    if (atEnd() || Date.now() > deadline) { finish(); return }
+    if (v.currentTime !== lastTime) { lastTime = v.currentTime; stalledSince = Date.now(); return }
+    if (v.paused) v.play().catch(() => {}) // e.g. paused by the browser: carry on
+    if (Date.now() - stalledSince > 4000) finish() // stuck on one frame for 4 s: keep what we have
+  }, 250)
   rec.start(250)
-  await v.play()
+  try { await v.play() } catch { finish() }
   tick()
   await stopped
   signal.removeEventListener('abort', finish)
