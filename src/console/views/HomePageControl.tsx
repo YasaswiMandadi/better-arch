@@ -56,7 +56,10 @@ export default function HomePageControl() {
   const set = <K extends keyof HomeEyeSettings>(k: K, v: HomeEyeSettings[K]) => setDraft((d) => ({ ...d, [k]: v }));
 
   // ---- video upload state ----
-  const [file, setFile] = useState<{ name: string; url: string; duration: number; size: number } | null>(null);
+  // the video in the editor: the one currently on the homepage (current: true), or a newly picked file
+  const [file, setFile] = useState<{ name: string; url: string; duration: number; size: number | null; current: boolean } | null>(null);
+  const [loadingCurrent, setLoadingCurrent] = useState(false);
+  const loadSeq = useRef(0);
   const [fileErr, setFileErr] = useState('');
   const [trim, setTrim] = useState<[number, number]>([0, 8]);
   const [quality, setQuality] = useState<Quality>('standard');
@@ -68,7 +71,7 @@ export default function HomePageControl() {
   const [videoStatus, setVideoStatus] = useState<{ ready: boolean; source: string; duration: number; error?: string } | null>(null);
 
   // revoke object URLs when replaced/unmounted
-  useEffect(() => () => { if (file) URL.revokeObjectURL(file.url); }, [file]);
+  useEffect(() => () => { if (file && file.url.startsWith('blob:')) URL.revokeObjectURL(file.url); }, [file]);
   useEffect(() => () => { if (pending) URL.revokeObjectURL(pending.url); }, [pending]);
 
   // Esc closes the full-screen preview
@@ -89,15 +92,49 @@ export default function HomePageControl() {
 
   const sources = pending ? [{ src: pending.url, type: pending.mime }] : eyeVideoSources(draft, REMOTE_ENABLED);
 
+  /** Puts the eye video that is on the homepage now (uploaded, or the built-in one) into the editor. */
+  async function loadCurrent(s: HomeEyeSettings) {
+    const seq = ++loadSeq.current;
+    setLoadingCurrent(true);
+    const probe = document.createElement('video');
+    const list = eyeVideoSources(s, REMOTE_ENABLED);
+    const playable = list.filter((x) => probe.canPlayType(x.type) !== '');
+    const name = s.video ? s.video.name || 'Uploaded eye video' : 'Built-in eye video';
+    try {
+      for (const src of playable.length ? playable : list) {
+        try {
+          const p = await probeVideo(src.src);
+          if (seq !== loadSeq.current) return; // a newer load (or a picked file) took over
+          setFile({ name, url: src.src, duration: p.duration, size: s.video?.size ?? null, current: true });
+          setTrim([0, Math.min(p.duration, EYE_MAX_CLIP_SECONDS)]);
+          return;
+        } catch { /* try the next format */ }
+      }
+      if (seq === loadSeq.current) setFileErr("The current eye video couldn't be loaded into the editor. You can still upload a new one.");
+    } finally {
+      if (seq === loadSeq.current) setLoadingCurrent(false);
+    }
+  }
+
+  // open the screen with the homepage's current eye video ready to edit
+  const savedVideoId = saved.video?.id ?? '';
+  useEffect(() => {
+    if (pending || (file && !file.current)) return; // don't replace a video the admin is working on
+    void loadCurrent(saved);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedVideoId]);
+
   async function pickFile(f: File | undefined) {
     setFileErr('');
     if (!f) return;
     const err = checkVideoFile(f) ?? canConvertHere();
     if (err) { setFileErr(err); return; }
     const url = URL.createObjectURL(f);
+    loadSeq.current++; // a picked file wins over a current-video load still in progress
+    setLoadingCurrent(false);
     try {
       const p = await probeVideo(url);
-      setFile({ name: f.name, url, duration: p.duration, size: f.size });
+      setFile({ name: f.name, url, duration: p.duration, size: f.size, current: false });
       setTrim([0, Math.min(p.duration, 8, EYE_MAX_CLIP_SECONDS)]);
     } catch (e: any) {
       URL.revokeObjectURL(url);
@@ -113,7 +150,8 @@ export default function HomePageControl() {
     setProgress(0);
     try {
       const r = await convertEyeVideo(file.url, { start: trim[0], end: trim[1], quality }, setProgress, ac.signal);
-      setPending({ url: URL.createObjectURL(r.blob), blob: r.blob, mime: r.mime, duration: r.duration, name: file.name });
+      const baseName = file.current && saved.video ? saved.video.name : file.name;
+      setPending({ url: URL.createObjectURL(r.blob), blob: r.blob, mime: r.mime, duration: r.duration, name: file.current ? `${baseName} (re-edited)` : file.name });
       toast('Converted: the preview now uses your video. Save to put it on the homepage.');
     } catch (e: any) {
       setFileErr(e?.message || 'The conversion failed.');
@@ -139,7 +177,7 @@ export default function HomePageControl() {
       update((d) => { d.site.homeEye = next; });
       setDraft(next);
       setPending(null);
-      setFile(null);
+      void loadCurrent(next); // the editor now shows what's on the homepage
       toast('Saved: the homepage eye is updated.');
     } finally {
       setSaving(false);
@@ -156,6 +194,7 @@ export default function HomePageControl() {
     update((d) => { d.site.homeEye = { ...(d.site.homeEye ?? {}), video: null }; });
     setDraft(next);
     setPending(null);
+    void loadCurrent(next);
     toast('Using the built-in eye video again.');
   }
 
@@ -188,7 +227,7 @@ export default function HomePageControl() {
       >
         <div className="flex flex-wrap gap-2.5 items-center">
           {dirty && <span className="font-sans text-[12px] font-bold uppercase tracking-[0.08em] text-amber bg-amberBg rounded-full px-2.5 py-1">Unsaved changes</span>}
-          <Btn onClick={() => { setDraft(saved); setPending(null); setFile(null); }} disabled={!dirty || saving} className="disabled:opacity-50">Discard</Btn>
+          <Btn onClick={() => { setDraft(saved); setPending(null); setFileErr(''); void loadCurrent(saved); }} disabled={!dirty || saving} className="disabled:opacity-50">Discard</Btn>
           <Btn variant="primary" onClick={save} disabled={!dirty || saving} className="disabled:opacity-50">{saving ? 'Saving…' : 'Save to homepage'}</Btn>
           <a href="/" target="_blank" rel="noopener" className="font-sans font-semibold text-[13px] underline" style={{ color: 'var(--rust)' }}>View homepage ↗</a>
         </div>
@@ -243,19 +282,27 @@ export default function HomePageControl() {
           <Panel>
             <PanelTitle num="01" title="Eye video" right={draft.video || pending ? <Btn size="sm" onClick={useBuiltIn}>Use built-in eye</Btn> : undefined} />
             <PanelNote>
-              Upload any video your browser can play (MP4, MOV, WebM). <b>Maximum file size: {EYE_MAX_UPLOAD_MB} MB.</b> You then choose up to {EYE_MAX_CLIP_SECONDS} seconds of it; the browser converts that part
+              The video below is the one on the homepage now: re-trim it or change its quality and convert, or drop a new video to replace it.
+              New videos: any format your browser can play (MP4, MOV, WebM). <b>Maximum file size: {EYE_MAX_UPLOAD_MB} MB.</b> You then choose up to {EYE_MAX_CLIP_SECONDS} seconds of it; the browser converts that part
               into a small greyscale loop (at most {EYE_MAX_STORED_MB} MB) and the eye is drawn from it. A close-up that ends roughly where it starts loops best.
             </PanelNote>
             <label className="block border border-dashed border-hair rounded-md px-4 py-5 text-center cursor-pointer hover:border-rust transition-colors"
               onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); void pickFile(e.dataTransfer.files?.[0]); }}>
-              <span className="font-sans text-[13.5px] text-muted">Drop a video here, or <b className="text-ink underline">choose a file</b> (max {EYE_MAX_UPLOAD_MB} MB)</span>
+              <span className="font-sans text-[13.5px] text-muted">To replace it: drop a new video here, or <b className="text-ink underline">choose a file</b> (max {EYE_MAX_UPLOAD_MB} MB)</span>
               <input type="file" accept="video/*" className="sr-only" onChange={(e) => { void pickFile(e.target.files?.[0]); e.target.value = ''; }} />
             </label>
             {fileErr && <p role="alert" className="text-danger text-[13px] font-semibold mt-2">{fileErr}</p>}
 
+            {loadingCurrent && !file && <p className="text-[13px] text-muted mt-4" role="status">Loading the current eye video…</p>}
             {file && (
               <div className="mt-4">
-                <p className="text-[13px] text-muted mb-2"><b className="text-ink">{file.name}</b> · {mb(file.size)} · {file.duration.toFixed(1)} s long</p>
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className={`font-sans text-[10.5px] font-bold uppercase tracking-[0.08em] rounded-full px-2.5 py-1 ${file.current ? 'text-moss bg-mossBg' : 'text-amber bg-amberBg'}`}>
+                    {file.current ? 'On the homepage now' : 'New video (not saved)'}
+                  </span>
+                  <p className="text-[13px] text-muted flex-1 min-w-0"><b className="text-ink">{file.name}</b>{file.size !== null ? ` · ${mb(file.size)}` : ''} · {file.duration.toFixed(1)} s long</p>
+                  {!file.current && !pending && progress === null && <Btn size="sm" onClick={() => { setFileErr(''); void loadCurrent(saved); }}>Back to current video</Btn>}
+                </div>
                 <video ref={scrubRef} src={file.url} muted playsInline controls className="w-full max-h-[240px] rounded bg-black mb-3" />
                 <Range label="Start at" value={trim[0]} min={0} max={Math.max(0, file.duration - 0.5)} step={0.1} fmt={(v) => `${v.toFixed(1)} s`}
                   onChange={(v) => { const end = Math.min(file.duration, Math.max(trim[1], v + 0.5), v + EYE_MAX_CLIP_SECONDS); setTrim([v, end]); if (scrubRef.current) scrubRef.current.currentTime = v; }} />
