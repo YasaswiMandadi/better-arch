@@ -23,6 +23,7 @@ export default function ThemeEditor() {
   const roster = useCollaboratorRoster();
   const [investigatorInput, setInvestigatorInput] = useState('');
   const [newKeyword, setNewKeyword] = useState('');
+  const [slugDraft, setSlugDraft] = useState<string | null>(null); // null = not editing the slug
 
   const theme = data.themes.find((t) => t.slug === editId);
   if (!theme) {
@@ -38,6 +39,42 @@ export default function ThemeEditor() {
       const t = d.themes.find((x) => x.slug === editId);
       if (t) fn(t);
     });
+  }
+
+  // ---- slug (the theme's URL, /theme/<slug>, and how episodes/essays point to it) ----
+  const currentSlug = theme.slug;
+  const slugValue = slugDraft ?? currentSlug;
+  const slugEditing = slugDraft !== null && slugDraft !== currentSlug;
+  function slugProblem(v: string): string | null {
+    if (!v) return "The slug can't be empty.";
+    if (v.length > 60) return 'Keep it under 60 characters.';
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(v)) return 'Use only lowercase letters, numbers and single hyphens, e.g. future-cities.';
+    const clash = data.themes.find((x) => x.slug === v && x.slug !== currentSlug);
+    if (clash) return `Already used by the theme "${clash.title.replace(/<[^>]*>/g, '') || clash.slug}". Each theme needs its own slug.`;
+    return null;
+  }
+  const slugError = slugEditing ? slugProblem(slugValue) : null;
+  function typeSlug(v: string) {
+    // tidy as you type: lowercase, spaces/underscores → hyphens, no other characters
+    setSlugDraft(v.toLowerCase().replace(/[\s_]+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-{2,}/g, '-'));
+  }
+  function saveSlug() {
+    const next = (slugDraft ?? '').replace(/^-+|-+$/g, '');
+    if (next === currentSlug) { setSlugDraft(null); return; }
+    const problem = slugProblem(next);
+    if (problem) { setSlugDraft(next); return; }
+    update((d) => {
+      if (d.themes.some((x) => x.slug === next)) return; // safety net: never create a duplicate
+      const t = d.themes.find((x) => x.slug === currentSlug);
+      if (!t) return;
+      t.slug = next;
+      // keep this theme's episodes and essays attached to it
+      for (const e of d.episodes) if (e.season === currentSlug) e.season = next;
+      for (const es of d.essays) if (es.season === currentSlug) es.season = next;
+    });
+    setSlugDraft(null);
+    go('themeEditor', next);
+    toast(`Slug changed to "${next}"`);
   }
 
   function addInvestigator() {
@@ -167,7 +204,47 @@ export default function ThemeEditor() {
       <Panel>
         <Grid2>
           <Field label="Theme name"><TextInput value={theme.title} onChange={(e) => patch((t) => { t.title = (e.target as any).value; })} /></Field>
-          <Field label="Slug (URL)"><TextInput value={theme.slug} disabled /></Field>
+          <Field label="Slug (URL)">
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                value={slugValue}
+                onChange={(e) => typeSlug(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); if (!slugError) saveSlug(); }
+                  if (e.key === 'Escape') setSlugDraft(null);
+                }}
+                spellCheck={false}
+                autoCapitalize="none"
+                autoCorrect="off"
+                aria-invalid={!!slugError}
+                aria-describedby="theme-slug-help"
+                className={`flex-1 min-w-[160px] bg-paper text-ink border rounded-md px-3 py-2.5 text-[14px] font-mono focus:outline-none transition-colors ${
+                  slugError ? 'border-danger focus:border-danger' : 'border-hair focus:border-rust'
+                }`}
+              />
+              {slugEditing ? (
+                <>
+                  <Btn size="sm" variant="primary" onClick={saveSlug} disabled={!!slugError} className="disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">Save slug</Btn>
+                  <Btn size="sm" onClick={() => setSlugDraft(null)}>Cancel</Btn>
+                </>
+              ) : (
+                <Btn size="sm" onClick={() => typeSlug(slugify(theme.title.replace(/<[^>]*>/g, '')))} title="Fill the slug from the theme name">Use title</Btn>
+              )}
+            </div>
+            <div id="theme-slug-help" className="mt-1.5 text-[12.5px] font-sans">
+              {slugError ? (
+                <span role="alert" className="text-danger font-semibold">{slugError}</span>
+              ) : (
+                <span className="text-faint">Page address: <span className="font-mono">/theme/{slugValue.replace(/^-+|-+$/g, '') || '…'}</span>{slugEditing ? ' · press Enter or Save slug' : ''}</span>
+              )}
+              {slugEditing && !slugError && theme.status === 'published' && (
+                <span className="block mt-1 text-amber font-semibold">This theme is published: its public address will change and links to the old address will stop working.</span>
+              )}
+              {slugEditing && !slugError && currentSlug === 'archxmedia' && (
+                <span className="block mt-1 text-amber font-semibold">The homepage "Enter the conversations" button links to /theme/archxmedia. Changing this slug breaks that button until it is updated.</span>
+              )}
+            </div>
+          </Field>
         </Grid2>
         <Grid3>
           <Field label="Label (e.g. S1)"><TextInput value={theme.no} onChange={(e) => patch((t) => { t.no = (e.target as any).value; })} /></Field>
