@@ -3,6 +3,7 @@ import type { ViewName } from '../types'
 import { NAV_SECTION } from '../nav'
 
 const SITE: [ViewName, string, string][] = [
+  ['dashboard', 'DB', 'Dashboard'],
   ['homepage', 'HP', 'Home page'],
 ]
 

@@ -18,11 +18,13 @@ import CollaboratorEditor from './views/CollaboratorEditor';
 import KeywordRepository from './views/KeywordRepository';
 import ReferenceRepository from './views/ReferenceRepository';
 import HomePageControl from './views/HomePageControl';
+import ConsoleDashboard from './views/ConsoleDashboard';
 import type { ViewName } from './types';
 import { NAV_SECTION } from './nav';
 import type { ComponentType } from 'react';
 
 const VIEWS: Partial<Record<ViewName, ComponentType>> = {
+  dashboard: ConsoleDashboard,
   themes: ThemeRepository,
   themeEditor: ThemeEditor,
   episodeAnalysis: EpisodeAnalysisRepository,
@@ -39,7 +41,7 @@ const VIEWS: Partial<Record<ViewName, ComponentType>> = {
 };
 
 const MOBILE_NAV: [ViewName, string][] = [
-  ['homepage', 'Home page'], ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
+  ['dashboard', 'Dashboard'], ['homepage', 'Home page'], ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
   ['collaborators', 'Collaborators'], ['keywords', 'Keywords'], ['references', 'References'],
 ];
 
@@ -63,7 +65,7 @@ export default function ConsoleApp() {
 
 function ConsoleShell() {
   const state = useConsoleState();
-  const ViewComponent = VIEWS[state.view] || ThemeRepository;
+  const ViewComponent = VIEWS[state.view] || ConsoleDashboard;
 
   return (
     <div className="consoleApp">
@@ -86,7 +88,7 @@ function ConsoleShell() {
           <div className="md:contents">
             <Sidebar />
           </div>
-          <main className="px-4 sm:px-6 md:px-8 pt-16 md:pt-8 pb-28 max-w-[1080px]">
+          <main className="min-w-0 px-4 sm:px-6 md:px-8 pt-16 md:pt-8 pb-28 max-w-[1080px]">
             <ViewComponent />
           </main>
         </div>

@@ -1,4 +1,7 @@
+import { randomUUID } from 'node:crypto';
 import type { Req, Res } from './_lib/http.js';
+import { mongoDb } from './_lib/mongo.js';
+import type { MessageDoc } from './_lib/messages.js';
 
 /**
  * POST /api/contact — sends a Contact-page message by email (via Resend, https://resend.com).
@@ -7,6 +10,10 @@ import type { Req, Res } from './_lib/http.js';
  *   RESEND_API_KEY  (required)  the API key from resend.com → API Keys
  *   CONTACT_TO      (optional)  where messages go; defaults to ptgsaay@gmail.com (testing)
  *   CONTACT_FROM    (optional)  sender; defaults to Resend's test sender, which works without a domain
+ *
+ * Every message is also saved in the database (MongoDB collection "messages"), so the console's
+ * Dashboard can list it even if the email fails. A message counts as received when either the
+ * database or the email accepted it.
  *
  * Note: until a domain is verified in Resend, its free account can only deliver to the email
  * address the Resend account was created with — so sign up with the CONTACT_TO address.
@@ -58,7 +65,7 @@ export default async function handler(req: Req, res: Res) {
   if (!body || typeof body !== 'object') return send(res, 400, { ok: false, error: 'Malformed request.' });
 
   // Spam signals never drop a message (phone autofill can fill hidden fields, and a lost real
-  // message is worse than a spam one). A suspicious message is still emailed, marked in the subject.
+  // message is worse than a spam one). A suspicious message is still saved and emailed, marked as possible spam.
   const flags: string[] = [];
   if (clean(body.ba_check, 200) || clean(body.website, 200)) flags.push('hidden spam-trap field was filled');
   const elapsed = Number(body.elapsed);
@@ -81,12 +88,6 @@ export default async function handler(req: Req, res: Res) {
   const ip = (Array.isArray(fwd) ? fwd[0] : fwd || '').split(',')[0].trim() || 'unknown';
   if (tooMany(ip)) return send(res, 429, { ok: false, error: 'Too many messages in a short time. Please try again in a few minutes.' });
 
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
-    console.error('[api/contact] RESEND_API_KEY is not set');
-    return send(res, 503, { ok: false, error: 'The contact form is not set up yet.' });
-  }
-
   const label = TYPES[type];
   const subject = oneLine(`${flags.length ? '[Possible spam] ' : ''}[BetterArch · ${label}] ${f.subject || `Message from ${f.name}`}`).slice(0, 250);
   const rows: [string, string][] = [
@@ -107,21 +108,58 @@ export default async function handler(req: Req, res: Res) {
 <div style="white-space:pre-wrap;border-left:3px solid #E0825C;padding:4px 0 4px 14px">${esc(f.msg)}</div>
 <p style="color:#888;font-size:12px;margin-top:20px">Sent from the BetterArch.org contact form · reply to this email to answer ${esc(f.name)} directly.</p></div>`;
 
+  const stored = await saveMessage({ type, ...f, flags });
+  const emailed = await sendEmail({ subject, text, html, replyTo: f.email });
+  if (stored) await markEmailed(stored, emailed);
+  if (!stored && !emailed && !process.env.MONGODB_URI && !process.env.RESEND_API_KEY) return send(res, 503, { ok: false, error: 'The contact form is not set up yet.' });
+  if (!stored && !emailed) return send(res, 502, { ok: false, error: 'The message could not be sent right now.' });
+  console.log('[api/contact] received', stored ? `saved ${stored}` : 'NOT saved', emailed ? 'emailed' : 'NOT emailed', flags.length ? `(flagged: ${flags.join('; ')})` : '');
+  return send(res, 200, { ok: true });
+}
+
+/** Saves the message; resolves to its id, or null when the database isn't reachable. */
+// (The sender's IP address is only used for the flood guard above; it is never stored.)
+async function saveMessage(m: Omit<MessageDoc, '_id' | 'emailKey' | 'createdAt' | 'read' | 'emailed'>): Promise<string | null> {
+  if (!process.env.MONGODB_URI) return null;
+  try {
+    const doc: MessageDoc = { _id: randomUUID(), ...m, emailKey: m.email.toLowerCase(), createdAt: new Date(), read: false, emailed: false };
+    await (await mongoDb()).collection<MessageDoc>('messages').insertOne(doc);
+    return doc._id;
+  } catch (e: any) {
+    console.error('[api/contact] could not save the message', e?.message || e);
+    return null;
+  }
+}
+
+async function markEmailed(id: string, emailed: boolean) {
+  if (!emailed) return;
+  try {
+    await (await mongoDb()).collection<MessageDoc>('messages').updateOne({ _id: id }, { $set: { emailed: true } });
+  } catch { /* the message itself is saved; this flag is informational */ }
+}
+
+/** Sends the notification email through Resend; resolves to whether it was accepted. */
+async function sendEmail(e: { subject: string; text: string; html: string; replyTo: string }): Promise<boolean> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.error('[api/contact] RESEND_API_KEY is not set');
+    return false;
+  }
   try {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: FROM(), to: [TO()], reply_to: f.email, subject, text, html }),
+      body: JSON.stringify({ from: FROM(), to: [TO()], reply_to: e.replyTo, subject: e.subject, text: e.text, html: e.html }),
     });
     if (!r.ok) {
       console.error('[api/contact] Resend error', r.status, (await r.text()).slice(0, 500));
-      return send(res, 502, { ok: false, error: 'The message could not be sent right now.' });
+      return false;
     }
     const sent = await r.json().catch(() => ({}));
-    console.log('[api/contact] sent', (sent as any)?.id ?? '', flags.length ? `(flagged: ${flags.join('; ')})` : '');
-    return send(res, 200, { ok: true });
-  } catch (e: any) {
-    console.error('[api/contact]', e?.message || e);
-    return send(res, 502, { ok: false, error: 'The message could not be sent right now.' });
+    console.log('[api/contact] emailed', (sent as any)?.id ?? '');
+    return true;
+  } catch (err: any) {
+    console.error('[api/contact]', err?.message || err);
+    return false;
   }
 }

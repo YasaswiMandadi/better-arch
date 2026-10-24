@@ -137,3 +137,30 @@
   .consoleApp .secLayoutWrap > .secLayoutAside { order: 2; margin-bottom: 0; }
   .consoleApp .secLayoutWrap > .secLayoutAside > div { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow: auto; }
 }
+
+/* ---- Dashboard charts (validated palette: categorical slots 1–4, light on white cards, dark on
+   graphite cards; see the dataviz notes in views/ConsoleDashboard.tsx). Text never uses these. ---- */
+.consoleApp {
+  --viz-1: #2a78d6; --viz-2: #eb6834; --viz-3: #1baf7a; --viz-4: #eda100;
+  --viz-grid: #E9E7E1; --viz-axis: #C3C2B7; --viz-track: #EEECE6;
+  --st-warning: #fab219; --st-good: #0ca30c;
+}
+.dark .consoleApp {
+  --viz-1: #3987e5; --viz-2: #d95926; --viz-3: #199e70; --viz-4: #c98500;
+  --viz-grid: #262A30; --viz-axis: #3A3E46; --viz-track: #262A30;
+}
+.consoleApp .viz-tip {
+  position: absolute; z-index: 20; pointer-events: none; min-width: 150px; max-width: 260px;
+  background: var(--card); color: var(--ink); border: 1px solid var(--hair); border-radius: 8px;
+  padding: 9px 11px; font-size: 12.5px; line-height: 1.45; box-shadow: var(--c-shadow-lift);
+}
+.consoleApp .viz-hit { cursor: default; outline: none; }
+.consoleApp .viz-hit:focus-visible .viz-hit-bg { fill: color-mix(in srgb, var(--ink) 7%, transparent); }
+.consoleApp .viz-num { font-variant-numeric: tabular-nums; }
+.consoleApp .dash-fade { transition: opacity .2s; }
+@media (prefers-reduced-motion: no-preference) {
+  .consoleApp .viz-grow { transform-box: fill-box; transform-origin: bottom; animation: vizGrow .5s cubic-bezier(.2,.7,.2,1) both; }
+  .consoleApp .viz-grow-x { transform-box: fill-box; transform-origin: left; animation: vizGrowX .5s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes vizGrow { from { transform: scaleY(0); } }
+  @keyframes vizGrowX { from { transform: scaleX(0); } }
+}

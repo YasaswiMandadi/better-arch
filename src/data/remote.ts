@@ -142,3 +142,89 @@ export async function deleteEyeVideo(token: string | null): Promise<string | nul
     return 'Could not reach the server.';
   }
 }
+
+// ---------------------------------------------------------------- Contact messages (console)
+
+/** The four Contact-page forms, in the order the API's stats use. */
+export const MESSAGE_TYPES = ['general', 'episode', 'propose', 'contribute'] as const;
+export type MessageType = (typeof MESSAGE_TYPES)[number];
+
+export interface ContactMessage {
+  id: string;
+  type: string;
+  name: string;
+  email: string;
+  org: string;
+  subject: string;
+  guest: string;
+  topic: string;
+  msg: string;
+  flags: string[];
+  createdAt: string;
+  read: boolean;
+  emailed: boolean;
+}
+
+export interface MessageStats {
+  total: number;
+  /** true when there are more messages than the charts include (20,000+) */
+  capped: boolean;
+  /** one per message: [time ms, type index (MESSAGE_TYPES), unread 1/0, flagged 1/0] */
+  events: [number, number, number, number][];
+  /** distinct people (by email address) */
+  people: number;
+  /** the most recent 300 people who wrote */
+  senders: { name: string; email: string; count: number; unread: number; last: string }[];
+}
+
+export type MessagesPage = { ok: true; items: ContactMessage[]; next: string | null; stats?: MessageStats } | { ok: false; error: string; status: number };
+
+export interface MessageFilter { email?: string; type?: string; unread?: boolean; /** page size (default 50, max 200) */ limit?: number }
+
+/** Lists Contact-page messages, newest first (admin). The first page (no `before`) also carries the stats. */
+export async function fetchMessages(token: string | null, before?: string | null, filter: MessageFilter = {}): Promise<MessagesPage> {
+  if (!token) return { ok: false, error: 'Sign in again to see messages.', status: 401 };
+  try {
+    const p = new URLSearchParams();
+    if (before) p.set('before', before);
+    if (filter.email) p.set('email', filter.email);
+    if (filter.type) p.set('type', filter.type);
+    if (filter.unread) p.set('unread', '1');
+    if (filter.limit) p.set('limit', String(filter.limit));
+    const q = p.toString() ? `?${p}` : '';
+    const r = await fetch(`/api/messages${q}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+    const j = await readJson(r);
+    if (r.ok && j?.ok && Array.isArray(j.items)) return { ok: true, items: j.items, next: j.next ?? null, stats: j.stats };
+    return { ok: false, error: j?.error || `Could not load messages (${r.status}).`, status: r.status };
+  } catch {
+    return { ok: false, error: 'Could not reach the server.', status: 0 };
+  }
+}
+
+/** Marks messages read/unread (admin); `ids: 'all'` marks every message. Resolves to an error, or null. */
+export async function markMessages(token: string | null, ids: string[] | 'all', read: boolean): Promise<string | null> {
+  if (!token) return 'Sign in again.';
+  try {
+    const r = await fetch('/api/messages', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(ids === 'all' ? { all: true, read } : { ids, read }),
+    });
+    const j = await readJson(r);
+    return r.ok && j?.ok ? null : j?.error || `Request failed (${r.status}).`;
+  } catch {
+    return 'Could not reach the server.';
+  }
+}
+
+/** Deletes one message for good (admin). Resolves to an error, or null. */
+export async function deleteMessage(token: string | null, id: string): Promise<string | null> {
+  if (!token) return 'Sign in again.';
+  try {
+    const r = await fetch(`/api/messages?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    const j = await readJson(r);
+    return r.ok && j?.ok ? null : j?.error || `Request failed (${r.status}).`;
+  } catch {
+    return 'Could not reach the server.';
+  }
+}

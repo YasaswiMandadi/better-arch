@@ -7,7 +7,7 @@ export default function Topbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 h-[60px] z-50 flex items-center gap-3.5 px-4 sm:px-5 c-topbar">
-      <button onClick={() => go('themes')} className="font-display italic font-semibold text-[16px] tracking-tight whitespace-nowrap text-white">
+      <button onClick={() => go('dashboard')} className="font-display italic font-semibold text-[16px] tracking-tight whitespace-nowrap text-white">
         BetterArch <span className="text-rust not-italic font-sans font-bold text-[11px] uppercase tracking-[0.14em] align-middle ml-1">Console</span>
       </button>
       <SyncBadge />
