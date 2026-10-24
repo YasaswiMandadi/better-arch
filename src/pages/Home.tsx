@@ -1,11 +1,15 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useTheme } from '../lib/theme';
 import { Moon, Sun, ChevronDown } from 'lucide-react';
 import VideoEye from '../components/VideoEye';
 import { useHomeEye } from '../data/useHomeEye';
 import TypeSwap from '../components/TypeSwap';
 import HeaderSearch from '../components/HeaderSearch';
+import PtgCredit from '../components/PtgCredit';
+import { FooterAnchor } from '../components/SiteFooter';
+import { useSiteData } from '../data/store';
+import { resolveFooter, safeHref } from '../data/footer';
 
 /** Live New Delhi time for the corner label. */
 function useDelhiClock(): string {
@@ -22,6 +26,12 @@ export default function Home() {
   const { theme, toggle } = useTheme();
   const eye = useHomeEye();
   const clock = useDelhiClock();
+  const { data } = useSiteData();
+  const homeFooter = resolveFooter(data.site, 'home');
+  const homeItems = [
+    ...homeFooter.socials.filter(([l, u]) => l.trim() && safeHref(u)).map(([label, href]) => ({ label, href })),
+    ...homeFooter.links.filter((l) => l.label.trim() && safeHref(l.href)),
+  ];
 
   return (
     <div className="hp-eye relative min-h-screen min-h-[100dvh] flex flex-col overflow-hidden" style={{ colorScheme: 'dark', background: eye.settings.bg }}>
@@ -91,21 +101,23 @@ export default function Home() {
         </div>
       </div>
 
-      {/* footer */}
-      <div className="relative z-10 flex flex-wrap items-center gap-x-5 gap-y-2 px-6 sm:px-8 py-5 font-mono text-[10.5px] tracking-[.1em] text-[#8e9398]">
-        <a href="https://www.linkedin.com/company/betterarch/" target="_blank" rel="noopener" className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors">Linkedin</a>
-        <span className="text-[#3a3d40]">/</span>
-        <a href="https://www.instagram.com/betterarch_org/" target="_blank" rel="noopener" className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors">Instagram</a>
-        <span className="text-[#3a3d40]">/</span>
-        <a href="https://www.x.com/betterarch_org/" target="_blank" rel="noopener" className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors">X</a>
-        <span className="text-[#3a3d40]">/</span>
-        <a href="https://open.spotify.com/show/7glojNr7jxfFlu5FF9RjjF" target="_blank" rel="noopener" className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors">Spotify</a>
-        <Link to="/about" className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors">About Us</Link>
-        <span className="text-[#3a3d40]">/</span>
-        <Link to="/disclaimer" className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors">Disclaimer</Link>
-        <span className="ml-auto uppercase text-[#7a7f84] hidden sm:inline flex items-center gap-1">
-          <ChevronDown size={11} className="rotate-180" /> the eye is watching · move your cursor
-        </span>
+      {/* footer: links and copyright from the console (Footer screen → Home page); the PTG credit is fixed */}
+      <div className="relative z-10 px-6 sm:px-8 pt-5 pb-4 font-mono text-[10.5px] tracking-[.1em] text-[#8e9398]">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          {homeFooter.show && homeItems.map((it, i) => (
+            <Fragment key={`${it.label}-${i}`}>
+              {i > 0 && <span className="text-[#3a3d40]">/</span>}
+              <FooterAnchor label={it.label} href={it.href} className="hp-link uppercase text-[#7a7f84] hover:text-[#E4E7EA] transition-colors" />
+            </Fragment>
+          ))}
+          <span className="ml-auto uppercase text-[#7a7f84] hidden sm:inline-flex items-center gap-1">
+            <ChevronDown size={11} className="rotate-180" /> the eye is watching · move your cursor
+          </span>
+        </div>
+        <div className="mt-3 pt-3 border-t border-white/[.07] flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[10px] tracking-[.08em] text-[#5d6166]">
+          {homeFooter.show && homeFooter.copyright.trim() ? <span>{homeFooter.copyright}</span> : <span />}
+          <PtgCredit tone="dark" className="ml-auto uppercase text-[#6b7075]" />
+        </div>
       </div>
     </div>
   );

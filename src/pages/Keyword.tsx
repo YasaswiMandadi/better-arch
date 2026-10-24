@@ -62,7 +62,7 @@ export default function Keyword() {
         );
       })}
 
-      <SiteFooter />
+      <SiteFooter page="keyword" />
     </InnerLayout>
   );
 }

@@ -279,7 +279,7 @@ export default function Theme() {
         </Section>
       ))}
 
-      <SiteFooter />
+      <SiteFooter page="theme" />
     </InnerLayout>
   );
 }

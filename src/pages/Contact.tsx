@@ -194,7 +194,7 @@ export default function Contact() {
         </ul>
       </Section>
 
-      <SiteFooter />
+      <SiteFooter page="contact" />
     </InnerLayout>
   );
 }

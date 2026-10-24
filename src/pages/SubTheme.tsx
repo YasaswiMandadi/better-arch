@@ -151,7 +151,7 @@ export default function SubTheme() {
         </Section>
       ))}
 
-      <SiteFooter />
+      <SiteFooter page="subtheme" />
     </InnerLayout>
   );
 }

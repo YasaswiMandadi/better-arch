@@ -1,4 +1,5 @@
 import type { HomeEyeSettings } from './homeEye';
+import type { FooterSettings } from './footer';
 import type { SectionLayout } from './sectionLayout';
 
 export interface KeywordItem {
@@ -218,6 +219,8 @@ export interface SiteSettings {
   essaysPage?: EssaysPageCopy;
   /** Homepage eye settings (console → Home page). Missing fields use HOME_EYE_DEFAULTS. */
   homeEye?: Partial<HomeEyeSettings>;
+  /** Footer: on/off and links for the default, plus each page type's own footer (console → Footer). */
+  footerSettings?: FooterSettings;
 }
 
 export interface SiteDB {

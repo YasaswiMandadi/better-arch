@@ -19,6 +19,7 @@ import KeywordRepository from './views/KeywordRepository';
 import ReferenceRepository from './views/ReferenceRepository';
 import HomePageControl from './views/HomePageControl';
 import ConsoleDashboard from './views/ConsoleDashboard';
+import FooterEditor from './views/FooterEditor';
 import type { ViewName } from './types';
 import { NAV_SECTION } from './nav';
 import type { ComponentType } from 'react';
@@ -38,10 +39,11 @@ const VIEWS: Partial<Record<ViewName, ComponentType>> = {
   keywords: KeywordRepository,
   references: ReferenceRepository,
   homepage: HomePageControl,
+  footer: FooterEditor,
 };
 
 const MOBILE_NAV: [ViewName, string][] = [
-  ['dashboard', 'Dashboard'], ['homepage', 'Home page'], ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
+  ['dashboard', 'Dashboard'], ['homepage', 'Home page'], ['footer', 'Footer'], ['themes', 'Themes'], ['essays', 'Essays'], ['episodeAnalysis', 'Episodes'],
   ['collaborators', 'Collaborators'], ['keywords', 'Keywords'], ['references', 'References'],
 ];
 

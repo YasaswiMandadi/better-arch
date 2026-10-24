@@ -5,6 +5,7 @@ import { NAV_SECTION } from '../nav'
 const SITE: [ViewName, string, string][] = [
   ['dashboard', 'DB', 'Dashboard'],
   ['homepage', 'HP', 'Home page'],
+  ['footer', 'FT', 'Footer'],
 ]
 
 const NAV: [ViewName, string, string][] = [

@@ -54,7 +54,7 @@ export default function EssaysMasterpage() {
         </section>
       )}
 
-      <SiteFooter />
+      <SiteFooter page="essays" />
     </InnerLayout>
   );
 }

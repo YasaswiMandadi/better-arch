@@ -81,7 +81,7 @@ export default function Essay() {
         )}
       </Section>
 
-      <SiteFooter />
+      <SiteFooter page="essay" />
     </InnerLayout>
   );
 }

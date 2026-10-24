@@ -471,7 +471,7 @@ export default function Episode() {
         </>
       )}
 
-      <SiteFooter />
+      <SiteFooter page="episode" />
 
       {txOpen && (
         <div className="fixed inset-0 bg-black/60 z-85 p-4 sm:p-8 overflow-auto flex items-start justify-center" onClick={(ev) => { if (ev.target === ev.currentTarget) setTxOpen(false); }}>

@@ -79,7 +79,7 @@ export default function Episodes() {
         })}
       </div>
 
-      <SiteFooter />
+      <SiteFooter page="episodes" />
     </InnerLayout>
   );
 }

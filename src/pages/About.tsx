@@ -75,7 +75,7 @@ export default function About() {
         </p>
       </Section>
 
-      <SiteFooter />
+      <SiteFooter page="about" />
     </InnerLayout>
   );
 }

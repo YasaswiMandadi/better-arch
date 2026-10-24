@@ -116,3 +116,4 @@ export type ViewName =
   | 'keywords'
   | 'references'
   | 'homepage'
+  | 'footer'

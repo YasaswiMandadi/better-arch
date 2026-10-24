@@ -74,7 +74,7 @@ export default function ThemesMasterpage() {
         </section>
       )}
 
-      <SiteFooter />
+      <SiteFooter page="themes" />
     </InnerLayout>
   );
 }
